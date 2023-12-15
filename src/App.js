@@ -6,7 +6,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 import React, { useState } from 'react';
 
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -18,11 +18,8 @@ import Stack from '@mui/material/Stack';
 
 
 import { jizdni_rady_pardubicky_pardubice_hln } from './data/pardubicky.js'
-
 import { jizdni_rady_strossova } from './data/strossova.js'
-
 import { jizdni_rady_k_nemocnici } from './data/k_nemocnici.js'
-
 import { jizdni_rady_na_okrouhliku } from './data/na_okrouhliku.js'
 
 
@@ -54,48 +51,66 @@ const destinace = [
 ];
 
 const prestupni_zastavky_pce = [
-	["Masarykovo náměstí", "Sukova", "Třída Míru"], // todo: toto musí includovat i třídu míru, sukovu a possibly zimní stadion a hotel grand
-	["Náměstí republiky"],
-	["17. listopadu"],
-	["Pardubice hl.n.", "Hlavní nádraží"],
+	{
+		zastavky: ["Masarykovo náměstí", "Sukova", "Třída Míru"],
+		jizdni_rady: [],
+	},
+	{
+		zastavky: ["Náměstí republiky"],
+		jizdni_rady: [],
+	},
+	{
+		zastavky: ["17. listopadu"],
+		jizdni_rady: [],
+	},
+	{
+		zastavky: ["Pardubice hl.n.", "Hlavní nádraží"],
+		jizdni_rady: [],
+	}
 ];
 
 const prestupni_zastavky_hk = [
-	["Hradec Králové hl.n.", /*"Hlavní nádraží",*/ "Terminál HD"] // tady ale je potreba hledat i z thd => hledat spojeni do a ze vsech
+	["Hradec Králové hl.n.", "Terminál HD"] // tady ale je potreba hledat i z thd => hledat spojeni do a ze vsech
 ];
 
-//const closest = (array, pivot) => array.filter(e => e > pivot).reduce((a, b) => (Math.abs(b - pivot) < Math.abs(a - pivot)) ? b : a);
-
 const closest = (array, pivot) => array.filter(e => (e >= pivot))[0];
+const exists = (obj, search) => obj.map(e => e.zastavky.some(row => row.includes(search)));
+const getRow = (obj, search) => obj.map(e => e.zastavky.some(row => row.includes(search) ? row : null));
 
-const exists = (arr, search) => arr.some(row => row.includes(search));
-const getRow = (arr, search) => arr.some(row => row.includes(search) ? row : null);
-
-function najdi(zacatek, konec, cas, poc_jr, hloubka = 0, cesty = []) {
+function najdi(zacatek, konec, cas, jizdni_rad, hloubka = 0, cesty = []) {
 
 	if(zacatek == konec) return cesty;
 
 	if(hloubka > 6) return null; // nehledej dal
 
-	let casy = poc_jr.map(entry => entry.cas);
+	let casy = jizdni_rad.map(entry => entry.cas);
 	let nejblizsi_odjezd = closest(casy, cas);
 
-	let indexCesty = poc_jr.findIndex(p => p.cas == nejblizsi_odjezd); // najit objekt cesty podle casu
-	let zastavky = poc_jr[indexCesty].zastavky
+	let indexCesty = jizdni_rad.findIndex(p => p.cas == nejblizsi_odjezd); // najit objekt cesty podle casu
+	let zastavky = jizdni_rad[indexCesty].zastavky
 
 	let cesta = zastavky.slice(zastavky.indexOf(zacatek), zastavky.indexOf(konec) + 1)
 
-	//if(zastavky.includes(konec)) return cesty + cesta;
+	let odjezd_hodiny = Math.floor(nejblizsi_odjezd / 100)
+	let odjezd_minuty = (nejblizsi_odjezd - odjezd_hodiny * 100)
+
+	//if(zastavky.includes(konec)) {
+	//	return cesty + [odjezd_hodiny + ":" + odjezd_minuty, ...cesta];
+	//}
 
 	cesta.slice(1).forEach(e =>	{ // pro kazdou zastavku krome prvni
 
 		if(exists(prestupni_zastavky_pce, e)) { // je zastavka prestupni?
+ 
+			alert("exists")
 
 			// pokud je zastavka prestupni, hledej cestu z prestupni zastavky
 
+			alert(getRow(prestupni_zastavky_pce, e)[0])
+
 			return cesty
-				+ najdi(getRow(prestupni_zastavky_pce, e)[0], konec, cas, poc_jr/*todo*/, hloubka + 1, cesty)
-				+ najdi(getRow(prestupni_zastavky_hk, e)[0], konec, cas, poc_jr/*todo*/, hloubka + 1, cesty);
+				+ najdi(getRow(prestupni_zastavky_pce, e)[0], konec, cas, jizdni_rad/*todo*/, hloubka + 1, cesty)
+				//+ najdi(getRow(prestupni_zastavky_hk, e)[0], konec, cas, jizdni_rad/*todo*/, hloubka + 1, cesty);
 		}
 		
 	})
