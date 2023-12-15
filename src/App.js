@@ -1,4 +1,5 @@
 import './App.css';
+
 import Button from '@mui/material/Button';
 
 import TextField from '@mui/material/TextField';
@@ -14,16 +15,28 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import Slide from '@mui/material/Slide';
+
 import Stack from '@mui/material/Stack';
 
 
-import { jizdni_rady_pardubicky_pardubice_hln } from './data/pardubicky.js'
-import { jizdni_rady_strossova } from './data/strossova.js'
-import { jizdni_rady_k_nemocnici } from './data/k_nemocnici.js'
-import { jizdni_rady_na_okrouhliku } from './data/na_okrouhliku.js'
+import { jizdni_rad } from './jr.js'
 
+const destinace = [
+        "Pardubice",
+        "Pardubice hl.n.",
+        "Hradec Králové hl.n.",
+        "Opatovice nad Labem",
+        "Kolín",
+        "Choceň",
+        "Ústí nad Orlicí",
+        "Všestary",
+        "Žamberk",
+        "Přelouč",
+        "Chrudim"
+];
 
-function Destination({setDest}) {
+function DestinationSelector({setDest}) {
 	return (
 	<Autocomplete
 		disablePortal
@@ -36,90 +49,77 @@ function Destination({setDest}) {
 	);
 }
 
-const destinace = [
-	"Pardubice",
-	"Pardubice hl.n.",
-	"Hradec Králové",
-	"Opatovice nad Labem",
-	"Kolín",
-	"Choceň",
-	"Ústí nad Orlicí",
-	"Všestary",
-	"Žamberk",
-	"Přelouč",
-	"Chrudim"
-];
-
-const prestupni_zastavky_pce = [
-	{
-		zastavky: ["Masarykovo náměstí", "Sukova", "Třída Míru"],
-		jizdni_rady: [],
-	},
-	{
-		zastavky: ["Náměstí republiky"],
-		jizdni_rady: [],
-	},
-	{
-		zastavky: ["17. listopadu"],
-		jizdni_rady: [],
-	},
-	{
-		zastavky: ["Pardubice hl.n.", "Hlavní nádraží"],
-		jizdni_rady: [],
-	}
-];
-
-const prestupni_zastavky_hk = [
-	["Hradec Králové hl.n.", "Terminál HD"] // tady ale je potreba hledat i z thd => hledat spojeni do a ze vsech
-];
-
 const closest = (array, pivot) => array.filter(e => (e >= pivot))[0];
-const exists = (obj, search) => obj.map(e => e.zastavky.some(row => row.includes(search)));
-const getRow = (obj, search) => obj.map(e => e.zastavky.some(row => row.includes(search) ? row : null));
 
-function najdi(zacatek, konec, cas, jizdni_rad, hloubka = 0, cesty = []) {
+const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-	if(zacatek == konec) return cesty;
+function najdi(zacatek, konec, cas, cesty = []) {
 
-	if(hloubka > 6) return null; // nehledej dal
+	if(zacatek in jizdni_rad) {
 
-	let casy = jizdni_rad.map(entry => entry.cas);
-	let nejblizsi_odjezd = closest(casy, cas);
+		console.log("Zacatek: ", zacatek)
 
-	let indexCesty = jizdni_rad.findIndex(p => p.cas == nejblizsi_odjezd); // najit objekt cesty podle casu
-	let zastavky = jizdni_rad[indexCesty].zastavky
+		let linka = jizdni_rad[zacatek]; // toto je garantovano
 
-	let cesta = zastavky.slice(zastavky.indexOf(zacatek), zastavky.indexOf(konec) + 1)
+		let casy = linka.map(odjezd => odjezd.cas);
+		let nejblizsi_odjezd = closest(casy, cas);
 
-	let odjezd_hodiny = Math.floor(nejblizsi_odjezd / 100)
-	let odjezd_minuty = (nejblizsi_odjezd - odjezd_hodiny * 100)
+		let spoj = linka[linka.findIndex(p => p.cas == nejblizsi_odjezd)];
 
-	//if(zastavky.includes(konec)) {
-	//	return cesty + [odjezd_hodiny + ":" + odjezd_minuty, ...cesta];
-	//}
+		let zastavky = spoj.zastavky
+		let cesta = zastavky.slice(zastavky.indexOf(zacatek))
 
-	cesta.slice(1).forEach(e =>	{ // pro kazdou zastavku krome prvni
 
-		if(exists(prestupni_zastavky_pce, e)) { // je zastavka prestupni?
- 
-			alert("exists")
+		let odjezd_hodiny = Math.floor(nejblizsi_odjezd / 100)
+		let odjezd_minuty = (nejblizsi_odjezd - odjezd_hodiny * 100)
 
-			// pokud je zastavka prestupni, hledej cestu z prestupni zastavky
+		let odjezd_hodiny_str = `${String(odjezd_hodiny).padStart(2, '0')}`
+		let odjezd_minuty_str = `${String(odjezd_minuty).padStart(2, '0')}`
 
-			alert(getRow(prestupni_zastavky_pce, e)[0])
+		let odjezd_minuty_str_trvani = `${String(odjezd_minuty + spoj.delka_jizdy).padStart(2, '0')}`
 
-			return cesty
-				+ najdi(getRow(prestupni_zastavky_pce, e)[0], konec, cas, jizdni_rad/*todo*/, hloubka + 1, cesty)
-				//+ najdi(getRow(prestupni_zastavky_hk, e)[0], konec, cas, jizdni_rad/*todo*/, hloubka + 1, cesty);
+		let prijezd = `${odjezd_hodiny_str}:${odjezd_minuty_str_trvani}`;
+
+		let typ = capitalizeFirst(spoj.typ)
+
+		if(spoj.typ == "trol" || spoj.typ == "bus") {
+			typ += spoj.cislo_linky;
 		}
-		
-	})
+
+		for(const stanice of cesta.slice(1)) {
+			//console.log(stanice, konec)
+
+			if(stanice == konec) {
+				cesty = cesty.concat(['\n', `${typ} ${odjezd_hodiny_str}:${odjezd_minuty_str}-${prijezd}`, ...cesta]);
+				break;
+			}
+
+			else if(stanice in jizdni_rad) { // prestupni stanice ; prohledat vsechny mozny cesty z ni
+
+				let dalsi_cesta = najdi(stanice, konec, cas + spoj.delka_jizdy, cesty);
+
+				if(dalsi_cesta != null) {
+					cesty = cesty.concat(['\n', `${typ} ${odjezd_hodiny_str}:${odjezd_minuty_str}-${prijezd}`, ...cesta]);
+					cesty = cesty.concat(dalsi_cesta);
+				}
+
+			}
+
+		}
+
+		return cesty;
+
+	} else {
+		return null;
+	}
 
 }
 
-function najdi_spojeni (destinace, openDialog) {
+function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent) {
 
 	if(destinace == "Pardubice") {
+		setDialogTitle("Jseš kokot?");
+		setDialogContent("Podívej se z okna a MOŽNÁ ti dojde proč jseš debil...");
 		openDialog(true);
 		return;
 	}
@@ -127,27 +127,33 @@ function najdi_spojeni (destinace, openDialog) {
 	let today = new Date();
 	let time = today.getHours() * 100 + today.getMinutes(); // 15:49 is now 1549
 
+	let cesty = 
+		najdi("Pardubice-Pardubičky", destinace, time)
+//	+   najdi("Štrossova"           , destinace, jizdni_rady_strossova);
+//	+   najdi("K Nemocnici"         , destinace, jizdni_rady_k_nemocnici);
+//	+   najdi("Na Okrouhlíku"       , destinace, jizdni_rady_na_okrouhliku);
 
-	let cesty = []
+	console.log(typeof cesty, cesty)
 
-	//cesty += najdi("Štrossova"           , destinace, jizdni_rady_strossova);
-	//cesty += najdi("K Nemocnici"         , destinace, jizdni_rady_k_nemocnici);
-	//cesty += najdi("Na Okrouhlíku"       , destinace, jizdni_rady_na_okrouhliku);
-	cesty += najdi("Pardubice-Pardubičky", destinace, time, jizdni_rady_pardubicky_pardubice_hln);
-
-	alert(cesty)
+	setDialogTitle("Výsledky");
+	setDialogContent(cesty.join(' '));
+	openDialog(true);
 
 };
 
+
+const Transition = React.forwardRef((props, ref) => {
+  <Slide direction="up" ref={ref} {...props} />
+});
 
 function App() {
 
 	const [selectedDest, setSelectedDest] = useState("");
 	const [open, setOpen] = React.useState(false);
+	const [dlgContent, setDlgContent] = React.useState("");
+	const [dlgTitle, setDlgTitle] = React.useState("");
 
-	const handleClose = () => {
-		setOpen(false);
-	};
+	const handleClose = () => setOpen(false);
 
 	return (
 	<div className="application">
@@ -182,22 +188,23 @@ function App() {
 		aria-describedby="alert-dialog-description"
 	>
 		<DialogTitle id="alert-dialog-title">
-			{ "Jseš kokot?" }
+			{ dlgTitle }
 		</DialogTitle>
 		<DialogContent>
 			<DialogContentText id="alert-dialog-description">
-				Podívej se z okna debile a třeba ti dojde kde jseš
+			<pre>
+				{ dlgContent }
+			</pre>
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
-			<Button onClick={handleClose}>Ano</Button>
-			<Button onClick={handleClose}>Ano</Button>
+			<Button onClick={handleClose}>OK</Button>
 		</DialogActions>
 	</Dialog>
 
 	<Stack direction="row" spacing={2}>
-		<Destination setDest={setSelectedDest} />
-		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen)}>Hledat spoj</Button>
+		<DestinationSelector setDest={setSelectedDest} />
+		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent)}>Hledat spoj</Button>
 	</Stack>
 
 	</div>
