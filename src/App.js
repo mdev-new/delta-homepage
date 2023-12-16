@@ -36,20 +36,7 @@ const destinace = [
         "Chrudim"
 ];
 
-function DestinationSelector({setDest}) {
-	return (
-	<Autocomplete
-		disablePortal
-		id="destination-input"
-		options={destinace}
-		onChange={(event, value) => setDest(value)}
-		sx={{ width: 300 }}
-		renderInput={(params) => <TextField {...params} label="Destinace" />}
-	/>
-	);
-}
-
-const closest = (array, pivot) => array.filter(e => (e >= pivot))[0];
+const closest = (array, pivot) => array.filter(e => (e >= pivot/* && Math.abs(e-pivot) < 12*/))[0];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
@@ -57,17 +44,25 @@ function najdi(zacatek, konec, cas, cesty = []) {
 
 	if(zacatek in jizdni_rad) {
 
-		console.log("Zacatek: ", zacatek)
+		//console.log("Zacatek: ", zacatek)
 
 		let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 		let casy = linka.map(odjezd => odjezd.cas);
 		let nejblizsi_odjezd = closest(casy, cas);
 
-		let spoj = linka[linka.findIndex(p => p.cas == nejblizsi_odjezd)];
+		//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
+
+		let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
+
+		if(indexSpoje == -1) return; // dnes uz nic nejede
+
+		let spoj = linka[indexSpoje];
 
 		let zastavky = spoj.zastavky
-		let cesta = zastavky.slice(zastavky.indexOf(zacatek))
+		//console.log(zastavky)
+
+		let cesta = zastavky//.slice(zastavky.indexOf(zacatek))
 
 
 		let odjezd_hodiny = Math.floor(nejblizsi_odjezd / 100)
@@ -83,23 +78,29 @@ function najdi(zacatek, konec, cas, cesty = []) {
 		let typ = capitalizeFirst(spoj.typ)
 
 		if(spoj.typ == "trol" || spoj.typ == "bus") {
-			typ += spoj.cislo_linky;
+			typ += "_" + spoj.cislo_linky;
 		}
+
+		let formatovani = ['\n', `${typ.padEnd(9)} ${odjezd_hodiny_str}:${odjezd_minuty_str} ${prijezd}`]
+
+		//console.log(cesta)
 
 		for(const stanice of cesta.slice(1)) {
 			//console.log(stanice, konec)
 
 			if(stanice == konec) {
-				cesty = cesty.concat(['\n', `${typ} ${odjezd_hodiny_str}:${odjezd_minuty_str}-${prijezd}`, ...cesta]);
+				cesty = cesty.concat([...formatovani, cesta.join(' - '), '\n']);//cesty.concat([...formatovani, ...cesta]);
 				break;
 			}
 
 			else if(stanice in jizdni_rad) { // prestupni stanice ; prohledat vsechny mozny cesty z ni
 
-				let dalsi_cesta = najdi(stanice, konec, cas + spoj.delka_jizdy, cesty);
+				//console.log("Here : ", stanice, konec, spoj.cas + spoj.delka_jizdy, cesty)
+
+				let dalsi_cesta = najdi(stanice, konec, spoj.cas + spoj.delka_jizdy - /*hardcoded zpozdeni predchoziho vlaku */ 2, cesty);
 
 				if(dalsi_cesta != null) {
-					cesty = cesty.concat(['\n', `${typ} ${odjezd_hodiny_str}:${odjezd_minuty_str}-${prijezd}`, ...cesta]);
+					cesty = cesty.concat([...formatovani, cesta.join(' - ')]);
 					cesty = cesty.concat(dalsi_cesta);
 				}
 
@@ -127,13 +128,19 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent)
 	let today = new Date();
 	let time = today.getHours() * 100 + today.getMinutes(); // 15:49 is now 1549
 
-	let cesty = 
-		najdi("Pardubice-Pardubičky", destinace, time)
-//	+   najdi("Štrossova"           , destinace, jizdni_rady_strossova);
-//	+   najdi("K Nemocnici"         , destinace, jizdni_rady_k_nemocnici);
-//	+   najdi("Na Okrouhlíku"       , destinace, jizdni_rady_na_okrouhliku);
+	let cesty = []
+.concat(najdi("Štrossova"           , destinace, time))
+.concat(najdi("Pardubice-Pardubičky", destinace, time))
+.concat(najdi("K Nemocnici"         , destinace, time))
+.concat(najdi("Na Okrouhlíku"       , destinace, time))
 
-	console.log(typeof cesty, cesty)
+	// todo sort
+
+	// let vystup = cesty.join(' ').split('\n').map(e => e.split(' ').filter(e => e != ""));
+
+	// console.log(vystup)
+
+	// console.log(vystup.map(e => e.sort((a, b) => a[1] > b[1])))
 
 	setDialogTitle("Výsledky");
 	setDialogContent(cesty.join(' '));
@@ -142,9 +149,18 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent)
 };
 
 
-const Transition = React.forwardRef((props, ref) => {
-  <Slide direction="up" ref={ref} {...props} />
-});
+function DestinationSelector({setDest}) {
+	return (
+	<Autocomplete
+		disablePortal
+		id="destination-input"
+		options={destinace}
+		onChange={(event, value) => setDest(value)}
+		sx={{ width: 300 }}
+		renderInput={(params) => <TextField {...params} label="Destinace" />}
+	/>
+	);
+}
 
 function App() {
 
@@ -191,10 +207,10 @@ function App() {
 			{ dlgTitle }
 		</DialogTitle>
 		<DialogContent>
-			<DialogContentText id="alert-dialog-description">
-			<pre>
+			<DialogContentText id="alert-dialog-description" className="box">
+			{/*<pre>*/}
 				{ dlgContent }
-			</pre>
+			{/*<pre>*/}
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
@@ -202,7 +218,7 @@ function App() {
 		</DialogActions>
 	</Dialog>
 
-	<Stack direction="row" spacing={2}>
+	<Stack direction="column" spacing={2}>
 		<DestinationSelector setDest={setSelectedDest} />
 		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent)}>Hledat spoj</Button>
 	</Stack>
