@@ -24,7 +24,6 @@ import { jizdni_rad } from './jr.js'
 
 const destinace = [
         "Pardubice",
-        "Pardubice hl.n.",
         "Hradec Králové hl.n.",
         "Opatovice nad Labem",
         "Kolín",
@@ -54,7 +53,7 @@ function najdi(zacatek, konec, cas, cesty = []) {
 		//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
 
 		let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
-
+console.log(zacatek, indexSpoje);
 		if(indexSpoje == -1) return; // dnes uz nic nejede
 
 		let spoj = linka[indexSpoje];
@@ -89,7 +88,7 @@ function najdi(zacatek, konec, cas, cesty = []) {
 			//console.log(stanice, konec)
 
 			if(stanice == konec) {
-				cesty = cesty.concat([...formatovani, cesta.join(' - '), '\n']);//cesty.concat([...formatovani, ...cesta]);
+				cesty = cesty.concat([...formatovani, [cesta[0], cesta[cesta.indexOf(stanice)]].join(' - '), '\n']);//cesty.concat([...formatovani, ...cesta]);
 				break;
 			}
 
@@ -100,7 +99,7 @@ function najdi(zacatek, konec, cas, cesty = []) {
 				let dalsi_cesta = najdi(stanice, konec, spoj.cas + spoj.delka_jizdy - /*hardcoded zpozdeni predchoziho vlaku */ 2, cesty);
 
 				if(dalsi_cesta != null) {
-					cesty = cesty.concat([...formatovani, cesta.join(' - ')]);
+					cesty = cesty.concat([...formatovani, [cesta[0], cesta[cesta.indexOf(stanice)]].join(' - ')]);
 					cesty = cesty.concat(dalsi_cesta);
 				}
 
@@ -208,9 +207,9 @@ function App() {
 		</DialogTitle>
 		<DialogContent>
 			<DialogContentText id="alert-dialog-description" className="box">
-			{/*<pre>*/}
+			<pre>
 				{ dlgContent }
-			{/*<pre>*/}
+			</pre>
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
