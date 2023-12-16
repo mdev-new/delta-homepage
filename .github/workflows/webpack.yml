@@ -1,5 +1,8 @@
 name: NodeJS with Webpack
 
+env: 
+  CI: false
+
 on:
   push:
     branches: [ "main" ]
@@ -26,4 +29,4 @@ jobs:
     - name: Build
       run: |
         npm install
-        npm run build
+        CI=false npm run build
