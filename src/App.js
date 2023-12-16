@@ -53,7 +53,7 @@ function najdi(zacatek, konec, cas, cesty = []) {
 		//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
 
 		let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
-console.log(zacatek, indexSpoje);
+
 		if(indexSpoje == -1) return; // dnes uz nic nejede
 
 		let spoj = linka[indexSpoje];
@@ -80,7 +80,7 @@ console.log(zacatek, indexSpoje);
 			typ += "_" + spoj.cislo_linky;
 		}
 
-		let formatovani = ['\n', `${typ.padEnd(9)} ${odjezd_hodiny_str}:${odjezd_minuty_str} ${prijezd}`]
+		let formatovani = ['\n', `${typ}\t`, `${odjezd_hodiny_str}:${odjezd_minuty_str}`, `${prijezd}`]
 
 		//console.log(cesta)
 
@@ -115,7 +115,7 @@ console.log(zacatek, indexSpoje);
 
 }
 
-function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent) {
+function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent, setResult) {
 
 	if(destinace == "Pardubice") {
 		setDialogTitle("Jseš kokot?");
@@ -125,8 +125,9 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent)
 	}
 
 	let today = new Date();
-	let time = today.getHours() * 100 + today.getMinutes(); // 15:49 is now 1549
-
+	//let time = 1200;
+	let time = today.getHours() * 100 + today.getMinutes() - 300; // 15:49 is now 1549
+ 
 	let cesty = []
 .concat(najdi("Štrossova"           , destinace, time))
 .concat(najdi("Pardubice-Pardubičky", destinace, time))
@@ -141,9 +142,13 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent)
 
 	// console.log(vystup.map(e => e.sort((a, b) => a[1] > b[1])))
 
-	setDialogTitle("Výsledky");
-	setDialogContent(cesty.join(' '));
-	openDialog(true);
+	//setDialogTitle("Výsledky");
+	//setDialogContent(cesty.join(' '));
+	//openDialog(true);
+
+	console.log(cesty)
+
+	setResult(cesty.join('\t'))
 
 };
 
@@ -165,8 +170,10 @@ function App() {
 
 	const [selectedDest, setSelectedDest] = useState("");
 	const [open, setOpen] = React.useState(false);
-	const [dlgContent, setDlgContent] = React.useState("");
-	const [dlgTitle, setDlgTitle] = React.useState("");
+	const [dlgContent, setDlgContent] = useState("");
+	const [dlgTitle, setDlgTitle] = useState("");
+
+	const [result, setResult] = useState("");
 
 	const handleClose = () => setOpen(false);
 
@@ -219,10 +226,16 @@ function App() {
 
 	<Stack direction="column" spacing={2}>
 		<DestinationSelector setDest={setSelectedDest} />
-		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent)}>Hledat spoj</Button>
+		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent, setResult)}>Hledat spoj</Button>
 	</Stack>
 
 	</div>
+
+
+	<pre>
+		{ result }
+	</pre>
+
 	</div>
 	);
 }

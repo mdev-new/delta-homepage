@@ -2029,24 +2029,25 @@ export const jizdni_rad = {
 			],
 			delka_jizdy: 3 // minuty
 		},
-		{
-			typ: "vlak",
-			cas: 2411,
-			zastavky: [
-				"Pardubice-Pardubičky",
-				"Pardubice hl.n."
-			],
-			delka_jizdy: 3 // minuty
-		},
 	],
 
 
 /// přestupní
 
-	"Náměstí Republiky": [ // todo
-	],
+	//"Náměstí Republiky": [ // todo
+	//],
 
 	"Masarykovo náměstí": [ // todo
+		{
+			typ: "bus",
+			cislo_linky: 99,
+			cas: 1230,
+			zastavky: [
+				"Masarykovo náměstí",
+				"Hlavní nádraží"
+			],
+			delka_jizdy: 11 // minuty
+		},
 	],
 
 
