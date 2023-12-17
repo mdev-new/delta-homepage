@@ -2046,7 +2046,7 @@ export const jizdni_rad = {
 	//],
 
 	"Masarykovo náměstí": [ // todo
-		{
+		/*{
 			typ: "bus",
 			cislo_linky: 99,
 			cas: tc(1230),
@@ -2055,7 +2055,7 @@ export const jizdni_rad = {
 				"Hlavní nádraží"
 			],
 			delka_jizdy: 11 // minuty
-		},
+		},*/
 	],
 
 

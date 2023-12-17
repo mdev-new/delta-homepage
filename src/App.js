@@ -32,14 +32,14 @@ import { jizdni_rad } from './jr.js'
 const destinace = [
         "Pardubice",
         "Hradec Králové hl.n.",
-        "Opatovice nad Labem",
-        "Kolín",
-        "Choceň",
-        "Ústí nad Orlicí",
+       // "Opatovice nad Labem",
+       // "Kolín",
+       // "Choceň",
+       // "Ústí nad Orlicí",
         "Všestary",
-        "Žamberk",
-        "Přelouč",
-        "Chrudim"
+       // "Žamberk",
+       // "Přelouč",
+       // "Chrudim"
 ];
 
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
