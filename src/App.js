@@ -51,13 +51,14 @@ const destinace = [
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
 
-const closest = (array, pivot) => array.filter(e => (e > pivot))[0];
+const closest = (array, pivot) => array.filter(e => (e > pivot)/* && Math.abs(e-pivot) < 4*60*/);
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
+
 function najdi(zacatek, konec, cas) {
 
-	if(!(zacatek in jizdni_rad)) return [];
+	if(!(zacatek in jizdni_rad)) return null
 
 	//console.log("Zacatek: ", zacatek)
 
@@ -70,7 +71,7 @@ function najdi(zacatek, konec, cas) {
 
 	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
 
-	if(indexSpoje == -1) { console.log("here"); return [] }; // dnes uz nic nejede
+	if(indexSpoje == -1) return null; // dnes uz nic nejede
 
 	let spoj = linka[indexSpoje];
 
@@ -85,44 +86,46 @@ function najdi(zacatek, konec, cas) {
 		typ += " " + spoj.cislo_linky;
 	}
 
-	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`, [...zastavky]]]//.slice(zastavky.indexOf(zacatek))
+	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`], [...zastavky]]//.slice(zastavky.indexOf(zacatek))
 
-	//console.log(cesta)
-
-	let hit = false;
+	let _moznosti = []
 
 	for(const stanice of zastavky.slice(1)) {
 
 		//console.log(stanice)
 
 		if(stanice == konec) {
+			_moznosti[stanice] = cesta;
 			break;
 		}
 
-		if(typeof jizdni_rad[stanice] == 'string') {
-			cesta.splice(1, 0, ...najdi(jizdni_rad[stanice], konec, spoj.cas + spoj.delka_jizdy))
-		}
-		else {
-			cesta.splice(1, 0, ...najdi(stanice, konec, spoj.cas + spoj.delka_jizdy))
+		let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
+
+		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
+
+		if(found != null) {
+			_moznosti[s] = [[cesta], found]
 		}
 
 	}
 
-	return cesta;
+	//console.log(_moznosti)
+
+	return _moznosti;
 
 }
 
-function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent, setResult) {
+function najdi_spojeni (destinace, controls) {
 
 	if(destinace == "Pardubice") {
-		setDialogTitle("Jseš kokot?");
-		setDialogContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		openDialog(true);
+		controls.setDialogTitle("Jseš kokot?");
+		controls.setDialogContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
+		controls.openDialog(true);
 		return;
 	} else if(destinace == "") {
-		setDialogTitle("Jseš kokot?");
-		setDialogContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
-		openDialog(true);
+		controls.setDialogTitle("Jseš kokot?");
+		controls.setDialogContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
+		controls.openDialog(true);
 		return;
 
 	}
@@ -144,10 +147,15 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent,
 	}
 	});*/
 
-	setResult(cesty)
+	console.log(cesty)
+
+	controls.setResult(cesty)
 
 };
 
+function ziskejCesty(root, cesta = []) {
+
+}
 
 function DestinationSelector({setDest}) {
 	return (
@@ -202,19 +210,17 @@ function App() {
 	<Dialog
 		open={open}
 		onClose={handleClose}
-		aria-labelledby="alert-dialog-title"
-		aria-describedby="alert-dialog-description"
 	>
-		<DialogTitle id="alert-dialog-title">
+		<DialogTitle>
 			{ dlgTitle }
 		</DialogTitle>
 		<DialogContent>
-			<DialogContentText id="alert-dialog-description" className="box">
+			<DialogContentText className="box">
 				{ dlgContent }
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
-			<Button onClick={handleClose}>OK</Button>
+			<Button variant="contained" disableElevation onClick={handleClose}>OK</Button>
 		</DialogActions>
 	</Dialog>
 
@@ -222,9 +228,8 @@ function App() {
 		<DestinationSelector setDest={setSelectedDest} />
 		<Button
 			variant="contained"
-			disableElevation
 			size="small"
-			onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent, setResult)}
+			onClick={() => najdi_spojeni(selectedDest, {setOpen, setDlgTitle, setDlgContent, setResult})}
 		>
 			<SearchIcon />
 		</Button>
@@ -237,7 +242,7 @@ function App() {
 
 	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
 	{
-		Object.entries(result).map(([zacatek, trasa]) => (
+		Object.entries(result).map(([stanice, data]) => (
 			<Grid item>
 			<TableContainer component={Paper} sx={{ margin: 'auto' }}>
 				<TableHead>
@@ -250,8 +255,8 @@ function App() {
 						</TableRow>
 					</TableHead>
 				<Table size="small">
-				<caption>Výchozí zastávka: {zacatek} {(trasa.length <= 0) ? " - Spojení nenalezeno!" : ""}</caption>
-				{
+				<caption>Výchozí zastávka: {stanice} {(data.length <= 0) ? " - Spojení nenalezeno!" : ""}</caption>
+				{/*
 					(trasa.length > 0) ? (
 					<>
 						<TableBody>
@@ -267,7 +272,7 @@ function App() {
 							}
 						</TableBody>
 					</>) : <></>
-				}
+				*/}
 				</Table>
 			</TableContainer>
 			</Grid>
