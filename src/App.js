@@ -70,7 +70,7 @@ function najdi(zacatek, konec, cas) {
 
 	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
 
-	if(indexSpoje == -1) return []; // dnes uz nic nejede
+	if(indexSpoje == -1) { console.log("here"); return [] }; // dnes uz nic nejede
 
 	let spoj = linka[indexSpoje];
 
@@ -80,7 +80,7 @@ function najdi(zacatek, konec, cas) {
 	let typ = capitalizeFirst(spoj.typ)
 
 	if(spoj.typ == "trol" || spoj.typ == "bus") {
-		if(spoj.typ == "trol") typ += "ejbus";
+		if(spoj.typ == "trol") typ = "Trolejbus";
 		else if(spoj.typ == "bus") typ = "Autobus";
 		typ += " " + spoj.cislo_linky;
 	}
@@ -88,6 +88,8 @@ function najdi(zacatek, konec, cas) {
 	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`, [...zastavky]]]//.slice(zastavky.indexOf(zacatek))
 
 	//console.log(cesta)
+
+	let hit = false;
 
 	for(const stanice of zastavky.slice(1)) {
 
@@ -97,10 +99,12 @@ function najdi(zacatek, konec, cas) {
 			break;
 		}
 
-		if(typeof jizdni_rad[stanice] == 'string')
-			cesta.splice(1, 0, ...najdi(jizdni_rad[stanice], konec, spoj.cas + spoj.delka_jizdy - 5))
-		else
-			cesta.splice(1, 0, ...najdi(stanice, konec, spoj.cas + spoj.delka_jizdy - 5))
+		if(typeof jizdni_rad[stanice] == 'string') {
+			cesta.splice(1, 0, ...najdi(jizdni_rad[stanice], konec, spoj.cas + spoj.delka_jizdy))
+		}
+		else {
+			cesta.splice(1, 0, ...najdi(stanice, konec, spoj.cas + spoj.delka_jizdy))
+		}
 
 	}
 
@@ -112,21 +116,33 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent,
 
 	if(destinace == "Pardubice") {
 		setDialogTitle("Jseš kokot?");
-		setDialogContent("Podívej se z okna a MOŽNÁ ti dojde proč jseš debil...");
+		setDialogContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
 		openDialog(true);
 		return;
+	} else if(destinace == "") {
+		setDialogTitle("Jseš kokot?");
+		setDialogContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
+		openDialog(true);
+		return;
+
 	}
 
 	let today = new Date();
 	let time = today.getHours() * 60 + today.getMinutes();
  
-	let cesty = [];
-	cesty.push(najdi("Štrossova"           , destinace, time));
-	cesty.push(najdi("Pardubice-Pardubičky", destinace, time));
-	cesty.push(najdi("K Nemocnici"         , destinace, time));
-	cesty.push(najdi("Na Okrouhlíku"       , destinace, time));
+	let cesty = {};
+	cesty["Pardubice-Pardubičky"] = (najdi("Pardubice-Pardubičky", destinace, time));
+	cesty["K Nemocnici"]          = (najdi("K Nemocnici"         , destinace, time));
+	cesty["Štrossova"]            = (najdi("Štrossova"           , destinace, time));
+	cesty["Na Okrouhlíku"]        = (najdi("Na Okrouhlíku"       , destinace, time));
 
-	console.log(cesty)
+	/*Object.entries(cesty).map(([zacatek, trasa]) => {
+		if(trasa.length > 0) {
+
+		if(trasa[trasa.length - 1][3][trasa[trasa.length - 1][3].length - 1] != destinace)
+			cesty[zacatek] = []
+	}
+	});*/
 
 	setResult(cesty)
 
@@ -221,13 +237,11 @@ function App() {
 
 	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
 	{
-		result.map(trasa => (
+		Object.entries(result).map(([zacatek, trasa]) => (
 			<Grid item>
-			<TableContainer component={Paper} sx={{ width: 650, margin: 'auto' }}>
-				<Table size="small">
-					<caption>Výchozí zastávka: {trasa[0][3][0]}</caption>
-					<TableHead>
-						<TableRow>
+			<TableContainer component={Paper} sx={{ margin: 'auto' }}>
+				<TableHead>
+					<TableRow>
 							<TableCell align="center"><b>Typ spoje</b></TableCell>
 							<TableCell align="center"><b>Čas odjezdu</b></TableCell>
 							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
@@ -235,18 +249,25 @@ function App() {
 							<TableCell align="center"><b>Trasa</b></TableCell>
 						</TableRow>
 					</TableHead>
-					<TableBody>
-						{
-							trasa.map((spoj) => (
-								<TableRow>
-									<TableCell align="center">{spoj[0]}</TableCell>
-									<TableCell align="center">{spoj[1]}</TableCell>
-									<TableCell align="center">{spoj[2]}</TableCell>
-									<TableCell align="center">{[spoj[3][0], spoj[3][spoj[3].length - 1]].join(' - ')}</TableCell>
-								</TableRow>
-							))
-						}
-					</TableBody>
+				<Table size="small">
+				<caption>Výchozí zastávka: {zacatek} {(trasa.length <= 0) ? " - Spojení nenalezeno!" : ""}</caption>
+				{
+					(trasa.length > 0) ? (
+					<>
+						<TableBody>
+							{
+								trasa.map((spoj) => (
+									<TableRow>
+										<TableCell align="center">{spoj[0]}</TableCell>
+										<TableCell align="center">{spoj[1]}</TableCell>
+										<TableCell align="center">{spoj[2]}</TableCell>
+										<TableCell align="center">{[spoj[3][0], spoj[3][spoj[3].length - 1]].join(' - ')}</TableCell>
+									</TableRow>
+								))
+							}
+						</TableBody>
+					</>) : <></>
+				}
 				</Table>
 			</TableContainer>
 			</Grid>

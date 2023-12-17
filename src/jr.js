@@ -2046,16 +2046,16 @@ export const jizdni_rad = {
 	//],
 
 	"Masarykovo náměstí": [ // todo
-		/*{
+		{
 			typ: "bus",
 			cislo_linky: 99,
-			cas: tc(1230),
+			cas: tc(2130),
 			zastavky: [
 				"Masarykovo náměstí",
-				"Hlavní nádraží"
+				"Prahavice"
 			],
 			delka_jizdy: 11 // minuty
-		},*/
+		},
 	],
 
 
