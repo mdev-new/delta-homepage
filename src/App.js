@@ -51,65 +51,62 @@ const destinace = [
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
 
-const closest = (array, pivot) => array.filter(e => (e > pivot)/* && Math.abs(e-pivot) < 4*60*/);
+const closest = (array, pivot) => [array.filter(e => (e > pivot)/* && Math.abs(e-pivot) < 4*60*/)[0]];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
 
 function najdi(zacatek, konec, cas) {
 
-	if(!(zacatek in jizdni_rad)) return null
-
-	//console.log("Zacatek: ", zacatek)
+	if(!(zacatek in jizdni_rad)) return null;
 
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 	let casy = linka.map(odjezd => odjezd.cas);
-	let nejblizsi_odjezd = closest(casy, cas);
+	let odjezdy = casy.filter(o => o >= cas);
 
-	//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
+	let _moznosti = {}
 
-	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
+	for(const odjezd of odjezdy) {
 
-	if(indexSpoje == -1) return null; // dnes uz nic nejede
+		let indexSpoje = linka.findIndex(p => p.cas == odjezd)
+		if(indexSpoje == -1) return null; // dnes uz nic nejede
 
-	let spoj = linka[indexSpoje];
+		let spoj = linka[indexSpoje];
+		let typ = capitalizeFirst(spoj.typ)
+		let zastavky = spoj.zastavky
 
-	let zastavky = spoj.zastavky
-	//console.log(zastavky)
-
-	let typ = capitalizeFirst(spoj.typ)
-
-	if(spoj.typ == "trol" || spoj.typ == "bus") {
-		if(spoj.typ == "trol") typ = "Trolejbus";
-		else if(spoj.typ == "bus") typ = "Autobus";
-		typ += " " + spoj.cislo_linky;
-	}
-
-	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`], [...zastavky]]//.slice(zastavky.indexOf(zacatek))
-
-	let _moznosti = []
-
-	for(const stanice of zastavky.slice(1)) {
-
-		//console.log(stanice)
-
-		if(stanice == konec) {
-			_moznosti[stanice] = cesta;
-			break;
+		if(spoj.typ == "trol" || spoj.typ == "bus") {
+			if(spoj.typ == "trol") typ = "Trolejbus";
+			else if(spoj.typ == "bus") typ = "Autobus";
+			typ += " " + spoj.cislo_linky;
 		}
 
-		let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
+		let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`], [...zastavky]]//.slice(zastavky.indexOf(zacatek))
 
-		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
+		for(const stanice of zastavky.slice(1)) {
 
-		if(found != null) {
-			_moznosti[s] = [[cesta], found]
+			if(stanice == konec) {
+				_moznosti[stanice] = cesta;
+				break;
+			}
+
+			let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
+
+			let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
+
+			if(found != null) {
+				if(!(s in _moznosti)) {
+					_moznosti[s] = {prijezd: [], odjezd: []};
+				}
+
+				_moznosti[s].prijezd.push([cesta]);
+				_moznosti[s].odjezd.push(found);
+			}
+
 		}
 
 	}
-
-	//console.log(_moznosti)
 
 	return _moznosti;
 
@@ -118,16 +115,15 @@ function najdi(zacatek, konec, cas) {
 function najdi_spojeni (destinace, controls) {
 
 	if(destinace == "Pardubice") {
-		controls.setDialogTitle("Jseš kokot?");
-		controls.setDialogContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		controls.openDialog(true);
+		controls.setDlgTitle("Jseš kokot?");
+		controls.setDlgContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
+		controls.setOpen(true);
 		return;
 	} else if(destinace == "") {
-		controls.setDialogTitle("Jseš kokot?");
-		controls.setDialogContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
-		controls.openDialog(true);
+		controls.setDlgTitle("Jseš kokot?");
+		controls.setDlgContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
+		controls.setOpen(true);
 		return;
-
 	}
 
 	let today = new Date();
@@ -138,14 +134,6 @@ function najdi_spojeni (destinace, controls) {
 	cesty["K Nemocnici"]          = (najdi("K Nemocnici"         , destinace, time));
 	cesty["Štrossova"]            = (najdi("Štrossova"           , destinace, time));
 	cesty["Na Okrouhlíku"]        = (najdi("Na Okrouhlíku"       , destinace, time));
-
-	/*Object.entries(cesty).map(([zacatek, trasa]) => {
-		if(trasa.length > 0) {
-
-		if(trasa[trasa.length - 1][3][trasa[trasa.length - 1][3].length - 1] != destinace)
-			cesty[zacatek] = []
-	}
-	});*/
 
 	console.log(cesty)
 
