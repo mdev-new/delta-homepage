@@ -18,6 +18,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+
+import SearchIcon from '@mui/icons-material/Search';
+
+import IconButton from '@mui/material/IconButton';
+
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -196,22 +202,27 @@ function App() {
 		</DialogActions>
 	</Dialog>
 
-	<Stack direction="column" spacing={2}>
+	<Stack direction="row" spacing={2}>
 		<DestinationSelector setDest={setSelectedDest} />
 		<Button
 			variant="contained"
+			disableElevation
+			size="small"
 			onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent, setResult)}
 		>
-			Hledat spoj
+			<SearchIcon />
 		</Button>
 	</Stack>
 
 	</div>
 
+	<br />
+	<br />
+
+	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
 	{
 		result.map(trasa => (
-			<>
-			<br />
+			<Grid item>
 			<TableContainer component={Paper} sx={{ width: 650, margin: 'auto' }}>
 				<Table size="small">
 					<caption>Výchozí zastávka: {trasa[0][3][0]}</caption>
@@ -238,9 +249,10 @@ function App() {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			</>
+			</Grid>
 		))
 	}
+	</Grid>
 
 	</div>
 	);

@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  zoom: '140%'; 
+
 }
 
 .box {
@@ -10,7 +10,10 @@
 h1 {
 	font-family:'Courier New';
 	font-size: 9vh;
-}
+  margin: 0px;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+  }
 
 .App-header {
   background-color: #282c34;
