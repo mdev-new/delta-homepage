@@ -19,6 +19,13 @@ import Slide from '@mui/material/Slide';
 
 import Stack from '@mui/material/Stack';
 
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 import { jizdni_rad } from './jr.js'
 
@@ -35,83 +42,61 @@ const destinace = [
         "Chrudim"
 ];
 
-const closest = (array, pivot) => array.filter(e => (e >= pivot/* && Math.abs(e-pivot) < 12*/))[0];
+const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
+
+
+const closest = (array, pivot) => array.filter(e => (e > pivot))[0];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-function najdi(zacatek, konec, cas, cesty = []) {
+function najdi(zacatek, konec, cas) {
 
-	if(zacatek in jizdni_rad) {
+	if(!(zacatek in jizdni_rad)) return [];
 
-		//console.log("Zacatek: ", zacatek)
+	//console.log("Zacatek: ", zacatek)
 
-		let linka = jizdni_rad[zacatek]; // toto je garantovano
+	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
-		let casy = linka.map(odjezd => odjezd.cas);
-		let nejblizsi_odjezd = closest(casy, cas);
+	let casy = linka.map(odjezd => odjezd.cas);
+	let nejblizsi_odjezd = closest(casy, cas);
 
-		//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
+	//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
 
-		let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
+	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
 
-		if(indexSpoje == -1) return; // dnes uz nic nejede
+	if(indexSpoje == -1) return []; // dnes uz nic nejede
 
-		let spoj = linka[indexSpoje];
+	let spoj = linka[indexSpoje];
 
-		let zastavky = spoj.zastavky
-		//console.log(zastavky)
+	let zastavky = spoj.zastavky
+	//console.log(zastavky)
 
-		let cesta = zastavky//.slice(zastavky.indexOf(zacatek))
+	let typ = capitalizeFirst(spoj.typ)
 
-
-		let odjezd_hodiny = Math.floor(nejblizsi_odjezd / 100)
-		let odjezd_minuty = (nejblizsi_odjezd - odjezd_hodiny * 100)
-
-		let odjezd_hodiny_str = `${String(odjezd_hodiny).padStart(2, '0')}`
-		let odjezd_minuty_str = `${String(odjezd_minuty).padStart(2, '0')}`
-
-		let odjezd_minuty_str_trvani = `${String(odjezd_minuty + spoj.delka_jizdy).padStart(2, '0')}`
-
-		let prijezd = `${odjezd_hodiny_str}:${odjezd_minuty_str_trvani}`;
-
-		let typ = capitalizeFirst(spoj.typ)
-
-		if(spoj.typ == "trol" || spoj.typ == "bus") {
-			typ += "_" + spoj.cislo_linky;
-		}
-
-		let formatovani = ['\n', `${typ}\t`, `${odjezd_hodiny_str}:${odjezd_minuty_str}`, `${prijezd}`]
-
-		//console.log(cesta)
-
-		for(const stanice of cesta.slice(1)) {
-			//console.log(stanice, konec)
-
-			if(stanice == konec) {
-				cesty = cesty.concat([...formatovani, [cesta[0], cesta[cesta.indexOf(stanice)]].join(' - '), '\n']);//cesty.concat([...formatovani, ...cesta]);
-				break;
-			}
-
-			else if(stanice in jizdni_rad) { // prestupni stanice ; prohledat vsechny mozny cesty z ni
-
-				//console.log("Here : ", stanice, konec, spoj.cas + spoj.delka_jizdy, cesty)
-
-				let dalsi_cesta = najdi(stanice, konec, spoj.cas + spoj.delka_jizdy - /*hardcoded zpozdeni predchoziho vlaku */ 2, cesty);
-
-				if(dalsi_cesta != null) {
-					cesty = cesty.concat([...formatovani, [cesta[0], cesta[cesta.indexOf(stanice)]].join(' - ')]);
-					cesty = cesty.concat(dalsi_cesta);
-				}
-
-			}
-
-		}
-
-		return cesty;
-
-	} else {
-		return null;
+	if(spoj.typ == "trol" || spoj.typ == "bus") {
+		typ += "_" + spoj.cislo_linky;
 	}
+
+	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`, [...zastavky]]]//.slice(zastavky.indexOf(zacatek))
+
+	//console.log(cesta)
+
+	for(const stanice of zastavky.slice(1)) {
+
+		console.log(stanice)
+
+		if(stanice == konec) {
+			break;
+		}
+
+		if(typeof jizdni_rad[stanice] == 'string')
+			cesta.splice(1, 0, ...najdi(jizdni_rad[stanice], konec, spoj.cas + spoj.delka_jizdy - 5))
+		else
+			cesta.splice(1, 0, ...najdi(stanice, konec, spoj.cas + spoj.delka_jizdy - 5))
+
+	}
+
+	return cesta;
 
 }
 
@@ -125,30 +110,17 @@ function najdi_spojeni (destinace, openDialog, setDialogTitle, setDialogContent,
 	}
 
 	let today = new Date();
-	//let time = 1200;
-	let time = today.getHours() * 100 + today.getMinutes() - 300; // 15:49 is now 1549
+	let time = today.getHours() * 60 + today.getMinutes();
  
-	let cesty = []
-.concat(najdi("Štrossova"           , destinace, time))
-.concat(najdi("Pardubice-Pardubičky", destinace, time))
-.concat(najdi("K Nemocnici"         , destinace, time))
-.concat(najdi("Na Okrouhlíku"       , destinace, time))
-
-	// todo sort
-
-	// let vystup = cesty.join(' ').split('\n').map(e => e.split(' ').filter(e => e != ""));
-
-	// console.log(vystup)
-
-	// console.log(vystup.map(e => e.sort((a, b) => a[1] > b[1])))
-
-	//setDialogTitle("Výsledky");
-	//setDialogContent(cesty.join(' '));
-	//openDialog(true);
+	let cesty = [];
+	cesty.push(najdi("Štrossova"           , destinace, time));
+	cesty.push(najdi("Pardubice-Pardubičky", destinace, time));
+	cesty.push(najdi("K Nemocnici"         , destinace, time));
+	cesty.push(najdi("Na Okrouhlíku"       , destinace, time));
 
 	console.log(cesty)
 
-	setResult(cesty.join('\t'))
+	setResult(cesty)
 
 };
 
@@ -169,11 +141,11 @@ function DestinationSelector({setDest}) {
 function App() {
 
 	const [selectedDest, setSelectedDest] = useState("");
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
 	const [dlgContent, setDlgContent] = useState("");
 	const [dlgTitle, setDlgTitle] = useState("");
 
-	const [result, setResult] = useState("");
+	const [result, setResult] = useState([]);
 
 	const handleClose = () => setOpen(false);
 
@@ -226,15 +198,51 @@ function App() {
 
 	<Stack direction="column" spacing={2}>
 		<DestinationSelector setDest={setSelectedDest} />
-		<Button variant="contained" onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent, setResult)}>Hledat spoj</Button>
+		<Button
+			variant="contained"
+			onClick={() => najdi_spojeni(selectedDest, setOpen, setDlgTitle, setDlgContent, setResult)}
+		>
+			Hledat spoj
+		</Button>
 	</Stack>
 
 	</div>
 
+	{
+		result.map(trasa => (
+			<>
+			<hr size="1.5" style={{backgroundColor: "black"}}/>
 
-	<pre>
-		{ result }
-	</pre>
+			<TableContainer component={Paper}>
+				<Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+					<TableHead>
+						<TableRow>
+							<TableCell>Typ spoje</TableCell>
+							<TableCell>Čas odjezdu</TableCell>
+							<TableCell>Čas příjezdu</TableCell>
+							{/*<TableCell align="right">Doba trvání</TableCell>*/}
+							<TableCell>Trasa</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{
+							trasa.map((spoj) => (
+								<TableRow>
+									<TableCell>{spoj[0]}</TableCell>
+									<TableCell>{spoj[1]}</TableCell>
+									<TableCell>{spoj[2]}</TableCell>
+									<TableCell>{spoj[3].join(' - ')}</TableCell>
+								</TableRow>
+							))
+						}
+					</TableBody>
+				</Table>
+			</TableContainer>
+			</>
+		))
+	}
+	<hr size="1.5" style={{backgroundColor: "black"}}/>
+
 
 	</div>
 	);

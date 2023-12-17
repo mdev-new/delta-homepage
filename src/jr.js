@@ -2,13 +2,21 @@
 
 // todo presnost v casech jizd
 
+const tc = t => {
+
+	let h = Math.floor(t / 100)
+	let m = (t - h * 100)
+
+	return h * 60 + m;
+}
+
 export const jizdni_rad = {
 
 	"Štrossova": [ // todo 2, 28, 27
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 501,
+			cas: tc(501),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -23,7 +31,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 526,
+			cas: tc(526),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -38,7 +46,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 544,
+			cas: tc(544),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -53,7 +61,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 603,
+			cas: tc(603),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -68,7 +76,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 628,
+			cas: tc(628),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -83,7 +91,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 636,
+			cas: tc(636),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -98,7 +106,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 648,
+			cas: tc(648),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -113,7 +121,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 715,
+			cas: tc(715),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -128,7 +136,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 721,
+			cas: tc(721),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -143,7 +151,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 729,
+			cas: tc(729),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -158,7 +166,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 748,
+			cas: tc(748),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -173,7 +181,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 808,
+			cas: tc(808),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -188,7 +196,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 900,
+			cas: tc(900),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -203,7 +211,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 937,
+			cas: tc(937),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -218,7 +226,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1037,
+			cas: tc(1037),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -233,7 +241,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1117,
+			cas: tc(1117),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -248,7 +256,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1150,
+			cas: tc(1150),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -263,7 +271,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1307,
+			cas: tc(1307),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -278,7 +286,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1337,
+			cas: tc(1337),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -293,7 +301,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1356,
+			cas: tc(1356),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -308,7 +316,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1427,
+			cas: tc(1427),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -323,7 +331,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1437,
+			cas: tc(1437),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -338,7 +346,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1443,
+			cas: tc(1443),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -353,7 +361,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1452,
+			cas: tc(1452),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -368,7 +376,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1514,
+			cas: tc(1514),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -383,7 +391,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1527,
+			cas: tc(1527),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -398,7 +406,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1539,
+			cas: tc(1539),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -413,7 +421,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1550,
+			cas: tc(1550),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -428,7 +436,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1610,
+			cas: tc(1610),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -443,7 +451,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1619,
+			cas: tc(1619),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -458,7 +466,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1636,
+			cas: tc(1636),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -473,7 +481,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1655,
+			cas: tc(1655),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -488,7 +496,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1737,
+			cas: tc(1737),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -503,7 +511,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1745,
+			cas: tc(1745),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -518,7 +526,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1808,
+			cas: tc(1808),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -533,7 +541,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1825,
+			cas: tc(1825),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -548,7 +556,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1845,
+			cas: tc(1845),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -563,7 +571,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 1924,
+			cas: tc(1924),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -578,7 +586,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 2020,
+			cas: tc(2020),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -593,7 +601,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 2128,
+			cas: tc(2128),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -608,7 +616,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 2225,
+			cas: tc(2225),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -623,7 +631,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 2252,
+			cas: tc(2252),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -638,7 +646,7 @@ export const jizdni_rad = {
 		{
 			typ: "trol",
 			cislo_linky: 12,
-			cas: 2318,
+			cas: tc(2318),
 			zastavky: [
 				"Štrossova",
 				"U Kostelíčka",
@@ -656,7 +664,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 525,
+			cas: tc(525),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -671,7 +679,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 608,
+			cas: tc(608),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -686,7 +694,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 632,
+			cas: tc(632),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -701,7 +709,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 708,
+			cas: tc(708),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -716,7 +724,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 732,
+			cas: tc(732),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -731,7 +739,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 830,
+			cas: tc(830),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -746,7 +754,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 930,
+			cas: tc(930),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -761,7 +769,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1030,
+			cas: tc(1030),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -776,7 +784,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1130,
+			cas: tc(1130),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -791,7 +799,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1230,
+			cas: tc(1230),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -806,7 +814,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1330,
+			cas: tc(1330),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -821,7 +829,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1432,
+			cas: tc(1432),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -836,7 +844,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1508,
+			cas: tc(1508),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -851,7 +859,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1532,
+			cas: tc(1532),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -866,7 +874,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1608,
+			cas: tc(1608),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -881,7 +889,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1645,
+			cas: tc(1645),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -896,7 +904,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 88,
-			cas: 1900,
+			cas: tc(1900),
 			zastavky: [
 				"K Nemocnici",
 				"Karla IV.",
@@ -914,7 +922,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 434,
+			cas: tc(434),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -927,7 +935,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 508,
+			cas: tc(508),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -940,7 +948,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 524,
+			cas: tc(524),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -953,7 +961,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 540,
+			cas: tc(540),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -966,7 +974,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 555,
+			cas: tc(555),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -979,7 +987,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 610,
+			cas: tc(610),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -992,7 +1000,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 622,
+			cas: tc(622),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1005,7 +1013,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 634,
+			cas: tc(634),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1018,7 +1026,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 646,
+			cas: tc(646),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1031,7 +1039,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 658,
+			cas: tc(658),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1044,7 +1052,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 710,
+			cas: tc(710),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1057,7 +1065,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 722,
+			cas: tc(722),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1070,7 +1078,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 734,
+			cas: tc(734),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1083,7 +1091,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 746,
+			cas: tc(746),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1096,7 +1104,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 758,
+			cas: tc(758),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1109,7 +1117,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 810,
+			cas: tc(810),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1122,7 +1130,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 825,
+			cas: tc(825),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1135,7 +1143,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 840,
+			cas: tc(840),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1148,7 +1156,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 855,
+			cas: tc(855),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1161,7 +1169,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 910,
+			cas: tc(910),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1174,7 +1182,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 925,
+			cas: tc(925),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1187,7 +1195,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 940,
+			cas: tc(940),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1200,7 +1208,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 955,
+			cas: tc(955),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1213,7 +1221,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1010,
+			cas: tc(1010),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1226,7 +1234,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1025,
+			cas: tc(1025),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1239,7 +1247,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1040,
+			cas: tc(1040),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1252,7 +1260,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1055,
+			cas: tc(1055),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1265,7 +1273,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1110,
+			cas: tc(1110),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1278,7 +1286,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1125,
+			cas: tc(1125),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1291,7 +1299,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1140,
+			cas: tc(1140),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1304,7 +1312,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1155,
+			cas: tc(1155),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1317,7 +1325,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1210,
+			cas: tc(1210),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1330,7 +1338,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1225,
+			cas: tc(1225),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1343,7 +1351,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1240,
+			cas: tc(1240),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1356,7 +1364,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1255,
+			cas: tc(1255),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1369,7 +1377,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1310,
+			cas: tc(1310),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1382,7 +1390,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1325,
+			cas: tc(1325),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1395,7 +1403,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1340,
+			cas: tc(1340),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1408,7 +1416,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1355,
+			cas: tc(1355),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1421,7 +1429,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1410,
+			cas: tc(1410),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1434,7 +1442,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1422,
+			cas: tc(1422),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1447,7 +1455,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1434,
+			cas: tc(1434),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1460,7 +1468,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1446,
+			cas: tc(1446),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1473,7 +1481,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1458,
+			cas: tc(1458),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1486,7 +1494,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1510,
+			cas: tc(1510),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1499,7 +1507,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1522,
+			cas: tc(1522),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1512,7 +1520,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1534,
+			cas: tc(1534),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1525,7 +1533,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1546,
+			cas: tc(1546),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1538,7 +1546,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1558,
+			cas: tc(1558),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1551,7 +1559,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1610,
+			cas: tc(1610),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1564,7 +1572,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1622,
+			cas: tc(1622),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1577,7 +1585,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1634,
+			cas: tc(1634),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1590,7 +1598,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1646,
+			cas: tc(1646),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1603,7 +1611,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1658,
+			cas: tc(1658),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1616,7 +1624,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1710,
+			cas: tc(1710),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1629,7 +1637,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1725,
+			cas: tc(1725),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1642,7 +1650,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1740,
+			cas: tc(1740),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1655,7 +1663,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1755,
+			cas: tc(1755),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1668,7 +1676,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1810,
+			cas: tc(1810),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1681,7 +1689,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1825,
+			cas: tc(1825),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1694,7 +1702,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1840,
+			cas: tc(1840),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1707,7 +1715,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1855,
+			cas: tc(1855),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1720,7 +1728,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1910,
+			cas: tc(1910),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1733,7 +1741,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1925,
+			cas: tc(1925),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1746,7 +1754,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1940,
+			cas: tc(1940),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1759,7 +1767,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 1955,
+			cas: tc(1955),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1772,7 +1780,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2010,
+			cas: tc(2010),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1785,7 +1793,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2036,
+			cas: tc(2036),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1798,7 +1806,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2106,
+			cas: tc(2106),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1811,7 +1819,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2133,
+			cas: tc(2133),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1824,7 +1832,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2203,
+			cas: tc(2203),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1837,7 +1845,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2233,
+			cas: tc(2233),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1850,7 +1858,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2303,
+			cas: tc(2303),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1863,7 +1871,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 1,
-			cas: 2328,
+			cas: tc(2328),
 			zastavky: [
 				"Na Okrouhlíku",
 				"Krajský úřad",
@@ -1878,7 +1886,7 @@ export const jizdni_rad = {
 	"Pardubice-Pardubičky": [
 		{
 			typ: "vlak",
-			cas: 449,
+			cas: tc(449),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1887,7 +1895,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 522,
+			cas: tc(522),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1896,7 +1904,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 606,
+			cas: tc(606),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1905,7 +1913,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 715,
+			cas: tc(715),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1914,7 +1922,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 815,
+			cas: tc(815),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1923,7 +1931,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 915,
+			cas: tc(915),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1932,7 +1940,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1115,
+			cas: tc(1115),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1941,7 +1949,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1315,
+			cas: tc(1315),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1950,7 +1958,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1413,
+			cas: tc(1413),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1959,7 +1967,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1515,
+			cas: tc(1515),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1968,7 +1976,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1613,
+			cas: tc(1613),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1977,7 +1985,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1715,
+			cas: tc(1715),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1986,7 +1994,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1813,
+			cas: tc(1813),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -1995,7 +2003,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1915,
+			cas: tc(1915),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -2004,7 +2012,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2013,
+			cas: tc(2013),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -2013,7 +2021,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2123,
+			cas: tc(2123),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -2022,7 +2030,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2311,
+			cas: tc(2311),
 			zastavky: [
 				"Pardubice-Pardubičky",
 				"Pardubice hl.n."
@@ -2041,7 +2049,7 @@ export const jizdni_rad = {
 		{
 			typ: "bus",
 			cislo_linky: 99,
-			cas: 1230,
+			cas: tc(1230),
 			zastavky: [
 				"Masarykovo náměstí",
 				"Hlavní nádraží"
@@ -2054,7 +2062,7 @@ export const jizdni_rad = {
 	"Pardubice hl.n.": [ // todo
 		{
 			typ: "vlak",
-			cas: 105,
+			cas: tc(105),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2064,7 +2072,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 434,
+			cas: tc(434),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2074,7 +2082,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 505,
+			cas: tc(505),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2084,7 +2092,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 536,
+			cas: tc(536),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2094,7 +2102,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 606,
+			cas: tc(606),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2104,7 +2112,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 638,
+			cas: tc(638),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2114,7 +2122,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 651,
+			cas: tc(651),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2124,7 +2132,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 705,
+			cas: tc(705),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2134,7 +2142,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 722,
+			cas: tc(722),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2144,7 +2152,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 740,
+			cas: tc(740),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2154,7 +2162,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 806,
+			cas: tc(806),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2164,7 +2172,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 835,
+			cas: tc(835),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2174,7 +2182,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 905,
+			cas: tc(905),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2184,7 +2192,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 933,
+			cas: tc(933),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2194,7 +2202,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1006,
+			cas: tc(1006),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2204,7 +2212,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1033,
+			cas: tc(1033),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2214,7 +2222,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1105,
+			cas: tc(1105),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2224,7 +2232,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1133,
+			cas: tc(1133),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2234,7 +2242,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1206,
+			cas: tc(1206),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2244,7 +2252,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1233,
+			cas: tc(1233),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2254,7 +2262,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1305,
+			cas: tc(1305),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2264,7 +2272,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1333,
+			cas: tc(1333),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2274,7 +2282,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1406,
+			cas: tc(1406),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2284,7 +2292,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1434,
+			cas: tc(1434),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2294,7 +2302,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1505,
+			cas: tc(1505),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2304,7 +2312,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1534,
+			cas: tc(1534),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2314,7 +2322,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1606,
+			cas: tc(1606),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2324,7 +2332,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1633,
+			cas: tc(1633),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2334,7 +2342,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1705,
+			cas: tc(1705),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2344,7 +2352,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1733,
+			cas: tc(1733),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2354,7 +2362,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1806,
+			cas: tc(1806),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2364,7 +2372,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1833,
+			cas: tc(1833),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2374,7 +2382,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1905,
+			cas: tc(1905),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2384,7 +2392,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1933,
+			cas: tc(1933),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2394,7 +2402,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2006,
+			cas: tc(2006),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2404,7 +2412,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2033,
+			cas: tc(2033),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2414,7 +2422,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2105,
+			cas: tc(2105),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2424,7 +2432,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2133,
+			cas: tc(2133),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2434,7 +2442,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2250,
+			cas: tc(2250),
 			zastavky: [
 				"Pardubice hl.n.",
 				"Pardubice-Rosice n.L.",
@@ -2447,7 +2455,7 @@ export const jizdni_rad = {
 	"Hradec Králové hl.n.": [
 		{
 			typ: "vlak",
-			cas: 504,
+			cas: tc(504),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2456,7 +2464,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 604,
+			cas: tc(604),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2465,7 +2473,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 704,
+			cas: tc(704),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2474,7 +2482,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 804,
+			cas: tc(804),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2483,7 +2491,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 904,
+			cas: tc(904),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2492,7 +2500,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1104,
+			cas: tc(1104),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2501,7 +2509,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1204,
+			cas: tc(1204),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2510,7 +2518,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1304,
+			cas: tc(1304),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2519,7 +2527,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1404,
+			cas: tc(1404),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2528,7 +2536,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1437,
+			cas: tc(1437),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2537,7 +2545,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1504,
+			cas: tc(1504),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2546,7 +2554,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1604,
+			cas: tc(1604),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2555,7 +2563,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1704,
+			cas: tc(1704),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2564,7 +2572,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1804,
+			cas: tc(1804),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2573,7 +2581,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 1904,
+			cas: tc(1904),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2582,7 +2590,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2004,
+			cas: tc(2004),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2591,7 +2599,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2104,
+			cas: tc(2104),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2600,7 +2608,7 @@ export const jizdni_rad = {
 		},
 		{
 			typ: "vlak",
-			cas: 2240,
+			cas: tc(2240),
 			zastavky: [
 				"Hradec Králové hl.n.",
 				"Všestary"
@@ -2619,13 +2627,8 @@ const aliases = {
 for (const [key, values] of Object.entries(aliases)) {
 	values.forEach(v => {
 
-		jizdni_rad[v] = jizdni_rad[key];
+		jizdni_rad[v] = key;
 
-		for(let i = 0; i < jizdni_rad[key].length; i++) {
-			let modifikovane_zastavky = jizdni_rad[key][i].zastavky.map(z => (z == key)? v : z);
-			jizdni_rad[v][i] = jizdni_rad[key][i];
-			jizdni_rad[v][i].zastavky = modifikovane_zastavky
-		}
 	});
 }
 
