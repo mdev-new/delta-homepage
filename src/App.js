@@ -228,11 +228,11 @@ function App() {
 					<caption>Výchozí zastávka: {trasa[0][3][0]}</caption>
 					<TableHead>
 						<TableRow>
-							<TableCell align="center">Typ spoje</TableCell>
-							<TableCell align="center">Čas odjezdu</TableCell>
-							<TableCell align="center">Čas příjezdu</TableCell>
+							<TableCell align="center"><b>Typ spoje</b></TableCell>
+							<TableCell align="center"><b>Čas odjezdu</b></TableCell>
+							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
 							{/*<TableCell align="right">Doba trvání</TableCell>*/}
-							<TableCell align="center">Trasa</TableCell>
+							<TableCell align="center"><b>Trasa</b></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
