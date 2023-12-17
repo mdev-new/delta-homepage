@@ -40,7 +40,7 @@ import Paper from '@mui/material/Paper';
 
 import { jizdni_rad } from './jr.js'
 
-const _ = require('lodash');
+// const _ = require('lodash');
 
 
 const destinace = [
@@ -59,7 +59,7 @@ const destinace = [
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
 
-const closest = (array, pivot) => array.filter(e => (e >= pivot)).sort()[0];
+const najdi_odjezdy = (array, pivot) => array.sort((a, b) => (a - b)).filter(e => (e >= pivot));
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
@@ -70,40 +70,48 @@ function najdi(zacatek, konec, cas) {
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 	let casy = linka.map(odjezd => odjezd.cas);
-	let nejblizsi_odjezd = closest(casy, cas);
+	let odjezdy = najdi_odjezdy(casy, cas);
 
-	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
-	if(indexSpoje == -1) return null; // dnes uz nic nejede
+	let _moznosti = []
 
-	let spoj = linka[indexSpoje];
-	let zastavky = spoj.zastavky
+	for (const odjezd of odjezdy.slice(0, 3)) {
 
-	let typ = capitalizeFirst(spoj.typ)
+		let indexSpoje = linka.findIndex(p => p.cas == odjezd)
+		if(indexSpoje == -1) return null; // dnes uz nic nejede
 
-	if(spoj.typ == "trol" || spoj.typ == "bus") {
-		if(spoj.typ == "trol") typ = "Trolejbus";
-		else if(spoj.typ == "bus") typ = "Autobus";
-		typ += " " + spoj.cislo_linky;
-	}
+		let spoj = linka[indexSpoje];
+		let zastavky = spoj.zastavky
 
-	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`], [...zastavky]]//.slice(zastavky.indexOf(zacatek))
+		let typ = capitalizeFirst(spoj.typ)
 
-	let _moznosti = {}
-
-	for(const stanice of zastavky.slice(1)) {
-
-		if(stanice == konec) {
-			_moznosti[stanice] = [[cesta]];
-			break;
+		if(spoj.typ == "trol" || spoj.typ == "bus") {
+			if(spoj.typ == "trol") typ = "Trolejbus";
+			else if(spoj.typ == "bus") typ = "Autobus";
+			typ += " " + spoj.cislo_linky;
 		}
 
-		let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
+		let cesta = [
+			[
+				typ,
+				`${hours_minutes(spoj.cas)}`,
+				`${hours_minutes(spoj.cas+spoj.delka_jizdy)}`
+			],
+			[...zastavky]
+		]
 
-		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
+		for(const stanice of zastavky.slice(1)) {
 
-		if(found != null) { // found == null = tudy cesta fakt nevede
+			if(stanice == konec) {
+				_moznosti.push({stanice: stanice, prijezd: [cesta]});
+				break;
+			}
 
-			_moznosti[s] = [[cesta], found] // [0] = prijezd ; [1] = odjezd
+			let found = najdi(spoj.alias, konec, spoj.cas + spoj.delka_jizdy)
+
+			if(found != null) { // found == null = tudy cesta fakt nevede
+				_moznosti.push({stanice: spoj.alias, prijezd: [cesta], odjezd: found}) // [0] = prijezd ; [1] = odjezd
+			}
+
 		}
 
 	}
@@ -126,8 +134,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		return;
 	}
 
-	let date = new Date(cas)
-	let time = date.getHours() * 60 + date.getMinutes();
+	let time = cas["$H"] * 60 + cas["$M"];
  
 	let cesty = {
 		"Pardubice-Pardubičky" : najdi("Pardubice-Pardubičky", destinace, time),
@@ -139,7 +146,7 @@ function najdi_spojeni (destinace, cas, controls) {
 	};
 
 	console.log(JSON.stringify(cesty))
-	console.log(propertiesToArray(cesty))
+	//console.log(propertiesToArray(cesty))
 
 	//controls.setResult(cesty)
 
@@ -194,7 +201,8 @@ function App() {
 
 	const handleClose = () => setOpen(false);
 
-	const [time, setTime] = useState(Date.now()/*dayjs('15:30', 'HH:MM')*/);
+	let dt = new Date();
+	const [time, setTime] = useState(dayjs(`${dt.getHours()}:${dt.getMinutes()}`, 'HH:MM'));
 
 	return (
 	<div className="application">
