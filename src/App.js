@@ -83,7 +83,7 @@ function najdi(zacatek, konec, cas) {
 
 	for(const stanice of zastavky.slice(1)) {
 
-		console.log(stanice)
+		//console.log(stanice)
 
 		if(stanice == konec) {
 			break;
@@ -186,9 +186,7 @@ function App() {
 		</DialogTitle>
 		<DialogContent>
 			<DialogContentText id="alert-dialog-description" className="box">
-			<pre>
 				{ dlgContent }
-			</pre>
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
@@ -217,21 +215,21 @@ function App() {
 				<Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							<TableCell>Typ spoje</TableCell>
-							<TableCell>Čas odjezdu</TableCell>
-							<TableCell>Čas příjezdu</TableCell>
+							<TableCell align="center">Typ spoje</TableCell>
+							<TableCell align="center">Čas odjezdu</TableCell>
+							<TableCell align="center">Čas příjezdu</TableCell>
 							{/*<TableCell align="right">Doba trvání</TableCell>*/}
-							<TableCell>Trasa</TableCell>
+							<TableCell align="center">Trasa</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{
 							trasa.map((spoj) => (
 								<TableRow>
-									<TableCell>{spoj[0]}</TableCell>
-									<TableCell>{spoj[1]}</TableCell>
-									<TableCell>{spoj[2]}</TableCell>
-									<TableCell>{spoj[3].join(' - ')}</TableCell>
+									<TableCell align="center">{spoj[0]}</TableCell>
+									<TableCell align="center">{spoj[1]}</TableCell>
+									<TableCell align="center">{spoj[2]}</TableCell>
+									<TableCell align="center">{[spoj[3][0], spoj[3][spoj[3].length - 1]].join(' - ')}</TableCell>
 								</TableRow>
 							))
 						}
