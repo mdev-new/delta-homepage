@@ -2048,6 +2048,17 @@ export const jizdni_rad = {
 	"Masarykovo náměstí": [ // todo
 		{
 			typ: "bus",
+			cislo_linky: 120,
+			cas: tc(1924),
+			zastavky: [
+				"Masarykovo náměstí",
+				"Hrobice",
+				"Hradec Králové hl.n."
+			],
+			delka_jizdy: 30 // minuty
+		},
+		{
+			typ: "bus",
 			cislo_linky: 99,
 			cas: tc(2130),
 			zastavky: [
@@ -2627,7 +2638,15 @@ const aliases = {
 for (const [key, values] of Object.entries(aliases)) {
 	values.forEach(v => {
 
-		jizdni_rad[v] = key;
+		jizdni_rad[v] = jizdni_rad[key].map(orig => {
+
+			let idx = orig.zastavky.indexOf(key);
+
+			if(idx >= 0) orig.zastavky[idx] = v;
+
+			return orig;
+
+		})
 
 	});
 }

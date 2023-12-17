@@ -24,6 +24,11 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import IconButton from '@mui/material/IconButton';
 
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
+import dayjs from 'dayjs';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -34,6 +39,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import { jizdni_rad } from './jr.js'
+
+const _ = require('lodash');
+
 
 const destinace = [
         "Pardubice",
@@ -51,32 +59,24 @@ const destinace = [
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
 
-const closest = (array, pivot) => array.filter(e => (e > pivot)/* && Math.abs(e-pivot) < 4*60*/);
+const closest = (array, pivot) => array.filter(e => (e >= pivot)).sort()[0];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
-
 
 function najdi(zacatek, konec, cas) {
 
 	if(!(zacatek in jizdni_rad)) return null
-
-	//console.log("Zacatek: ", zacatek)
 
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 	let casy = linka.map(odjezd => odjezd.cas);
 	let nejblizsi_odjezd = closest(casy, cas);
 
-	//console.log("Odjezd: ", nejblizsi_odjezd, zacatek)
-
 	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
-
 	if(indexSpoje == -1) return null; // dnes uz nic nejede
 
 	let spoj = linka[indexSpoje];
-
 	let zastavky = spoj.zastavky
-	//console.log(zastavky)
 
 	let typ = capitalizeFirst(spoj.typ)
 
@@ -88,14 +88,12 @@ function najdi(zacatek, konec, cas) {
 
 	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`], [...zastavky]]//.slice(zastavky.indexOf(zacatek))
 
-	let _moznosti = []
+	let _moznosti = {}
 
 	for(const stanice of zastavky.slice(1)) {
 
-		//console.log(stanice)
-
 		if(stanice == konec) {
-			_moznosti[stanice] = cesta;
+			_moznosti[stanice] = [[cesta]];
 			break;
 		}
 
@@ -103,58 +101,73 @@ function najdi(zacatek, konec, cas) {
 
 		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
 
-		if(found != null) {
-			_moznosti[s] = [[cesta], found]
+		if(found != null) { // found == null = tudy cesta fakt nevede
+
+			_moznosti[s] = [[cesta], found] // [0] = prijezd ; [1] = odjezd
 		}
 
 	}
-
-	//console.log(_moznosti)
 
 	return _moznosti;
 
 }
 
-function najdi_spojeni (destinace, controls) {
+function najdi_spojeni (destinace, cas, controls) {
 
 	if(destinace == "Pardubice") {
-		controls.setDialogTitle("Jseš kokot?");
-		controls.setDialogContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		controls.openDialog(true);
+		controls.setDlgTitle("Jseš kokot?");
+		controls.setDlgContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
+		controls.setOpen(true);
 		return;
 	} else if(destinace == "") {
-		controls.setDialogTitle("Jseš kokot?");
-		controls.setDialogContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama");
-		controls.openDialog(true);
+		controls.setDlgTitle("Jseš kokot?");
+		controls.setDlgContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama (mottl rizz)");
+		controls.setOpen(true);
 		return;
-
 	}
 
-	let today = new Date();
-	let time = today.getHours() * 60 + today.getMinutes();
+	let date = new Date(cas)
+	let time = date.getHours() * 60 + date.getMinutes();
  
-	let cesty = {};
-	cesty["Pardubice-Pardubičky"] = (najdi("Pardubice-Pardubičky", destinace, time));
-	cesty["K Nemocnici"]          = (najdi("K Nemocnici"         , destinace, time));
-	cesty["Štrossova"]            = (najdi("Štrossova"           , destinace, time));
-	cesty["Na Okrouhlíku"]        = (najdi("Na Okrouhlíku"       , destinace, time));
+	let cesty = {
+		"Pardubice-Pardubičky" : najdi("Pardubice-Pardubičky", destinace, time),
+		"K Nemocnici"          : najdi("K Nemocnici"         , destinace, time),
+		"Štrossova"            : najdi("Štrossova"           , destinace, time),
+		"Na Okrouhlíku"        : najdi("Na Okrouhlíku"       , destinace, time),
+		"Zdravotnická škola"   : najdi("Zdravotnická škola"  , destinace, time),
+		"Zámeček"              : najdi("Zámeček"             , destinace, time)
+	};
 
-	/*Object.entries(cesty).map(([zacatek, trasa]) => {
-		if(trasa.length > 0) {
+	console.log(JSON.stringify(cesty))
+	console.log(propertiesToArray(cesty))
 
-		if(trasa[trasa.length - 1][3][trasa[trasa.length - 1][3].length - 1] != destinace)
-			cesty[zacatek] = []
-	}
-	});*/
-
-	console.log(cesty)
-
-	controls.setResult(cesty)
+	//controls.setResult(cesty)
 
 };
 
-function ziskejCesty(root, cesta = []) {
+function propertiesToArray(obj) {
 
+	const isObject = val => val && typeof val === 'object' && !Array.isArray(val);
+
+	const addDelimiter = (a, b) => a ? `${a} - ${b}` : b;
+
+	const paths = (obj = {}, head = '') => {
+		return Object.entries(obj).reduce((product, [key, value]) => {
+
+			let fullPath = addDelimiter(head, key);
+
+			if(isObject(value)) {
+				return product.concat(...paths(value, fullPath))
+			} else if(Array.isArray(value) && value.some(v => isObject(v))) {
+				return value.filter(v => isObject(v)).map(x => product.concat(...paths(x, fullPath))).filter(c => c.length > 0)
+			} else {
+				return product.concat(fullPath)
+			}
+
+		}, []);
+	}
+
+	return paths(obj);
 }
 
 function DestinationSelector({setDest}) {
@@ -180,6 +193,8 @@ function App() {
 	const [result, setResult] = useState([]);
 
 	const handleClose = () => setOpen(false);
+
+	const [time, setTime] = useState(Date.now()/*dayjs('15:30', 'HH:MM')*/);
 
 	return (
 	<div className="application">
@@ -211,9 +226,7 @@ function App() {
 		open={open}
 		onClose={handleClose}
 	>
-		<DialogTitle>
-			{ dlgTitle }
-		</DialogTitle>
+		<DialogTitle>{ dlgTitle }</DialogTitle>
 		<DialogContent>
 			<DialogContentText className="box">
 				{ dlgContent }
@@ -224,14 +237,25 @@ function App() {
 		</DialogActions>
 	</Dialog>
 
+	<Stack direction="column" spacing={2}>
 	<Stack direction="row" spacing={2}>
 		<DestinationSelector setDest={setSelectedDest} />
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
+			<TimePicker
+				label="Čas odjezdu"
+				value={time}
+				ampm={false}
+				onChange={(newTime) => setTime(newTime)}
+			/>
+		</LocalizationProvider>
+	</Stack>
 		<Button
 			variant="contained"
 			size="small"
-			onClick={() => najdi_spojeni(selectedDest, {setOpen, setDlgTitle, setDlgContent, setResult})}
+			onClick={() => najdi_spojeni(selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
+			startIcon={<SearchIcon />}
 		>
-			<SearchIcon />
+			Hledej, šmudlo!
 		</Button>
 	</Stack>
 
@@ -241,43 +265,6 @@ function App() {
 	<br />
 
 	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
-	{
-		Object.entries(result).map(([stanice, data]) => (
-			<Grid item>
-			<TableContainer component={Paper} sx={{ margin: 'auto' }}>
-				<TableHead>
-					<TableRow>
-							<TableCell align="center"><b>Typ spoje</b></TableCell>
-							<TableCell align="center"><b>Čas odjezdu</b></TableCell>
-							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
-							{/*<TableCell align="right">Doba trvání</TableCell>*/}
-							<TableCell align="center"><b>Trasa</b></TableCell>
-						</TableRow>
-					</TableHead>
-				<Table size="small">
-				<caption>Výchozí zastávka: {stanice} {(data.length <= 0) ? " - Spojení nenalezeno!" : ""}</caption>
-				{/*
-					(trasa.length > 0) ? (
-					<>
-						<TableBody>
-							{
-								trasa.map((spoj) => (
-									<TableRow>
-										<TableCell align="center">{spoj[0]}</TableCell>
-										<TableCell align="center">{spoj[1]}</TableCell>
-										<TableCell align="center">{spoj[2]}</TableCell>
-										<TableCell align="center">{[spoj[3][0], spoj[3][spoj[3].length - 1]].join(' - ')}</TableCell>
-									</TableRow>
-								))
-							}
-						</TableBody>
-					</>) : <></>
-				*/}
-				</Table>
-			</TableContainer>
-			</Grid>
-		))
-	}
 	</Grid>
 
 	</div>
