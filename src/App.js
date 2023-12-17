@@ -74,7 +74,9 @@ function najdi(zacatek, konec, cas) {
 	let typ = capitalizeFirst(spoj.typ)
 
 	if(spoj.typ == "trol" || spoj.typ == "bus") {
-		typ += "_" + spoj.cislo_linky;
+		if(spoj.typ == "trol") typ += "ejbus";
+		else if(spoj.typ == "bus") typ = "Autobus";
+		typ += " " + spoj.cislo_linky;
 	}
 
 	let cesta = [[typ, `${hours_minutes(spoj.cas)}`, `${hours_minutes(spoj.cas+spoj.delka_jizdy)}`, [...zastavky]]]//.slice(zastavky.indexOf(zacatek))
@@ -209,10 +211,10 @@ function App() {
 	{
 		result.map(trasa => (
 			<>
-			<hr size="1.5" style={{backgroundColor: "black"}}/>
-
-			<TableContainer component={Paper}>
-				<Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+			<br />
+			<TableContainer component={Paper} sx={{ width: 650, margin: 'auto' }}>
+				<Table size="small">
+					<caption>Výchozí zastávka: {trasa[0][3][0]}</caption>
 					<TableHead>
 						<TableRow>
 							<TableCell align="center">Typ spoje</TableCell>
@@ -239,8 +241,6 @@ function App() {
 			</>
 		))
 	}
-	<hr size="1.5" style={{backgroundColor: "black"}}/>
-
 
 	</div>
 	);
