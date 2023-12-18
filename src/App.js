@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { Helmet } from "react-helmet";
 
@@ -42,10 +42,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import { jizdni_rad } from './jr.js'
-
 // const _ = require('lodash');
-
 
 const destinace = [
         "Pardubice",
@@ -67,63 +64,6 @@ const najdi_odjezdy = (array, pivot) => array.sort((a, b) => (a - b)).filter(e =
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-function najdi(zacatek, konec, cas) {
-
-	if(!(zacatek in jizdni_rad)) return null
-
-	let linka = jizdni_rad[zacatek]; // toto je garantovano
-
-	let casy = linka.map(odjezd => odjezd.cas);
-	let odjezdy = najdi_odjezdy(casy, cas).slice(0, 3);
-	console.log(odjezdy)
-
-	let _moznosti = []
-
-	for (const odjezd of odjezdy) {
-
-		let indexSpoje = linka.findIndex(p => p.cas == odjezd)
-		if(indexSpoje == -1) return null; // dnes uz nic nejede
-
-		let spoj = linka[indexSpoje];
-		let zastavky = spoj.zastavky
-
-		let typ = capitalizeFirst(spoj.typ)
-
-		if(spoj.typ == "trol" || spoj.typ == "bus") {
-			if(spoj.typ == "trol") typ = "Trolejbus";
-			else if(spoj.typ == "bus") typ = "Autobus";
-			typ += " " + spoj.cislo_linky;
-		}
-
-		let cesta = [
-			[
-				typ,
-				`${hours_minutes(spoj.cas)}`,
-				`${hours_minutes(spoj.cas+spoj.delka_jizdy)}`
-			],
-			[...zastavky]
-		]
-
-		for(const stanice of zastavky.slice(1)) {
-
-			if(stanice == konec) {
-				_moznosti.push({stanice: stanice, prijezd: [cesta]});
-				break;
-			}
-
-			let found = najdi(spoj.alias, konec, spoj.cas + spoj.delka_jizdy)
-
-			if(found != null) { // found == null = tudy cesta fakt nevede
-				_moznosti.push({stanice: spoj.alias, prijezd: [cesta], odjezd: found}) // [0] = prijezd ; [1] = odjezd
-			}
-
-		}
-
-	}
-
-	return _moznosti;
-
-}
 
 function najdi_spojeni (destinace, cas, controls) {
 
@@ -142,13 +82,23 @@ function najdi_spojeni (destinace, cas, controls) {
 	let time = cas["$H"] * 60 + cas["$M"];
  
 	let cesty = {
-		"Pardubice-Pardubičky" : najdi("Pardubice-Pardubičky", destinace, time),
-		"K Nemocnici"          : najdi("K Nemocnici"         , destinace, time),
-		"Štrossova"            : najdi("Štrossova"           , destinace, time),
-		"Na Okrouhlíku"        : najdi("Na Okrouhlíku"       , destinace, time),
-		"Zdravotnická škola"   : najdi("Zdravotnická škola"  , destinace, time),
-		"Zámeček"              : najdi("Zámeček"             , destinace, time)
+		"Pardubice-Pardubičky" : null,
+		"K Nemocnici"          : null,
+		"Štrossova"            : null,
+		"Na Okrouhlíku"        : null,
+		"Zdravotnická škola"   : null,
+		"Zámeček"              : null,
 	};
+
+	let worker = new Worker(process.env.PUBLIC_URL + '/worker.js', { type: "module" });
+	worker.addEventListener('message', function(e) {
+		cesty[e.data[0]] = e.data[1];
+	}, false);
+
+	let zacatky = Object.keys(cesty);
+	for(const z of zacatky) {
+		worker.postMessage({zacatek: z, konec: destinace, cas: time});
+	}
 
 	console.log(JSON.stringify(cesty))
 	//console.log(propertiesToArray(cesty))
