@@ -30,6 +30,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import dayjs from 'dayjs';
 
+
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -70,11 +74,12 @@ function najdi(zacatek, konec, cas) {
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 	let casy = linka.map(odjezd => odjezd.cas);
-	let odjezdy = najdi_odjezdy(casy, cas);
+	let odjezdy = najdi_odjezdy(casy, cas).slice(0, 3);
+	console.log(odjezdy)
 
 	let _moznosti = []
 
-	for (const odjezd of odjezdy.slice(0, 3)) {
+	for (const odjezd of odjezdy) {
 
 		let indexSpoje = linka.findIndex(p => p.cas == odjezd)
 		if(indexSpoje == -1) return null; // dnes uz nic nejede
@@ -177,19 +182,6 @@ function propertiesToArray(obj) {
 	return paths(obj);
 }
 
-function DestinationSelector({setDest}) {
-	return (
-	<Autocomplete
-		disablePortal
-		id="destination-input"
-		options={destinace}
-		onChange={(event, value) => setDest(value)}
-		sx={{ width: 300 }}
-		renderInput={(params) => <TextField {...params} label="Destinace" />}
-	/>
-	);
-}
-
 function App() {
 
 	const [selectedDest, setSelectedDest] = useState("");
@@ -247,16 +239,29 @@ function App() {
 
 	<Stack direction="column" spacing={2}>
 	<Stack direction="row" spacing={2}>
-		<DestinationSelector setDest={setSelectedDest} />
+		<Autocomplete
+			disablePortal
+			id="destination-input"
+			options={destinace}
+			onChange={(event, value) => setSelectedDest(value)}
+			sx={{ width: 250 }}
+			renderInput={(params) => <TextField {...params} label="Destinace" />}
+		/>
+
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<TimePicker
 				label="Čas odjezdu"
 				value={time}
 				ampm={false}
+				sx={{width: 120}}
 				onChange={(newTime) => setTime(newTime)}
 			/>
 		</LocalizationProvider>
+
+		<FormControlLabel control={<Checkbox defaultChecked />} label="Zobrazit ceny" />
+
 	</Stack>
+
 		<Button
 			variant="contained"
 			size="small"
