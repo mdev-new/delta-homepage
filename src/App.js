@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 
 import { Helmet } from "react-helmet";
 
@@ -30,10 +30,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import dayjs from 'dayjs';
 
-
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -42,9 +38,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
+
 import { jizdni_rad } from './jr.js'
 
-// const _ = require('lodash');
+const _ = require('lodash');
 
 
 const destinace = [
@@ -60,10 +61,13 @@ const destinace = [
        // "Chrudim"
 ];
 
+//https://stackoverflow.com/questions/14810506/map-function-for-objects-instead-of-arrays
+const objectMap = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]))
+
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
 
-const najdi_odjezdy = (array, pivot) => array.sort((a, b) => (a - b)).filter(e => (e >= pivot));
+const closest = (array, pivot) => array.sort((a, b) => a - b).filter(e => (e >= pivot))[0];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
@@ -74,55 +78,93 @@ function najdi(zacatek, konec, cas) {
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
 	let casy = linka.map(odjezd => odjezd.cas);
-	let odjezdy = najdi_odjezdy(casy, cas).slice(0, 3);
-	console.log(odjezdy)
+	let nejblizsi_odjezd = closest(casy, cas);
 
-	let _moznosti = []
+	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
+	if(indexSpoje == -1) return null; // dnes uz nic nejede
 
-	for (const odjezd of odjezdy) {
+	let spoj = linka[indexSpoje];
+	let zastavky = spoj.zastavky
 
-		let indexSpoje = linka.findIndex(p => p.cas == odjezd)
-		if(indexSpoje == -1) return null; // dnes uz nic nejede
+	let typ = capitalizeFirst(spoj.typ)
 
-		let spoj = linka[indexSpoje];
-		let zastavky = spoj.zastavky
+	if(spoj.typ == "trol" || spoj.typ == "bus") {
+		if(spoj.typ == "trol") typ = "Trolejbus";
+		else if(spoj.typ == "bus") typ = "Autobus";
+		typ += " " + spoj.cislo_linky;
+	}
 
-		let typ = capitalizeFirst(spoj.typ)
+	let cesta = [
+		[
+			typ,
+			`${hours_minutes(spoj.cas)}`,
+			`${hours_minutes(spoj.cas+spoj.delka_jizdy)}`
+		],
+		[...zastavky]
+	]
 
-		if(spoj.typ == "trol" || spoj.typ == "bus") {
-			if(spoj.typ == "trol") typ = "Trolejbus";
-			else if(spoj.typ == "bus") typ = "Autobus";
-			typ += " " + spoj.cislo_linky;
+	let _moznosti = {}
+
+	for(const stanice of zastavky.slice(1)) {
+
+		if(stanice == konec) {
+			_moznosti[stanice] = {prijezd: cesta};
+			break;
 		}
 
-		let cesta = [
-			[
-				typ,
-				`${hours_minutes(spoj.cas)}`,
-				`${hours_minutes(spoj.cas+spoj.delka_jizdy)}`
-			],
-			[...zastavky]
-		]
+		let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
 
-		for(const stanice of zastavky.slice(1)) {
+		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
 
-			if(stanice == konec) {
-				_moznosti.push({stanice: stanice, prijezd: [cesta]});
-				break;
-			}
+		if(found != null) { // found == null = tudy cesta fakt nevede
 
-			let found = najdi(spoj.alias, konec, spoj.cas + spoj.delka_jizdy)
-
-			if(found != null) { // found == null = tudy cesta fakt nevede
-				_moznosti.push({stanice: spoj.alias, prijezd: [cesta], odjezd: found}) // [0] = prijezd ; [1] = odjezd
-			}
-
+			_moznosti[s] = {prijezd: cesta, odjezd: found} // [0] = prijezd ; [1] = odjezd
 		}
 
 	}
 
 	return _moznosti;
 
+}
+
+// i hate this algorithm with everything i have
+// it is rather stupid and only assumes one route for each stop will ever be.
+
+function parse(storage, object, zacatek = "", depth = 0) {
+	if(object == undefined) return null;
+
+	if((!("odjezd" in object)) && ("prijezd" in object)) { // konecna
+
+		return object.prijezd.join(' - ')
+
+	} else if(!("prijezd" in object) && !("odjezd" in object)) { // list moznosti kam dal
+		for(const [key, value] of Object.entries(object)) {
+
+			let _zacatek = (depth == 0) ? key : zacatek;
+
+			if(!(_zacatek in storage)) storage[_zacatek] = [[]];
+			let next = parse(storage, value, _zacatek, depth + 1);
+			//console.log("next", next)
+			if(next != null && next != undefined) {
+				storage[_zacatek].push(next)
+			}
+		}
+		return;
+	} else if(("odjezd" in object)) {
+		let next = parse(storage, object.odjezd, zacatek, depth+1)
+
+		if(next == undefined && object.prijezd != undefined) {
+			return object.prijezd.join(' - ')
+		}
+		else if(object.prijezd != undefined) {
+			return next + object.prijezd.join(' - ')
+		}
+		else {
+			return next
+		}
+	} else {
+		console.log("Something went wrong?")
+	}
 }
 
 function najdi_spojeni (destinace, cas, controls) {
@@ -142,45 +184,35 @@ function najdi_spojeni (destinace, cas, controls) {
 	let time = cas["$H"] * 60 + cas["$M"];
  
 	let cesty = {
-		"Pardubice-Pardubičky" : najdi("Pardubice-Pardubičky", destinace, time),
-		"K Nemocnici"          : najdi("K Nemocnici"         , destinace, time),
-		"Štrossova"            : najdi("Štrossova"           , destinace, time),
-		"Na Okrouhlíku"        : najdi("Na Okrouhlíku"       , destinace, time),
-		"Zdravotnická škola"   : najdi("Zdravotnická škola"  , destinace, time),
-		"Zámeček"              : najdi("Zámeček"             , destinace, time)
+		"Pardubice-Pardubičky" : {odjezd: najdi("Pardubice-Pardubičky", destinace, time)},
+		"K Nemocnici"          : {odjezd: najdi("K Nemocnici"         , destinace, time)},
+		"Štrossova"            : {odjezd: najdi("Štrossova"           , destinace, time)},
+		"Na Okrouhlíku"        : {odjezd: najdi("Na Okrouhlíku"       , destinace, time)},
+		"Zdravotnická škola"   : {odjezd: najdi("Zdravotnická škola"  , destinace, time)},
+		"Zámeček"              : {odjezd: najdi("Zámeček"             , destinace, time)}
 	};
 
 	console.log(JSON.stringify(cesty))
-	//console.log(propertiesToArray(cesty))
 
-	//controls.setResult(cesty)
+	let objekt = {}
+	parse(objekt, cesty)
 
-};
+	// poor man's object.filter()
+	{
+		let newobj = {}
+		for(const k of Object.keys(objekt)) {
+			if(!(objekt[k] == undefined || objekt[k].length == 0)) newobj[k] = objekt[k];
+		}
 
-function propertiesToArray(obj) {
-
-	const isObject = val => val && typeof val === 'object' && !Array.isArray(val);
-
-	const addDelimiter = (a, b) => a ? `${a} - ${b}` : b;
-
-	const paths = (obj = {}, head = '') => {
-		return Object.entries(obj).reduce((product, [key, value]) => {
-
-			let fullPath = addDelimiter(head, key);
-
-			if(isObject(value)) {
-				return product.concat(...paths(value, fullPath))
-			} else if(Array.isArray(value) && value.some(v => isObject(v))) {
-				return value.filter(v => isObject(v)).map(x => product.concat(...paths(x, fullPath))).filter(c => c.length > 0)
-			} else {
-				return product.concat(fullPath)
-			}
-
-		}, []);
+		objekt = newobj;
 	}
 
-	return paths(obj);
-}
+	controls.setResult(objectMap(objekt, (v) => {
+		v.reverse();
+		return v;
+	}))
+
+};
 
 function App() {
 
@@ -193,8 +225,9 @@ function App() {
 
 	const handleClose = () => setOpen(false);
 
-	let dt = new Date();
-	const [time, setTime] = useState(dayjs(`${dt.getHours()}:${dt.getMinutes()}`, 'HH:MM'));
+	const date = new Date();
+	//const [time, setTime] = useState(dayjs(`${date.getHours()}:${date.getMinutes()}`, 'HH:MM'));
+	const [time, setTime] = useState(dayjs(`15:30`, 'HH:MM'));
 
 	return (
 	<div className="application">
@@ -213,13 +246,8 @@ function App() {
 		}}
 	>
 
-	<h1>
-		Delta Jede Domů
-	</h1>
-
-	<h2>
-		Najdi si efektivní spojení domů
-	</h2>
+	<h1>Delta Jede Domů</h1>
+	<h2>Najdi si efektivní spojení domů</h2>
 
 	{/* Dialog pro kokoty */}
 	<Dialog
@@ -258,7 +286,7 @@ function App() {
 			/>
 		</LocalizationProvider>
 
-		<FormControlLabel control={<Checkbox defaultChecked />} label="Zobrazit ceny" />
+		<FormControlLabel control={<Checkbox disabled />} label="Zobrazit ceny" />
 
 	</Stack>
 
@@ -278,6 +306,42 @@ function App() {
 	<br />
 
 	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
+	{
+		Object.entries(result).map(([stanice, cesty]) => (
+			<Grid item>
+				<TableContainer component={Paper} sx={{ margin: 'auto' }}>
+					<TableHead>
+						<TableRow>
+							<TableCell align="center"><b>Typ spoje</b></TableCell>
+							{/*<TableCell align="center"><b>Čas odjezdu</b></TableCell>
+							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
+							<TableCell align="right">Doba trvání</TableCell>
+							<TableCell align="center"><b>Trasa</b></TableCell>*/}
+						</TableRow>
+					</TableHead>
+					<Table size="small">
+					<caption>
+						Výchozí stanice: {stanice} {(cesty.filter(c => !_.isEmpty(c)).length == 0) ? " - Spojení nenalezeno!" : ""}
+					</caption>
+					{
+						(cesty.length > 0)
+						? (
+							<TableBody>
+							{
+								cesty.filter(c => !_.isEmpty(c)).map((radek) => (
+									<TableRow>
+										<TableCell align="center">{radek}</TableCell>
+									</TableRow>
+								))
+							}
+							</TableBody>
+						) : <></>
+					}
+					</Table>
+				</TableContainer>
+			</Grid>
+		))
+	}
 	</Grid>
 
 	</div>
