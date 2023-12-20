@@ -38,6 +38,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import Box from '@mui/material/Box';
+
 
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -135,7 +137,7 @@ function parse(storage, object, zacatek = "", depth = 0) {
 
 	if((!("odjezd" in object)) && ("prijezd" in object)) { // konecna
 
-		return object.prijezd.join(' - ')
+		return object.prijezd
 
 	} else if(!("prijezd" in object) && !("odjezd" in object)) { // list moznosti kam dal
 		for(const [key, value] of Object.entries(object)) {
@@ -154,10 +156,10 @@ function parse(storage, object, zacatek = "", depth = 0) {
 		let next = parse(storage, object.odjezd, zacatek, depth+1)
 
 		if(next == undefined && object.prijezd != undefined) {
-			return object.prijezd.join(' - ')
+			return object.prijezd
 		}
 		else if(object.prijezd != undefined) {
-			return next + object.prijezd.join(' - ')
+			return next
 		}
 		else {
 			return next
@@ -192,7 +194,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		"Zámeček"              : {odjezd: najdi("Zámeček"             , destinace, time)}
 	};
 
-	console.log(JSON.stringify(cesty))
+	//console.log(JSON.stringify(cesty))
 
 	let objekt = {}
 	parse(objekt, cesty)
@@ -227,7 +229,9 @@ function App() {
 
 	const date = new Date();
 	//const [time, setTime] = useState(dayjs(`${date.getHours()}:${date.getMinutes()}`, 'HH:MM'));
-	const [time, setTime] = useState(dayjs(`15:30`, 'HH:MM'));
+	const [time, setTime] = useState(dayjs());
+
+	let width = 650;
 
 	return (
 	<div className="application">
@@ -266,7 +270,7 @@ function App() {
 	</Dialog>
 
 	<Stack direction="column" spacing={2}>
-	<Stack direction="row" spacing={2}>
+	<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
 		<Autocomplete
 			disablePortal
 			id="destination-input"
@@ -276,6 +280,7 @@ function App() {
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
 		/>
 
+		<Stack direction="row" spacing={2}>
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<TimePicker
 				label="Čas odjezdu"
@@ -286,13 +291,14 @@ function App() {
 			/>
 		</LocalizationProvider>
 
-		<FormControlLabel control={<Checkbox disabled />} label="Zobrazit ceny" />
+		<FormControlLabel control={<Checkbox disabled />} label="Ceny" />
+		</Stack>
 
 	</Stack>
 
 		<Button
 			variant="contained"
-			size="small"
+			size="large"
 			onClick={() => najdi_spojeni(selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
 			startIcon={<SearchIcon />}
 		>
@@ -305,18 +311,17 @@ function App() {
 	<br />
 	<br />
 
-	<Grid container spacing={4} justifyContent="center" alignItems="flex-start">
+	<Grid container spacing={2} justifyContent="center" alignItems="center">
 	{
 		Object.entries(result).map(([stanice, cesty]) => (
-			<Grid item>
-				<TableContainer component={Paper} sx={{ margin: 'auto' }}>
+			<Grid item xs={12} sm={7} md={5}>
+				<TableContainer component={Paper}>
 					<TableHead>
 						<TableRow>
 							<TableCell align="center"><b>Typ spoje</b></TableCell>
-							{/*<TableCell align="center"><b>Čas odjezdu</b></TableCell>
+							<TableCell align="center"><b>Čas odjezdu</b></TableCell>
 							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
-							<TableCell align="right">Doba trvání</TableCell>
-							<TableCell align="center"><b>Trasa</b></TableCell>*/}
+							<TableCell align="center"><b>Trasa</b></TableCell>
 						</TableRow>
 					</TableHead>
 					<Table size="small">
@@ -330,7 +335,10 @@ function App() {
 							{
 								cesty.filter(c => !_.isEmpty(c)).map((radek) => (
 									<TableRow>
-										<TableCell align="center">{radek}</TableCell>
+										<TableCell align="center">{radek[0][0]}</TableCell>
+										<TableCell align="center">{radek[0][1]}</TableCell>
+										<TableCell align="center">{radek[0][2]}</TableCell>
+										<TableCell align="center">{[radek[1][0], radek[1][radek[1].length-1]].join(' - ')}</TableCell>
 									</TableRow>
 								))
 							}
@@ -343,6 +351,9 @@ function App() {
 		))
 	}
 	</Grid>
+
+	<br />
+	<br />
 
 	</div>
 	);

@@ -2057,16 +2057,6 @@ export const jizdni_rad = {
 			],
 			delka_jizdy: 30 // minuty
 		},
-		{
-			typ: "bus",
-			cislo_linky: 99,
-			cas: tc(2130),
-			zastavky: [
-				"Masarykovo náměstí",
-				"Prahavice"
-			],
-			delka_jizdy: 11 // minuty
-		},
 	],
 
 
