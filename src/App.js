@@ -79,6 +79,8 @@ function najdi(zacatek, konec, cas) {
 
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
+	console.log("linka", linka)
+
 	let casy = linka.map(odjezd => odjezd.cas);
 	let nejblizsi_odjezd = closest(casy, cas);
 
@@ -100,23 +102,23 @@ function najdi(zacatek, konec, cas) {
 		[
 			typ,
 			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+spoj.delka_jizdy)}`
+			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`
 		],
-		[...zastavky]
+		[...(zastavky.map(z => z.name))]
 	]
 
 	let _moznosti = {}
 
 	for(const stanice of zastavky.slice(1)) {
 
-		if(stanice == konec) {
-			_moznosti[stanice] = {prijezd: cesta};
+		if(stanice.name == konec) {
+			_moznosti[stanice.name] = {prijezd: cesta};
 			break;
 		}
 
-		let s = (typeof jizdni_rad[stanice] == 'string') ? jizdni_rad[stanice] : stanice;
+		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice] : stanice.name;
 
-		let found = najdi(s, konec, spoj.cas + spoj.delka_jizdy)
+		let found = najdi(s, konec, spoj.cas + stanice.time)
 
 		if(found != null) { // found == null = tudy cesta fakt nevede
 
@@ -131,6 +133,8 @@ function najdi(zacatek, konec, cas) {
 
 // i hate this algorithm with everything i have
 // it is rather stupid and only assumes one route for each stop will ever be.
+
+// todo zase vracime nekompletni cesty
 
 function parse(storage, object, zacatek = "", depth = 0) {
 	if(object == undefined) return null;
@@ -183,6 +187,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		return;
 	}
 
+	console.log(cas)
 	let time = cas["$H"] * 60 + cas["$M"];
  
 	let cesty = {
@@ -194,7 +199,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		"Zámeček"              : {odjezd: najdi("Zámeček"             , destinace, time)}
 	};
 
-	//console.log(JSON.stringify(cesty))
+	console.log(cesty, JSON.stringify(cesty))
 
 	let objekt = {}
 	parse(objekt, cesty)
@@ -280,18 +285,18 @@ function App() {
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
 		/>
 
-		<Stack direction="row" spacing={2}>
-		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<TimePicker
-				label="Čas odjezdu"
-				value={time}
-				ampm={false}
-				sx={{width: 120}}
-				onChange={(newTime) => setTime(newTime)}
-			/>
-		</LocalizationProvider>
+		<Stack direction="row" spacing={0.5}>
+			<LocalizationProvider dateAdapter={AdapterDayjs}>
+				<TimePicker
+					label="Čas odjezdu"
+					value={time}
+					ampm={false}
+					sx={{width: 120}}
+					onChange={(newTime) => setTime(newTime)}
+				/>
+			</LocalizationProvider>
 
-		<FormControlLabel control={<Checkbox disabled />} label="Ceny" />
+			<FormControlLabel control={<Checkbox disabled />} label="Ceny" />
 		</Stack>
 
 	</Stack>
