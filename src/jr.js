@@ -45,39 +45,6 @@ const jizdni_rad_template = {
 				{name: "U Marka", time: 10},
 				{name: "Hlavní nádraží", time: 12},
 			]
-		},
-		{
-			typ: "trol",
-			cislo_linky: 15,
-			casy: [
-				501, 526, 544,
-				603, 628, 636, 648,
-				715, 721, 729, 748,
-				808,
-				900, 937,
-				1037,
-				1117, 1150,
-				1307, 1337, 1356,
-				1427, 1437, 1443, 1452,
-				1514, 1527, 1539, 1550,
-				1610, 1619, 1636, 1655,
-				1737, 1745,
-				1808, 1825, 1845,
-				1924,
-				2020,
-				2128,
-				2225, 2252,
-				2318
-			],
-			zastavky: [
-				{name: "Štrossova", time: 0},
-				{name: "U Kostelíčka", time: 2},
-				{name: "Krajský úřad", time: 4},
-				{name: "Náměstí Republiky", time: 6},
-				{name: "Masarykovo náměstí", time: 8},
-				{name: "U Marka", time: 10},
-				{name: "Hlavní nádraží", time: 12},
-			]
 		}
 	],
 

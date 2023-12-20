@@ -19,6 +19,8 @@ import Slide from '@mui/material/Slide';
 
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
+import { DataGrid } from '@mui/x-data-grid';
+
 
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -116,13 +118,13 @@ function najdi(zacatek, konec, cas) {
 			break;
 		}
 
-		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice] : stanice.name;
+		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice.name] : stanice.name;
 
 		let found = najdi(s, konec, spoj.cas + stanice.time)
 
 		if(found != null) { // found == null = tudy cesta fakt nevede
 
-			_moznosti[s] = {prijezd: cesta, odjezd: found} // [0] = prijezd ; [1] = odjezd
+			_moznosti[s] = {prijezd: cesta, odjezd: found}
 		}
 
 	}
@@ -214,12 +216,20 @@ function najdi_spojeni (destinace, cas, controls) {
 		objekt = newobj;
 	}
 
-	controls.setResult(objectMap(objekt, (v) => {
+	let res = objectMap(objekt, (v) => {
 		v.reverse();
 		return v;
-	}))
+	})
+
+	console.log("res", res)
+
+	controls.setResult(res)
 
 };
+
+const compareArrays = (a, b) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
+
 
 function App() {
 
@@ -285,7 +295,7 @@ function App() {
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
 		/>
 
-		<Stack direction="row" spacing={0.5}>
+		<Stack direction="row" spacing={0.3}>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TimePicker
 					label="Čas odjezdu"
@@ -316,46 +326,33 @@ function App() {
 	<br />
 	<br />
 
-	<Grid container spacing={2} justifyContent="center" alignItems="center">
+
+	<Stack direction="column" alignItems="center" spacing={3}>
 	{
-		Object.entries(result).map(([stanice, cesty]) => (
-			<Grid item xs={12} sm={7} md={5}>
-				<TableContainer component={Paper}>
-					<TableHead>
-						<TableRow>
-							<TableCell align="center"><b>Typ spoje</b></TableCell>
-							<TableCell align="center"><b>Čas odjezdu</b></TableCell>
-							<TableCell align="center"><b>Čas příjezdu</b></TableCell>
-							<TableCell align="center"><b>Trasa</b></TableCell>
-						</TableRow>
-					</TableHead>
-					<Table size="small">
-					<caption>
-						Výchozí stanice: {stanice} {(cesty.filter(c => !_.isEmpty(c)).length == 0) ? " - Spojení nenalezeno!" : ""}
-					</caption>
-					{
-						(cesty.length > 0)
-						? (
-							<TableBody>
-							{
-								cesty.filter(c => !_.isEmpty(c)).map((radek) => (
-									<TableRow>
-										<TableCell align="center">{radek[0][0]}</TableCell>
-										<TableCell align="center">{radek[0][1]}</TableCell>
-										<TableCell align="center">{radek[0][2]}</TableCell>
-										<TableCell align="center">{[radek[1][0], radek[1][radek[1].length-1]].join(' - ')}</TableCell>
-									</TableRow>
-								))
-							}
-							</TableBody>
-						) : <></>
-					}
-					</Table>
-				</TableContainer>
-			</Grid>
+		Object.entries(result).filter(([k, v]) => v[0].length != 0).map(([stanice, cesty]) => (
+
+		<Paper sx>
+		<DataGrid
+			columns={[
+				{ headerName: 'Typ', field: 'typ', flex: 1, minWidth: 150 },
+				{ headerName: 'Odjezd ze zastávky', field: 'odjezd', flex: 1, minWidth: 150, },
+				{ headerName: 'Příjezd do cíle', field: 'prijezd', flex: 0.85, minWidth: 125 },
+				{ headerName: 'Trasa', field: 'cesta', flex: 2.5, minWidth: 375 },
+			]}
+	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
+	  			id: Math.random(),
+	  			typ: entry[0][0],
+				odjezd: entry[0][1],
+				prijezd: entry[0][2],
+				cesta: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')
+	  		}})}
+	  		rowHeight={38}
+		/>
+		</Paper>
+
 		))
 	}
-	</Grid>
+	</Stack>
 
 	<br />
 	<br />
