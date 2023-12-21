@@ -25,3 +25,16 @@ h1 {
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.MuiDataGrid-columnHeaderTitle {
+  font-weight: bold !important;
+}
+
+.hello {
+  display: inline-block;
+  width: 60%;
+}
+
+@media screen and (max-width: 1000px) {
+  .hello { width: 100%; }
+}
