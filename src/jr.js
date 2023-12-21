@@ -2,6 +2,8 @@
 
 // todo presnost v casech jizd
 
+// nastupiste aplikovano retroaktivne (na jizdu z predchozi zastavky k aktualni)
+
 import log from './log.js'
 
 const tc = t => {
@@ -39,13 +41,13 @@ const jizdni_rad_template = {
 				2318
 			],
 			zastavky: [
-				{name: "Štrossova", time: 0},
-				{name: "U Kostelíčka", time: 2},
-				{name: "Krajský úřad", time: 4},
-				{name: "Náměstí Republiky", time: 6},
-				{name: "Masarykovo náměstí", time: 8},
-				{name: "U Marka", time: 10},
-				{name: "Hlavní nádraží", time: 12},
+				{ name: "Štrossova", time: 0, nastupiste: ""},
+				{ name: "U Kostelíčka", time: 2, nastupiste: ""},
+				{ name: "Krajský úřad", time: 4, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 6, nastupiste: ""},
+				{ name: "Masarykovo náměstí", time: 8, nastupiste: ""},
+				{ name: "U Marka", time: 10, nastupiste: ""},
+				{ name: "Hlavní nádraží", time: 12, nastupiste: ""},
 			]
 		}
 	],
@@ -72,13 +74,13 @@ const jizdni_rad_template = {
 				1900
 			],
 			zastavky: [
-				{name: "K Nemocnici", time: 0},
-				{name: "Karla IV.", time: 0},
-				{name: "Náměstí Republiky", time: 0},
+				{ name: "K Nemocnici", time: 0, nastupiste: ""},
+				{ name: "Karla IV.", time: 0, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 0, nastupiste: ""},
 				//{name: "Sukova", time: 0},
-				{name: "Masarykovo náměstí", time: 0},
-				{name: "U Marka", time: 0},
-				{name: "Hlavní nádraží", time: 0},
+				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
+				{ name: "U Marka", time: 0, nastupiste: ""},
+				{ name: "Hlavní nádraží", time: 0, nastupiste: ""},
 			]
 		}
 	],
@@ -110,10 +112,10 @@ const jizdni_rad_template = {
 				2303, 2328
 			],
 			zastavky: [
-				{name: "Na Okrouhlíku", time: 0},
-				{name: "Krajský úřad", time: 0},
-				{name: "Náměstí Republiky", time: 0},
-				{name: "Masarykovo náměstí", time: 0},
+				{ name: "Na Okrouhlíku", time: 0, nastupiste: ""},
+				{ name: "Krajský úřad", time: 0, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 0, nastupiste: ""},
+				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
 				//"17.listopadu"
 			]
 		}
@@ -142,8 +144,8 @@ const jizdni_rad_template = {
 				2311
 			],
 			zastavky: [
-				{name: "Pardubice-Pardubičky", time: 0},
-				{name: "Pardubice hl.n.", time: 0},
+				{ name: "Pardubice-Pardubičky", time: 0, nastupiste: ""},
+				{ name: "Pardubice hl.n.", time: 0, nastupiste: "2"},
 			]
 		}
 	],
@@ -162,9 +164,9 @@ const jizdni_rad_template = {
 			cislo_linky: 120,
 			casy: [1924],
 			zastavky: [
-				{name: "Masarykovo náměstí", time: 0},
-				{name: "Hrobice", time: 0},
-				{name: "Hradec Králové hl.n.", time: 0},
+				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
+				{ name: "Hrobice", time: 0, nastupiste: ""},
+				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
 			]
 		},
 	],
@@ -195,9 +197,9 @@ const jizdni_rad_template = {
 				2250
 			],
 			zastavky: [
-				{name: "Pardubice hl.n.", time: 0},
-				{name: "Pardubice-Rosice n.L.", time: 0},
-				{name: "Hradec Králové hl.n.", time: 0},
+				{ name: "Pardubice hl.n.", time: 0, nastupiste: ""},
+				{ name: "Pardubice-Rosice n.L.", time: 0, nastupiste: ""},
+				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
 			]
 		}
 	],
@@ -225,8 +227,8 @@ const jizdni_rad_template = {
 				2240
 			],
 			zastavky: [
-				{name: "Hradec Králové hl.n.", time: 0},
-				{name: "Všestary", time: 0},
+				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
+				{ name: "Všestary", time: 0, nastupiste: ""},
 			]
 		}
 	],

@@ -58,6 +58,8 @@ import DirectionsBusFilledTwoToneIcon from '@mui/icons-material/DirectionsBusFil
 
 import TrainTwoToneIcon from '@mui/icons-material/TrainTwoTone';
 
+import Badge from '@mui/material/Badge';
+
 const _ = require('lodash');
 
 
@@ -109,11 +111,14 @@ function najdi(zacatek, konec, cas) {
 		typ += " " + spoj.cislo_linky;
 	}
 
+	console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
+
 	let cesta = [
 		[
 			typ,
 			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`
+			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`,
+			spoj.zastavky.filter(f => f.name != zacatek)[0].nastupiste
 		],
 		[...(zastavky.map(z => z.name))]
 	]
@@ -184,7 +189,7 @@ function parse(storage, object, zacatek = "", depth = 0) {
 	}
 }
 
-function najdi_spojeni (destinace, cas, controls) {
+function najdi_spojeni (zacatek, destinace, cas, controls) {
 
 	if(destinace == "Pardubice") {
 		controls.setDlgTitle("Jseš kokot?");
@@ -200,15 +205,31 @@ function najdi_spojeni (destinace, cas, controls) {
 
 	log(cas)
 	let time = cas["$H"] * 60 + cas["$M"];
- 
-	let cesty = {
-		"Pardubice-Pardubičky" : {odjezd: najdi("Pardubice-Pardubičky", destinace, time)},
-		"K Nemocnici"          : {odjezd: najdi("K Nemocnici"         , destinace, time)},
-		"Štrossova"            : {odjezd: najdi("Štrossova"           , destinace, time)},
-		"Na Okrouhlíku"        : {odjezd: najdi("Na Okrouhlíku"       , destinace, time)},
-		"Zdravotnická škola"   : {odjezd: najdi("Zdravotnická škola"  , destinace, time)},
-		"Zámeček"              : {odjezd: najdi("Zámeček"             , destinace, time)}
-	};
+
+	let cesty = {}
+
+	switch(zacatek) {
+	case "DELTA":
+	case "": {
+		cesty["Pardubice-Pardubičky"] = { odjezd: najdi("Pardubice-Pardubičky", destinace, time) };
+		cesty["K Nemocnici"         ] = { odjezd: najdi("K Nemocnici"         , destinace, time) };
+		cesty["Štrossova"           ] = { odjezd: najdi("Štrossova"           , destinace, time) };
+		cesty["Na Okrouhlíku"       ] = { odjezd: najdi("Na Okrouhlíku"       , destinace, time) };
+		cesty["Nemocnice"           ] = { odjezd: najdi("Nemocnice"           , destinace, time) };
+		break;
+	}
+
+	case "Zdrávka": {
+		cesty["Zdravotnická škola"  ] = { odjezd: najdi("Zdravotnická škola"  , destinace, time) };
+		cesty["Zámeček"             ] = { odjezd: najdi("Zámeček"             , destinace, time) };
+		break;
+	}
+
+	default: {
+		cesty[zacatek] = {odjezd: najdi(zacatek, destinace, time)};
+		break;
+	}
+	}
 
 	log(cesty, JSON.stringify(cesty))
 
@@ -241,17 +262,17 @@ const compareArrays = (a, b) =>
 
 function typeToIcon(params) {
 	if (params.value.startsWith('Autobus')) {
-		return <><DirectionsBusFilledTwoToneIcon /> {params.value.split(' ')[1]}</>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon /></Badge>;
 	} else if(params.value.startsWith('Vlak')) {
 		return <TrainTwoToneIcon />;
 	} else if(params.value.startsWith('Trolejbus')) {
-		return <><DirectionsBusFilledTwoToneIcon /> {params.value.split(' ')[1]}</>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon /></Badge>;
 	}
 }
 
 function App() {
 
-	const [selectedDest, setSelectedDest] = useState("");
+	const [selectedDest, setSelectedDest] = useState("Hradec Králové hl.n.");
 	const [open, setOpen] = useState(false);
 	const [dlgContent, setDlgContent] = useState("");
 	const [dlgTitle, setDlgTitle] = useState("");
@@ -262,7 +283,7 @@ function App() {
 
 	const [time, setTime] = useState(dayjs());
 
-	const apiRef = useGridApiRef();
+	const [start, setStart] = useState("DELTA");
 
 	return (
 	<div className="application">
@@ -303,8 +324,16 @@ function App() {
 	<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
 		<Autocomplete
 			disablePortal
-			id="destination-input"
+			defaultValue="DELTA"
+			options={['DELTA', 'Zdrávka'].concat(Object.keys(jizdni_rad).filter(n => !['Štrossova', 'K Nemocnici', 'Nemocnice', 'Na Okrouhlíku', 'Pardubice-Pardubičky', 'Zámeček', 'Zdravotnická škola'].includes(n) && typeof jizdni_rad[n] != 'string'))}
+			onChange={(event, value) => setStart(value)}
+			sx={{ width: 250 }}
+			renderInput={(params) => <TextField {...params} label="Výchozí stanice" />}
+		/>
+		<Autocomplete
+			disablePortal
 			options={destinace}
+			defaultValue="Hradec Králové hl.n."
 			onChange={(event, value) => setSelectedDest(value)}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
@@ -329,7 +358,7 @@ function App() {
 		<Button
 			variant="contained"
 			size="large"
-			onClick={() => najdi_spojeni(selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
+			onClick={() => najdi_spojeni(start, selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
 			startIcon={<SearchIcon />}
 		>
 			Hledej, šmudlo!
@@ -358,8 +387,8 @@ function App() {
 			hideFooterSelectedRowCount={true}
 			hideFooterPagination={true}
 			hideFooter={true}
-			autosizeOnMount={true}
 			disableColumnResize={true}
+			sx={{'& .MuiDataGrid-columnSeparator': {display: 'none'}}}
 			columns={[
 				{
 					resizable: false,
@@ -368,10 +397,14 @@ function App() {
 					field: 'typ',
 					renderCell: (params) => {
 						return typeToIcon(params);
-    				}
+    				},
+    				width: 60,
+    				align: 'center',
+    				headerAlign: 'center',
     			},
-				{ sortable: false, headerName: 'Odjezd', field: 'odjezd' },
-				{ sortable: false, headerName: 'Příjezd', field: 'prijezd' },
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'N/K', field: 'nastupiste', width: 40 },
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Odjezd', field: 'odjezd', width: 72 },
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Příjezd', field: 'prijezd', width: 72 },
 				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
 			]}
 	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
@@ -379,9 +412,10 @@ function App() {
 	  			typ: entry[0][0],
 				odjezd: entry[0][1],
 				prijezd: entry[0][2],
+				nastupiste: entry[0][3],
 				cesta: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')
 	  		}})}
-	  		rowHeight={38}
+	  		rowHeight={48}
 		/>
 		</Card>
 		</div>
