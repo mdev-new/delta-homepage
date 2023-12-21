@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals';
 
 import { LicenseInfo } from "@mui/x-license-pro";
 LicenseInfo.setLicenseKey(
-  '7684ecd9a2d817a3af28ae2a8682895aTz03NjEwMSxFPTE3MjgxNjc2MzEwMDAsUz1wcm8sTE09c3Vic2NyaXB0aW9uLEtWPTI='
+  "369a1eb75b405178b0ae6c2b51263cacTz03MTMzMCxFPTE3MjE3NDE5NDcwMDAsUz1wcm8sTE09c3Vic2NyaXB0aW9uLEtWPTI="
 );
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

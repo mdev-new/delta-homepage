@@ -40,7 +40,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import Card from '@mui/material/Card';
 
 import Box from '@mui/material/Box';
 
@@ -51,6 +51,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import log from './log.js'
 
 import { jizdni_rad } from './jr.js'
+
+import Chip from '@mui/material/Chip';
+
+import DirectionsBusFilledTwoToneIcon from '@mui/icons-material/DirectionsBusFilledTwoTone';
+
+import TrainTwoToneIcon from '@mui/icons-material/TrainTwoTone';
 
 const _ = require('lodash');
 
@@ -233,6 +239,15 @@ function najdi_spojeni (destinace, cas, controls) {
 const compareArrays = (a, b) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
+function typeToIcon(params) {
+	if (params.value.startsWith('Autobus')) {
+		return <><DirectionsBusFilledTwoToneIcon /> {params.value.split(' ')[1]}</>;
+	} else if(params.value.startsWith('Vlak')) {
+		return <TrainTwoToneIcon />;
+	} else if(params.value.startsWith('Trolejbus')) {
+		return <><DirectionsBusFilledTwoToneIcon /> {params.value.split(' ')[1]}</>;
+	}
+}
 
 function App() {
 
@@ -246,6 +261,8 @@ function App() {
 	const handleClose = () => setOpen(false);
 
 	const [time, setTime] = useState(dayjs());
+
+	const apiRef = useGridApiRef();
 
 	return (
 	<div className="application">
@@ -330,7 +347,7 @@ function App() {
 		Object.entries(result).filter(([k, v]) => v[0].length != 0).map(([stanice, cesty]) => (
 
 		<div className="hello">
-		<Paper>
+		<Card>
 		<DataGridPro
 			autoHeight
 			disableColumnFilter
@@ -342,11 +359,20 @@ function App() {
 			hideFooterPagination={true}
 			hideFooter={true}
 			autosizeOnMount={true}
+			disableColumnResize={true}
 			columns={[
-				{ resizable: false, sortable: false, headerName: 'Typ', field: 'typ' },
-				{ resizable: false, sortable: false, headerName: 'Odjezd', field: 'odjezd' },
-				{ resizable: false, sortable: false, headerName: 'Příjezd', field: 'prijezd' },
-				{ resizable: false, sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
+				{
+					resizable: false,
+					sortable: false,
+					headerName: 'Typ',
+					field: 'typ',
+					renderCell: (params) => {
+						return typeToIcon(params);
+    				}
+    			},
+				{ sortable: false, headerName: 'Odjezd', field: 'odjezd' },
+				{ sortable: false, headerName: 'Příjezd', field: 'prijezd' },
+				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
 			]}
 	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
 	  			id: Math.random(),
@@ -357,7 +383,7 @@ function App() {
 	  		}})}
 	  		rowHeight={38}
 		/>
-		</Paper>
+		</Card>
 		</div>
 
 		))
