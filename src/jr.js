@@ -2,6 +2,8 @@
 
 // todo presnost v casech jizd
 
+import log from './log.js'
+
 const tc = t => {
 
 	let h = Math.floor(t / 100)
@@ -240,7 +242,7 @@ const _process = jizdni_rad => {
 
 	for (const [k, v] of Object.entries(jizdni_rad)) {
 		for (const [k1, v1] of Object.entries(v)) {
-			console.log(v1.casy)
+			log(v1.casy)
 			for (const v2 of v1.casy) {
 				let _v1 = {...v1};
 				delete _v1["casy"];
@@ -271,4 +273,4 @@ const _process = jizdni_rad => {
 
 export const jizdni_rad = _process(jizdni_rad_template)
 
-console.log(jizdni_rad)
+log(jizdni_rad)

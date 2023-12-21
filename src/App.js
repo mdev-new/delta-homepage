@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
 import { Helmet } from "react-helmet";
 
@@ -19,7 +19,9 @@ import Slide from '@mui/material/Slide';
 
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import { DataGrid } from '@mui/x-data-grid';
+
+import { useGridApiRef } from '@mui/x-data-grid';
+import { DataGridPro, GridApiPro } from '@mui/x-data-grid-pro';
 
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -46,6 +48,7 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+import log from './log.js'
 
 import { jizdni_rad } from './jr.js'
 
@@ -81,7 +84,7 @@ function najdi(zacatek, konec, cas) {
 
 	let linka = jizdni_rad[zacatek]; // toto je garantovano
 
-	console.log("linka", linka)
+	log("linka", linka)
 
 	let casy = linka.map(odjezd => odjezd.cas);
 	let nejblizsi_odjezd = closest(casy, cas);
@@ -150,9 +153,9 @@ function parse(storage, object, zacatek = "", depth = 0) {
 
 			let _zacatek = (depth == 0) ? key : zacatek;
 
-			if(!(_zacatek in storage)) storage[_zacatek] = [[]];
+			if(!(_zacatek in storage)) storage[_zacatek] = [];
 			let next = parse(storage, value, _zacatek, depth + 1);
-			//console.log("next", next)
+			//log("next", next)
 			if(next != null && next != undefined) {
 				storage[_zacatek].push(next)
 			}
@@ -171,7 +174,7 @@ function parse(storage, object, zacatek = "", depth = 0) {
 			return next
 		}
 	} else {
-		console.log("Something went wrong?")
+		log("Something went wrong?")
 	}
 }
 
@@ -189,7 +192,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		return;
 	}
 
-	console.log(cas)
+	log(cas)
 	let time = cas["$H"] * 60 + cas["$M"];
  
 	let cesty = {
@@ -201,7 +204,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		"Zámeček"              : {odjezd: najdi("Zámeček"             , destinace, time)}
 	};
 
-	console.log(cesty, JSON.stringify(cesty))
+	log(cesty, JSON.stringify(cesty))
 
 	let objekt = {}
 	parse(objekt, cesty)
@@ -221,7 +224,7 @@ function najdi_spojeni (destinace, cas, controls) {
 		return v;
 	})
 
-	console.log("res", res)
+	log("res", res)
 
 	controls.setResult(res)
 
@@ -242,11 +245,7 @@ function App() {
 
 	const handleClose = () => setOpen(false);
 
-	const date = new Date();
-	//const [time, setTime] = useState(dayjs(`${date.getHours()}:${date.getMinutes()}`, 'HH:MM'));
 	const [time, setTime] = useState(dayjs());
-
-	let width = 650;
 
 	return (
 	<div className="application">
@@ -268,7 +267,6 @@ function App() {
 	<h1>Delta Jede Domů</h1>
 	<h2>Najdi si efektivní spojení domů</h2>
 
-	{/* Dialog pro kokoty */}
 	<Dialog
 		open={open}
 		onClose={handleClose}
@@ -331,13 +329,24 @@ function App() {
 	{
 		Object.entries(result).filter(([k, v]) => v[0].length != 0).map(([stanice, cesty]) => (
 
-		<Paper sx>
-		<DataGrid
+		<div className="hello">
+		<Paper>
+		<DataGridPro
+			autoHeight
+			disableColumnFilter
+			disableColumnMenu
+			disableColumnSelector
+			disableDensitySelector
+			disableRowSelectionOnClick
+			hideFooterSelectedRowCount={true}
+			hideFooterPagination={true}
+			hideFooter={true}
+			autosizeOnMount={true}
 			columns={[
-				{ headerName: 'Typ', field: 'typ', flex: 1, minWidth: 150 },
-				{ headerName: 'Odjezd ze zastávky', field: 'odjezd', flex: 1, minWidth: 150, },
-				{ headerName: 'Příjezd do cíle', field: 'prijezd', flex: 0.85, minWidth: 125 },
-				{ headerName: 'Trasa', field: 'cesta', flex: 2.5, minWidth: 375 },
+				{ resizable: false, sortable: false, headerName: 'Typ', field: 'typ' },
+				{ resizable: false, sortable: false, headerName: 'Odjezd', field: 'odjezd' },
+				{ resizable: false, sortable: false, headerName: 'Příjezd', field: 'prijezd' },
+				{ resizable: false, sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
 			]}
 	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
 	  			id: Math.random(),
@@ -349,6 +358,7 @@ function App() {
 	  		rowHeight={38}
 		/>
 		</Paper>
+		</div>
 
 		))
 	}
