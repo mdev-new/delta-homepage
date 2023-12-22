@@ -20,8 +20,7 @@ import Slide from '@mui/material/Slide';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 
-import { useGridApiRef } from '@mui/x-data-grid';
-import { DataGridPro, GridApiPro } from '@mui/x-data-grid-pro';
+import { DataGrid } from '@mui/x-data-grid';
 
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -111,7 +110,7 @@ function najdi(zacatek, konec, cas) {
 		typ += " " + spoj.cislo_linky;
 	}
 
-	console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
+	//console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
 
 	let cesta = [
 		[
@@ -377,7 +376,7 @@ function App() {
 
 		<div className="hello">
 		<Card>
-		<DataGridPro
+		<DataGrid
 			autoHeight
 			disableColumnFilter
 			disableColumnMenu
