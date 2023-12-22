@@ -20,8 +20,7 @@ import Slide from '@mui/material/Slide';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 
-import { useGridApiRef } from '@mui/x-data-grid';
-import { DataGridPro, GridApiPro } from '@mui/x-data-grid-pro';
+import { DataGrid } from '@mui/x-data-grid';
 
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -63,34 +62,38 @@ import Badge from '@mui/material/Badge';
 const _ = require('lodash');
 
 
-const destinace = [
-        "Pardubice",
-        "Hradec Králové hl.n.",
-       // "Opatovice nad Labem",
-       // "Kolín",
-       // "Choceň",
-       // "Ústí nad Orlicí",
-        "Všestary",
-       // "Žamberk",
-       // "Přelouč",
-       // "Chrudim"
-];
+const destinace = {
+	"Intr": [],
+	"Zdávka": ["Zdravotnická škola", "Zámeček"],
+	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
+	"Hradec Králové hl.n.": ["Hradec Králové hl.n."],
+	// "Opatovice nad Labem",
+	// "Kolín",
+	// "Choceň",
+	// "Ústí nad Orlicí",
+	"Všestary": ["Všestary"],
+	// "Žamberk",
+	// "Přelouč",
+	// "Chrudim"
+};
 
 //https://stackoverflow.com/questions/14810506/map-function-for-objects-instead-of-arrays
 const objectMap = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]))
 
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
+const compareArrays = (a, b) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
 
 const closest = (array, pivot) => array.sort((a, b) => a - b).filter(e => (e >= pivot))[0];
 
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-function najdi(zacatek, konec, cas) {
+function najdi(jr, zacatek, konec, cas) {
 
-	if(!(zacatek in jizdni_rad)) return null
+	if(!(zacatek in jr)) return null
 
-	let linka = jizdni_rad[zacatek]; // toto je garantovano
+	let linka = jr[zacatek]; // toto je garantovano
 
 	log("linka", linka)
 
@@ -111,30 +114,34 @@ function najdi(zacatek, konec, cas) {
 		typ += " " + spoj.cislo_linky;
 	}
 
-	console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
-
-	let cesta = [
-		[
-			typ,
-			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`,
-			spoj.zastavky.filter(f => f.name != zacatek)[0].nastupiste
-		],
-		[...(zastavky.map(z => z.name))]
-	]
+	//console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
 
 	let _moznosti = {}
 
+	let _zastavky = [...zastavky];
+	jr[zacatek] = linka.filter(spoj => !compareArrays(spoj.zastavky, _zastavky))
+
+
 	for(const stanice of zastavky.slice(1)) {
+
+		let cesta = [
+			[
+				typ,
+				`${hours_minutes(spoj.cas)}`,
+				`${hours_minutes(spoj.cas+stanice.time)}`,
+				stanice.nastupiste
+			],
+			zastavky.map(z => z.name)
+		]
 
 		if(stanice.name == konec) {
 			_moznosti[stanice.name] = {prijezd: cesta};
 			break;
 		}
 
-		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice.name] : stanice.name;
+		let s = (typeof jr[stanice.name] == 'string') ? jr[stanice.name] : stanice.name;
 
-		let found = najdi(s, konec, spoj.cas + stanice.time)
+		let found = najdi({...jr}, s, konec, spoj.cas + stanice.time)
 
 		if(found != null) { // found == null = tudy cesta fakt nevede
 
@@ -154,6 +161,7 @@ function najdi(zacatek, konec, cas) {
 
 function parse(storage, object, zacatek = "", depth = 0) {
 	if(object == undefined) return null;
+	if(object == null) return null;
 
 	if((!("odjezd" in object)) && ("prijezd" in object)) { // konecna
 
@@ -189,16 +197,11 @@ function parse(storage, object, zacatek = "", depth = 0) {
 	}
 }
 
-function najdi_spojeni (zacatek, destinace, cas, controls) {
+function najdi_spojeni (zacatek, d, cas, controls) {
 
-	if(destinace == "Pardubice") {
+	if(zacatek == d) {
 		controls.setDlgTitle("Jseš kokot?");
 		controls.setDlgContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		controls.setOpen(true);
-		return;
-	} else if(destinace == "") {
-		controls.setDlgTitle("Jseš kokot?");
-		controls.setDlgContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama (mottl rizz)");
 		controls.setOpen(true);
 		return;
 	}
@@ -208,28 +211,9 @@ function najdi_spojeni (zacatek, destinace, cas, controls) {
 
 	let cesty = {}
 
-	switch(zacatek) {
-	case "DELTA":
-	case "": {
-		cesty["Pardubice-Pardubičky"] = { odjezd: najdi("Pardubice-Pardubičky", destinace, time) };
-		cesty["K Nemocnici"         ] = { odjezd: najdi("K Nemocnici"         , destinace, time) };
-		cesty["Štrossova"           ] = { odjezd: najdi("Štrossova"           , destinace, time) };
-		cesty["Na Okrouhlíku"       ] = { odjezd: najdi("Na Okrouhlíku"       , destinace, time) };
-		cesty["Nemocnice"           ] = { odjezd: najdi("Nemocnice"           , destinace, time) };
-		break;
-	}
-
-	case "Zdrávka": {
-		cesty["Zdravotnická škola"  ] = { odjezd: najdi("Zdravotnická škola"  , destinace, time) };
-		cesty["Zámeček"             ] = { odjezd: najdi("Zámeček"             , destinace, time) };
-		break;
-	}
-
-	default: {
-		cesty[zacatek] = {odjezd: najdi(zacatek, destinace, time)};
-		break;
-	}
-	}
+	destinace[zacatek].forEach(x => {
+		cesty[x] = { odjezd: najdi({...jizdni_rad}, x, d, time) };
+	})
 
 	log(cesty, JSON.stringify(cesty))
 
@@ -251,14 +235,11 @@ function najdi_spojeni (zacatek, destinace, cas, controls) {
 		return v;
 	})
 
-	log("res", res)
+	console.log("res", res, cesty)
 
 	controls.setResult(res)
 
 };
-
-const compareArrays = (a, b) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);
 
 function typeToIcon(params) {
 	if (params.value.startsWith('Autobus')) {
@@ -325,14 +306,14 @@ function App() {
 		<Autocomplete
 			disablePortal
 			defaultValue="DELTA"
-			options={['DELTA', 'Zdrávka'].concat(Object.keys(jizdni_rad).filter(n => !['Štrossova', 'K Nemocnici', 'Nemocnice', 'Na Okrouhlíku', 'Pardubice-Pardubičky', 'Zámeček', 'Zdravotnická škola'].includes(n) && typeof jizdni_rad[n] != 'string'))}
+			options={Object.keys(destinace)}
 			onChange={(event, value) => setStart(value)}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Výchozí stanice" />}
 		/>
 		<Autocomplete
 			disablePortal
-			options={destinace}
+			options={Object.keys(destinace)}
 			defaultValue="Hradec Králové hl.n."
 			onChange={(event, value) => setSelectedDest(value)}
 			sx={{ width: 250 }}
@@ -377,7 +358,7 @@ function App() {
 
 		<div className="hello">
 		<Card>
-		<DataGridPro
+		<DataGrid
 			autoHeight
 			disableColumnFilter
 			disableColumnMenu
@@ -397,25 +378,25 @@ function App() {
 					field: 'typ',
 					renderCell: (params) => {
 						return typeToIcon(params);
-    				},
-    				width: 60,
-    				align: 'center',
-    				headerAlign: 'center',
-    			},
+					},
+					width: 60,
+					align: 'center',
+					headerAlign: 'center',
+				},
 				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'N/K', field: 'nastupiste', width: 40 },
 				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Odjezd', field: 'odjezd', width: 72 },
 				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Příjezd', field: 'prijezd', width: 72 },
 				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
 			]}
-	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
-	  			id: Math.random(),
-	  			typ: entry[0][0],
+			rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
+				id: Math.random(),
+				typ: entry[0][0],
 				odjezd: entry[0][1],
 				prijezd: entry[0][2],
 				nastupiste: entry[0][3],
 				cesta: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')
-	  		}})}
-	  		rowHeight={48}
+			}})}
+			rowHeight={48}
 		/>
 		</Card>
 		</div>
