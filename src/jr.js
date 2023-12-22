@@ -46,7 +46,7 @@ const jizdni_rad_template = {
 				{ name: "Krajský úřad", time: 4, nastupiste: ""},
 				{ name: "Náměstí Republiky", time: 6, nastupiste: ""},
 				{ name: "Masarykovo náměstí", time: 8, nastupiste: ""},
-				{ name: "U Marka", time: 10, nastupiste: ""},
+				{ name: "U Marka", time: 10, nastupiste: "2"},
 				{ name: "Hlavní nádraží", time: 12, nastupiste: ""},
 			]
 		}
@@ -83,6 +83,9 @@ const jizdni_rad_template = {
 				{ name: "Hlavní nádraží", time: 0, nastupiste: ""},
 			]
 		}
+	],
+
+	"Nemocnice": [
 	],
 
 	"Na Okrouhlíku": [
@@ -156,19 +159,106 @@ const jizdni_rad_template = {
 	//"Náměstí Republiky": [ // todo
 	//],
 
-	//"Krajský úřad"
+	//"Krajský úřad": [],
 
 	"Masarykovo náměstí": [ // todo
 		{
 			typ: "bus",
-			cislo_linky: 120,
-			casy: [1924],
+			cislo_linky: 28,
+			casy: [
+				435,
+				514, 537, 558,
+				635,
+				708, 745,
+				923,
+				1022,
+				1134,
+				1250,
+				1313, 1344,
+				1416, 1453,
+				1513, 1538,
+				1625, 1658,
+				1728,
+				1801, 1846,
+				1916,
+				2128
+			],
 			zastavky: [
 				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
-				{ name: "Hrobice", time: 0, nastupiste: ""},
-				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 2, nastupiste: "3"},
+				{ name: "Krajský úřad", time: 1, nastupiste: "3"},
+				{ name: "U Kostelíčka", time: 1, nastupiste: ""},
+				{ name: "Štrossova", time: 2, nastupiste: ""},
+				{ name: "Nemocnice", time: 1, nastupiste: ""},
+				{ name: "Kyjevská", time: 1, nastupiste: ""},
+				{ name: "Pardubičky,točna", time: 1, nastupiste: ""},
+				{ name: "Průmyslová", time: 1, nastupiste: ""},
+				{ name: "ERA,Zámeček", time: 1, nastupiste: ""},
+				{ name: "Zdravotnická škola", time: 2, nastupiste: ""},
+				{ name: "Zámeček", time: 2, nastupiste: ""},
+
 			]
 		},
+		/*{
+			typ: "bus",
+			cislo_linky: 27,
+			casy: [
+				525,
+				608, 632,
+				708, 732,
+				830,
+				930,
+				1030,
+				1130,
+				1230,
+				1330,
+				1432,
+				1508,
+				1532,
+				1608,
+				1645,
+				1900
+			],
+			zastavky: [
+				{ name: "K Nemocnici", time: 0, nastupiste: ""},
+				{ name: "Karla IV.", time: 0, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 0, nastupiste: ""},
+				//{name: "Sukova", time: 0},
+				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
+				{ name: "U Marka", time: 0, nastupiste: ""},
+				{ name: "Hlavní nádraží", time: 0, nastupiste: ""},
+			]
+		},
+		{
+			typ: "bus",
+			cislo_linky: 12,
+			casy: [
+				525,
+				608, 632,
+				708, 732,
+				830,
+				930,
+				1030,
+				1130,
+				1230,
+				1330,
+				1432,
+				1508,
+				1532,
+				1608,
+				1645,
+				1900
+			],
+			zastavky: [
+				{ name: "K Nemocnici", time: 0, nastupiste: ""},
+				{ name: "Karla IV.", time: 0, nastupiste: ""},
+				{ name: "Náměstí Republiky", time: 0, nastupiste: ""},
+				//{name: "Sukova", time: 0},
+				{ name: "Masarykovo náměstí", time: 0, nastupiste: ""},
+				{ name: "U Marka", time: 0, nastupiste: ""},
+				{ name: "Hlavní nádraží", time: 0, nastupiste: ""},
+			]
+		}*/
 	],
 
 	"Pardubice hl.n.": [ // todo
@@ -228,10 +318,67 @@ const jizdni_rad_template = {
 			],
 			zastavky: [
 				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
-				{ name: "Všestary", time: 0, nastupiste: ""},
+				{ name: "Všestary", time: 8, nastupiste: "3"},
+			]
+		},
+		{
+			typ: "vlak",
+			casy: [
+				26,
+				426,
+				504, 532,
+				604, 633, 639,
+				702, 732,
+				804, 837,
+				904, 937,
+				1004, 1037,
+				1104, 1137,
+				1204, 1237,
+				1304, 1337,
+				1404, 1437,
+				1500, 1504, 1537,
+				1604, 1637,
+				1704, 1737,
+				1804, 1837,
+				1904, 1937,
+				2004, 2037,
+				2104, 2137,
+				2204, 2228
+			],
+			zastavky: [
+				{ name: "Hradec Králové hl.n.", time: 0, nastupiste: ""},
+				{ name: "Pardubice hl.n.", time: 18, nastupiste: ""},
 			]
 		}
 	],
+
+	"Všestary": [
+		{
+			typ: "vlak",
+			casy: [
+				545,
+				645,
+				745,
+				845,
+				945,
+				1145,
+				1245,
+				1345,
+				1445,
+				1545,
+				1645,
+				1745,
+				1845,
+				1945,
+				2045,
+				2145,
+			],
+			zastavky: [
+				{ name: "Všestary", time: 0, nastupiste: ""},
+				{ name: "Hradec Králové hl.n.", time: 8, nastupiste: ""},
+			]
+		},
+	]
 };
 
 const _process = jizdni_rad => {
