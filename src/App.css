@@ -15,6 +15,12 @@ h1 {
   -webkit-margin-after: 0px;
   }
 
+h4 {
+    margin: 0px;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -32,9 +38,9 @@ h1 {
 
 .hello {
   display: inline-block;
-  width: 60%;
+  width: 40%;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 500px) {
   .hello { width: 100%; }
 }

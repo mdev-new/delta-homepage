@@ -46,6 +46,12 @@ import Popover from '@mui/material/Popover';
 
 import Badge from '@mui/material/Badge';
 
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+
+import Paper from '@mui/material/Paper';
+
+
 import Slider from 'react-slide-out';
 import 'react-slide-out/lib/index.css';
 
@@ -57,6 +63,14 @@ import { jizdni_rad_z_delty, jizdni_rad_na_deltu } from './jr.js'
 import { useGeolocated } from "react-geolocated";
 import { MapProvider, Map, MouseControl, KeyboardControl, ZoomControl, Marker, MarkerLayer, BASE_LAYERS} from 'mapy-cz-react';
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import CommentIcon from '@mui/icons-material/Comment';
+
+import { useTheme } from '@mui/material/styles';
 
 const delta_stanice = {
 	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
@@ -137,6 +151,8 @@ function App() {
 	const [result, setResult] = useState([]);
 	const [markers, setMarkers] = useState([]);
 
+	const theme = useTheme()
+
 	const handleClose = () => setDialog(prev => ({...prev, open: false}));
 
 	const {
@@ -216,13 +232,13 @@ function App() {
 			title={sidebar.title}
 			footer={
 				<div style={{padding: '15px'}}>
-					<Button variant="outlined" onClick={() => setSidebar(false)}>Zavřít</Button>
+					<Button variant="contained" onClick={() => setSidebar(false)}>Zavřít</Button>
 				</div>
 			}
 			isOpen={sidebar.open}
 			onOutsideClick={() => setSidebar(false)}
 		>
-		<center><h3>Mapka</h3></center>
+		<Typography><center><p>Mapka</p></center></Typography>
 		<MapProvider center={{lat: coords.latitude, lng: coords.longitude }} mapLayers={[BASE_LAYERS.TURIST_NEW]} zoom={16} >
 			<Map height="100%">
 				<MarkerLayer>
@@ -307,7 +323,46 @@ function App() {
 	{
 		Object.entries(result).filter(([k, v]) => v[0].length != 0).map(([stanice, cesty]) => (
 
-		<div className="hello">
+		<>
+		<Card className="hello">
+			<CardContent>
+				<Typography><center><h4>{stanice}</h4></center></Typography>
+			</CardContent>
+		{
+			cesty.filter(c => !_.isEmpty(c)).map(entry => 
+					<Box>
+						<Card>
+							<CardActionArea onClick={() => setSidebar(prev => ({...prev, open: true, title: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')}))}>
+								<CardContent>
+									<Typography>
+										<List sx={{ width: '100%' }}>
+										{
+											[entry[1][0], entry[1][entry[1].length-1]].map((value) => {
+
+												return (
+													<ListItem
+														disablePadding
+													>
+														<ListItemIcon>
+															{typeToIcon({value: entry[0][0]})}
+														</ListItemIcon>
+														<ListItemText primary={`${value} ${entry[0][1]}`} />
+													</ListItem>
+												);
+											})
+										}
+										</List>
+									</Typography>
+								</CardContent>
+							</CardActionArea>
+						</Card>
+					</Box>
+			)
+		}
+		</Card>
+		
+
+		{/*<div className="hello">
 		<Card>
 		<DataGrid
 			autoHeight
@@ -346,8 +401,8 @@ function App() {
 			}})}
 			rowHeight={58}
 		/>
-		</Card>
-		</div>
+		</Card>*/}
+		</>
 
 		))
 	}
