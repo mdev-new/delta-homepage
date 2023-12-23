@@ -128,85 +128,48 @@ const DoubleLabeledSwitch = ({labelLeft, labelRight, collapsed, setCollapsed}) =
 	);
 }
 
-function MousePopover({baseText, popOver}) {
-	const [anchorEl, setAnchorEl] = React.useState(null);
-
-	const handlePopoverOpen = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handlePopoverClose = () => {
-		setAnchorEl(null);
-	};
-
-	const open = Boolean(anchorEl);
-
-	return (
-		<div>
-			<Typography
-				aria-owns={open ? 'mouse-over-popover' : undefined}
-				aria-haspopup="true"
-				onClick={handlePopoverOpen}
-				onDoubleClickCapture={handlePopoverClose}
-			>
-				{baseText}
-			</Typography>
-			<Popover
-				id="mouse-over-popover"
-				sx={{
-					pointerEvents: 'none'
-				}}
-				open={open}
-				anchorEl={anchorEl}
-				PaperProps={{
-				 	style: { width: '50%' },
-				}}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'left',
-				}}
-				onClose={handlePopoverClose}
-				disableRestoreFocus
-			>
-				{popOver}
-			</Popover>
-		</div>
-	);
-}
-
 function App() {
 
-	const [selectedDest, setSelectedDest] = useState("Hradec Králové hl.n.");
-	const [open, setOpen] = useState(false);
-	const [dlgContent, setDlgContent] = useState("");
-	const [dlgTitle, setDlgTitle] = useState("");
+	const [dialog, setDialog] = useState({open: false, content: "", title: ""})
+	const [sidebar, setSidebar] = useState({open: false, title: ""});
+	const [searchParams, setSearchParams] = useState({time: dayjs(), start: "DELTA", dest: "Hradec Králové hl.n.", zDelty: true});
 
 	const [result, setResult] = useState([]);
+	const [markers, setMarkers] = useState([]);
 
-	const handleClose = () => setOpen(false);
+	const handleClose = () => setDialog(prev => ({...prev, open: false}));
 
-	const [time, setTime] = useState(dayjs());
+	const {
+		coords,
+		isGeolocationAvailable,
+		isGeolocationEnabled
+	} = useGeolocated({
+		positionOptions: {
+			enableHighAccuracy: true,
+		},
+		userDecisionTimeout: 5000,
+	});
 
-	const [start, setStart] = useState("DELTA");
+	function renderCell (params) {
+		let c = params.value.join(' - ')
+		return <a href='#' onClick={(e) => {
+			e.preventDefault()
+			setMarkers(
+				Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
+					if(typeof v != 'string') {
+						return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: v.info.coords[1], longitude: v.info.coords[0] }} />
+					}
+					return <></>
+				}
+			))
+			setSidebar(prev => ({...prev, title: "Cesta " + c, open: true}))
+		}}>
+			{c}
+		</a>
+	}
 
-	const [zDelty, setZDelty] = useState(true);
-
-	const [sidebar, setSidebar] = useState(false);
-	const [sidebarTitle, setSidebarTitle] = useState("");
-
-	const [markers, setMarkers] = useState("")
-
-	const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-        useGeolocated({
-            positionOptions: {
-                enableHighAccuracy: false,
-            },
-            userDecisionTimeout: 5000,
-        });
+	const normalCellRender = (params) => <Typography>{params.value}</Typography>
+	const genericCell = {headerAlign: 'center', align: 'center', sortable: false, renderCell: normalCellRender}
 
 	return (
 	<div className="application">
@@ -229,15 +192,15 @@ function App() {
 	<h2>Najdi si efektivní spojení domů</h2>
 
 	<Dialog
-		open={open}
+		open={dialog.open}
 		onClose={handleClose}
 		sx={{margin: 'auto'}}
 		fullWidth={true}
 	>
-		<DialogTitle>{ dlgTitle }</DialogTitle>
+		<DialogTitle>{ dialog.title }</DialogTitle>
 		<DialogContent>
 			<DialogContentText className="box">
-				{ dlgContent }
+				{ dialog.content }
 			</DialogContentText>
 		</DialogContent>
 		<DialogActions>
@@ -245,21 +208,50 @@ function App() {
 		</DialogActions>
 	</Dialog>
 
+	{
+		!isGeolocationAvailable ? <font size="20rem" color="red">Geolokace není dostupná. Funkce budou omezeny.</font>
+		: !isGeolocationEnabled ? <font size="20rem" color="red">Geolokace není povolená. Funkce budou omezeny.</font>
+		: !coords ? <font size="20rem" color="red">Nelze získat pozici.</font>
+		: <Slider
+			title={sidebar.title}
+			footer={
+				<div style={{padding: '15px'}}>
+					<Button variant="outlined" onClick={() => setSidebar(false)}>Zavřít</Button>
+				</div>
+			}
+			isOpen={sidebar.open}
+			onOutsideClick={() => setSidebar(false)}
+		>
+		<center><h3>Mapka</h3></center>
+		<MapProvider center={{lat: coords.latitude, lng: coords.longitude }} mapLayers={[BASE_LAYERS.TURIST_NEW]} zoom={16} >
+			<Map height="100%">
+				<MarkerLayer>
+					<Marker enableCard={true} cardHeaderText="Moje pozice" coords={{ latitude: coords.latitude, longitude: coords.longitude }} />
+					{markers}
+				</MarkerLayer>
+				<ZoomControl />
+				<KeyboardControl />
+				<MouseControl zoom pan wheel />
+			</Map>
+		</MapProvider>
+		</Slider>
+	}
+
 	<Stack direction="column" spacing={2}>
 	<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
 		<Autocomplete
 			defaultValue="DELTA"
-			options={zDelty ? Object.keys(delta_stanice) : Object.keys(delta_prijezdy)}
-			onChange={(event, value) => setStart(value)}
+			options={searchParams.zDelty ? Object.keys(delta_stanice) : Object.keys(delta_prijezdy)}
+			onChange={(event, value) => setSearchParams(prev => ({...prev, start: value}))}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Výchozí stanice" />}
 		/>
 		<Autocomplete
 			disablePortal
-			disabled={!zDelty}
-			options={zDelty ? Object.keys(delta_prijezdy) : Object.keys(delta_prijezdy)}
+			disabled={!searchParams.zDelty}
+			options={searchParams.zDelty ? Object.keys(delta_prijezdy) : Object.keys(delta_prijezdy)}
 			defaultValue="Hradec Králové hl.n."
-			onChange={(event, value) => setSelectedDest(value)}
+			onChange={(event, value) => setSearchParams(prev => ({...prev, dest: value}))}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
 		/>
@@ -271,23 +263,34 @@ function App() {
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TimePicker
 					label="Čas odjezdu"
-					value={time}
+					value={searchParams.time}
 					ampm={false}
 					sx={{width: 120}}
-					onChange={(newTime) => setTime(newTime)}
+					onChange={(newTime) => setSearchParams(prev => ({...prev, time: newTime}))}
 				/>
 			</LocalizationProvider>
 
 			<FormControlLabel control={<Checkbox disabled />} label="Zobrazit ceny" />
 
 		</Stack>
-			<DoubleLabeledSwitch labelLeft="Na Deltu" labelRight="Z Delty" collapsed={zDelty} setCollapsed={setZDelty} />
+			<DoubleLabeledSwitch
+				labelLeft="Na Deltu"
+				labelRight="Z Delty"
+				collapsed={searchParams.zDelty}
+				setCollapsed={() => setSearchParams(prev => ({...prev, zDelty: true}))} />
 		</Stack>
 
 		<Button
 			variant="contained"
 			size="large"
-			onClick={() => najdi_spojeni(zDelty ? delta_odjezdy : destinace_na_deltu, start, !zDelty ? "DELTA" : selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
+			onClick={() =>
+				najdi_spojeni(
+					searchParams.zDelty ? delta_odjezdy : destinace_na_deltu,
+					searchParams.start,
+					!searchParams.zDelty ? "DELTA" : searchParams.dest,
+					searchParams.time,
+					{setDialog, setResult}
+				)}
 			startIcon={<SearchIcon />}
 		>
 			Hledej, šmudlo!
@@ -320,38 +323,18 @@ function App() {
 			sx={{'& .MuiDataGrid-columnSeparator': {display: 'none'}}}
 			columns={[
 				{
-					resizable: false,
-					sortable: false,
+					...genericCell,
 					headerName: 'Typ',
 					field: 'typ',
 					renderCell: (params) => {
 						return typeToIcon(params);
 					},
-					width: 70,
-					align: 'center',
-					headerAlign: 'center',
+					width: 60,
 				},
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'N/K', field: 'nastupiste', width: 1, renderCell: (params) => <Typography>{params.value}</Typography> },
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Odjezd', field: 'odjezd', width: 72, renderCell: (params) => <Typography>{params.value}</Typography> },
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Příjezd', field: 'prijezd', width: 72, renderCell: (params) => <Typography>{params.value}</Typography> },
-				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1, renderCell: (params) => {
-					let c = params.value.join(' - ')
-					return <a href='#' onClick={(e) => {
-						e.preventDefault()
-						setSidebarTitle("Cesta " + c)
-						setMarkers(
-							Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
-								if(typeof v != 'string') {
-									return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: v.info.coords[1], longitude: v.info.coords[0] }} />
-								}
-								return <></>
-							}
-						))
-						setSidebar(true)
-					}}>
-						{c}
-					</a>
-				}},
+				{ ...genericCell, headerName: 'N/K', field: 'nastupiste', width: 1 },
+				{ ...genericCell, headerName: 'Odjezd', field: 'odjezd', width: 72 },
+				{ ...genericCell, headerName: 'Příjezd', field: 'prijezd', width: 72 },
+				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1, renderCell: renderCell },
 			]}
 			rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
 				id: Math.random(),
@@ -369,55 +352,6 @@ function App() {
 		))
 	}
 	</Stack>
-
-	<br />
-	<br />
-
-	{
-		!isGeolocationAvailable ? <font size="20rem" color="red">Geolokace není dostupná. Funkce budou omezeny.</font>
-		: !isGeolocationEnabled ? <font size="20rem" color="red">Geolokace není povolená. Funkce budou omezeny.</font>
-		: !coords ? <font size="20rem" color="red">Nelze získat pozici.</font>
-		: <Slider
-			title={sidebarTitle}
-			footer={
-				<div style={{padding: '15px'}}>
-					<Button variant="outlined" onClick={() => setSidebar(false)}>Zavřít</Button>
-				</div>
-			}
-			isOpen={sidebar}
-			onOutsideClick={() => setSidebar(false)}
-		>
-		<center><h3>Mapka</h3></center>
-		<MapProvider center={{lat: coords.latitude, lng: coords.longitude }} mapLayers={[BASE_LAYERS.TURIST_NEW]} zoom={16} >
-			<Map height="100%">
-				<MarkerLayer>
-					<Marker enableCard={true} cardHeaderText="Moje pozice" coords={{ latitude: coords.latitude, longitude: coords.longitude }} />
-					{markers}
-					{/*
-						//[...new Set(Object.entries(jizdni_rad_z_delty).concat(Object.entries(jizdni_rad_na_deltu)))].map(st =>
-						Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
-							if(typeof v != 'string') {
-								return
-								<Marker
-									enableCard={true}
-									cardHeaderText={k}
-									coords={{
-										latitude: 0, longitude: 0
-									}
-									}
-								/>
-							}
-						}
-						)
-					*/}
-				</MarkerLayer>
-				<ZoomControl />
-				<KeyboardControl />
-				<MouseControl zoom pan wheel />
-			</Map>
-		</MapProvider>
-		</Slider>
-	}
 
 	</div>
 	);

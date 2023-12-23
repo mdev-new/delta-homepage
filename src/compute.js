@@ -116,13 +116,11 @@ function parse(storage, object, zacatek = "", depth = 0) {
 export function najdi_spojeni (destinace, zacatek, konec, cas, controls) {
 
 	if(konec == zacatek) {
-		controls.setDlgTitle("Jseš kokot?");
-		controls.setDlgContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		controls.setOpen(true);
+		controls.setDialog({title: "Jseš kokot?", content: "Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...", open: true})
 		return;
 	}
 
-	console.log(cas)
+	//console.log(cas)
 	let time = cas["$H"] * 60 + cas["$m"];
 
 	let cesty = {}
