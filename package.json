@@ -9,17 +9,14 @@
     "@mui/material": "^5.15.0",
     "@mui/x-data-grid": "^6.18.5",
     "@mui/x-date-pickers": "^6.18.5",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "dayjs": "^1.11.10",
     "lodash-es": "^4.17.21",
     "mapy-cz-react": "^0.1.1",
+    "million": "^2.6.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-geolocated": "^4.1.2",
     "react-helmet": "^6.1.0",
-    "react-mapycz": "^1.2.1",
     "react-scripts": "5.0.1",
     "react-slide-out": "^0.1.4",
     "web-vitals": "^2.1.4",
@@ -28,7 +25,6 @@
     "workbox-cacheable-response": "^6.6.0",
     "workbox-core": "^6.6.0",
     "workbox-expiration": "^6.6.0",
-    "workbox-google-analytics": "^6.6.0",
     "workbox-navigation-preload": "^6.6.0",
     "workbox-precaching": "^6.6.0",
     "workbox-range-requests": "^6.6.0",
@@ -37,13 +33,14 @@
     "workbox-streams": "^6.6.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@craco/craco": "^7.1.0"
   },
   "scripts": {
-    "start": "set HTTPS=true&&react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "set HTTPS=true&&craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [
