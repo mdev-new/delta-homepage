@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Helmet } from "react-helmet";
 
@@ -15,258 +15,167 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-import Slide from '@mui/material/Slide';
-
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-
 import { DataGrid } from '@mui/x-data-grid';
 
+import Card from '@mui/material/Card';
 
-import SearchIcon from '@mui/icons-material/Search';
+import Switch from '@mui/material/Switch';
 
-import IconButton from '@mui/material/IconButton';
+import dayjs from 'dayjs';
 
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-import dayjs from 'dayjs';
-
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Card from '@mui/material/Card';
-
-import Box from '@mui/material/Box';
-
-
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import log from './log.js'
+import Box from '@mui/material/Box';
+import FormLabel from '@mui/material/FormLabel';
 
-import { jizdni_rad } from './jr.js'
+import Typography from "@mui/material/Typography";
 
-import Chip from '@mui/material/Chip';
-
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
 import DirectionsBusFilledTwoToneIcon from '@mui/icons-material/DirectionsBusFilledTwoTone';
-
 import TrainTwoToneIcon from '@mui/icons-material/TrainTwoTone';
+
+import Popover from '@mui/material/Popover';
 
 import Badge from '@mui/material/Badge';
 
-const _ = require('lodash');
+import Slider from 'react-slide-out';
+import 'react-slide-out/lib/index.css';
+
+import _ from 'lodash-es';
+
+import { najdi_spojeni } from './compute.js'
+import { jizdni_rad_z_delty, jizdni_rad_na_deltu } from './jr.js'
+
+import { useGeolocated } from "react-geolocated";
+import { MapProvider, Map, MouseControl, KeyboardControl, ZoomControl, Marker, MarkerLayer, BASE_LAYERS} from 'mapy-cz-react';
 
 
-const destinace = [
-        "Pardubice",
-        "Hradec Králové hl.n.",
-       // "Opatovice nad Labem",
-       // "Kolín",
-       // "Choceň",
-       // "Ústí nad Orlicí",
-        "Všestary",
-       // "Žamberk",
-       // "Přelouč",
-       // "Chrudim"
-];
-
-//https://stackoverflow.com/questions/14810506/map-function-for-objects-instead-of-arrays
-const objectMap = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)]))
-
-const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
-
-
-const closest = (array, pivot) => array.sort((a, b) => a - b).filter(e => (e >= pivot))[0];
-
-const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
-
-function najdi(zacatek, konec, cas) {
-
-	if(!(zacatek in jizdni_rad)) return null
-
-	let linka = jizdni_rad[zacatek]; // toto je garantovano
-
-	log("linka", linka)
-
-	let casy = linka.map(odjezd => odjezd.cas);
-	let nejblizsi_odjezd = closest(casy, cas);
-
-	let indexSpoje = linka.findIndex(p => p.cas == nejblizsi_odjezd)
-	if(indexSpoje == -1) return null; // dnes uz nic nejede
-
-	let spoj = linka[indexSpoje];
-	let zastavky = spoj.zastavky
-
-	let typ = capitalizeFirst(spoj.typ)
-
-	if(spoj.typ == "trol" || spoj.typ == "bus") {
-		if(spoj.typ == "trol") typ = "Trolejbus";
-		else if(spoj.typ == "bus") typ = "Autobus";
-		typ += " " + spoj.cislo_linky;
-	}
-
-	//console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
-
-	let cesta = [
-		[
-			typ,
-			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`,
-			spoj.zastavky.filter(f => f.name != zacatek)[0].nastupiste
-		],
-		[...(zastavky.map(z => z.name))]
-	]
-
-	let _moznosti = {}
-
-	for(const stanice of zastavky.slice(1)) {
-
-		if(stanice.name == konec) {
-			_moznosti[stanice.name] = {prijezd: cesta};
-			break;
-		}
-
-		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice.name] : stanice.name;
-
-		let found = najdi(s, konec, spoj.cas + stanice.time)
-
-		if(found != null) { // found == null = tudy cesta fakt nevede
-
-			_moznosti[s] = {prijezd: cesta, odjezd: found}
-		}
-
-	}
-
-	return _moznosti;
-
-}
-
-// i hate this algorithm with everything i have
-// it is rather stupid and only assumes one route for each stop will ever be.
-
-// todo zase vracime nekompletni cesty
-
-function parse(storage, object, zacatek = "", depth = 0) {
-	if(object == undefined) return null;
-
-	if((!("odjezd" in object)) && ("prijezd" in object)) { // konecna
-
-		return object.prijezd
-
-	} else if(!("prijezd" in object) && !("odjezd" in object)) { // list moznosti kam dal
-		for(const [key, value] of Object.entries(object)) {
-
-			let _zacatek = (depth == 0) ? key : zacatek;
-
-			if(!(_zacatek in storage)) storage[_zacatek] = [];
-			let next = parse(storage, value, _zacatek, depth + 1);
-			//log("next", next)
-			if(next != null && next != undefined) {
-				storage[_zacatek].push(next)
-			}
-		}
-		return;
-	} else if(("odjezd" in object)) {
-		let next = parse(storage, object.odjezd, zacatek, depth+1)
-
-		if(next == undefined && object.prijezd != undefined) {
-			return object.prijezd
-		}
-		else if(object.prijezd != undefined) {
-			return next
-		}
-		else {
-			return next
-		}
-	} else {
-		log("Something went wrong?")
-	}
-}
-
-function najdi_spojeni (zacatek, destinace, cas, controls) {
-
-	if(destinace == "Pardubice") {
-		controls.setDlgTitle("Jseš kokot?");
-		controls.setDlgContent("Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...");
-		controls.setOpen(true);
-		return;
-	} else if(destinace == "") {
-		controls.setDlgTitle("Jseš kokot?");
-		controls.setDlgContent("Zadej kam chceš jet trotle, nebo tě pošlu za vránama (mottl rizz)");
-		controls.setOpen(true);
-		return;
-	}
-
-	log(cas)
-	let time = cas["$H"] * 60 + cas["$M"];
-
-	let cesty = {}
-
-	switch(zacatek) {
-	case "DELTA":
-	case "": {
-		cesty["Pardubice-Pardubičky"] = { odjezd: najdi("Pardubice-Pardubičky", destinace, time) };
-		cesty["K Nemocnici"         ] = { odjezd: najdi("K Nemocnici"         , destinace, time) };
-		cesty["Štrossova"           ] = { odjezd: najdi("Štrossova"           , destinace, time) };
-		cesty["Na Okrouhlíku"       ] = { odjezd: najdi("Na Okrouhlíku"       , destinace, time) };
-		cesty["Nemocnice"           ] = { odjezd: najdi("Nemocnice"           , destinace, time) };
-		break;
-	}
-
-	case "Zdrávka": {
-		cesty["Zdravotnická škola"  ] = { odjezd: najdi("Zdravotnická škola"  , destinace, time) };
-		cesty["Zámeček"             ] = { odjezd: najdi("Zámeček"             , destinace, time) };
-		break;
-	}
-
-	default: {
-		cesty[zacatek] = {odjezd: najdi(zacatek, destinace, time)};
-		break;
-	}
-	}
-
-	log(cesty, JSON.stringify(cesty))
-
-	let objekt = {}
-	parse(objekt, cesty)
-
-	// poor man's object.filter()
-	{
-		let newobj = {}
-		for(const k of Object.keys(objekt)) {
-			if(!(objekt[k] == undefined || objekt[k].length == 0)) newobj[k] = objekt[k];
-		}
-
-		objekt = newobj;
-	}
-
-	let res = objectMap(objekt, (v) => {
-		v.reverse();
-		return v;
-	})
-
-	log("res", res)
-
-	controls.setResult(res)
-
+const delta_stanice = {
+	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
+	"Intr": [],
+	"Zdrávka": ["Zdravotnická škola", "Zámeček"],
 };
 
-const compareArrays = (a, b) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);
+const delta_odjezdy = {
+	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
+	"Intr": [],
+	"Zdrávka": ["Zdravotnická škola", "Zámeček"],
+	"Hradec Králové hl.n.": ["Hradec Králové hl.n."],
+	"Všestary": ["Všestary"],
+	//"Opatovice nad Labem",
+	//"Kolín",
+	//"Choceň",
+	//"Ústí nad Orlicí",
+	//"Žamberk",
+	//"Přelouč",
+	//"Chrudim",
+	//"Dvůr Králové nad Labem"
+}
+
+const delta_prijezdy = {
+	"Intr": [],
+	"Zdrávka": ["Zdravotnická škola", "Zámeček"],
+	"Hradec Králové hl.n.": ["Hradec Králové hl.n."],
+	"Všestary": ["Všestary"],
+	//"Opatovice nad Labem",
+	//"Kolín",
+	//"Choceň",
+	//"Ústí nad Orlicí",
+	//"Žamberk",
+	//"Přelouč",
+	//"Chrudim",
+	//"Dvůr Králové nad Labem"
+}
+
+const destinace_na_deltu = {
+	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
+};
 
 function typeToIcon(params) {
 	if (params.value.startsWith('Autobus')) {
-		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon /></Badge>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize="large" /></Badge>;
 	} else if(params.value.startsWith('Vlak')) {
-		return <TrainTwoToneIcon />;
+		if(params.value.split(' ')[1] !== undefined)
+			return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><TrainTwoToneIcon fontSize="large" /></Badge>;
+		else
+			return <TrainTwoToneIcon fontSize="large" />;
 	} else if(params.value.startsWith('Trolejbus')) {
-		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon /></Badge>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize="large" /></Badge>;
 	}
+}
+
+//https://stackoverflow.com/questions/58095186/can-switches-have-multiple-labels
+const DoubleLabeledSwitch = ({labelLeft, labelRight, collapsed, setCollapsed}) => {
+
+	return (
+		<Stack direction="row" component="label" alignItems="center" justifyContent="center">
+			<Typography>
+				{labelLeft}
+			</Typography>
+			<Switch onChange={() => setCollapsed(prev => !prev)} checked={collapsed} />
+			<Typography>
+				{labelRight}
+			</Typography>
+		</Stack>
+	);
+}
+
+function MousePopover({baseText, popOver}) {
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handlePopoverOpen = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handlePopoverClose = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
+
+	return (
+		<div>
+			<Typography
+				aria-owns={open ? 'mouse-over-popover' : undefined}
+				aria-haspopup="true"
+				onClick={handlePopoverOpen}
+				onDoubleClickCapture={handlePopoverClose}
+			>
+				{baseText}
+			</Typography>
+			<Popover
+				id="mouse-over-popover"
+				sx={{
+					pointerEvents: 'none'
+				}}
+				open={open}
+				anchorEl={anchorEl}
+				PaperProps={{
+				 	style: { width: '50%' },
+				}}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'left',
+				}}
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'left',
+				}}
+				onClose={handlePopoverClose}
+				disableRestoreFocus
+			>
+				{popOver}
+			</Popover>
+		</div>
+	);
 }
 
 function App() {
@@ -283,6 +192,21 @@ function App() {
 	const [time, setTime] = useState(dayjs());
 
 	const [start, setStart] = useState("DELTA");
+
+	const [zDelty, setZDelty] = useState(true);
+
+	const [sidebar, setSidebar] = useState(false);
+	const [sidebarTitle, setSidebarTitle] = useState("");
+
+	const [markers, setMarkers] = useState("")
+
+	const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+        useGeolocated({
+            positionOptions: {
+                enableHighAccuracy: false,
+            },
+            userDecisionTimeout: 5000,
+        });
 
 	return (
 	<div className="application">
@@ -307,6 +231,8 @@ function App() {
 	<Dialog
 		open={open}
 		onClose={handleClose}
+		sx={{margin: 'auto'}}
+		fullWidth={true}
 	>
 		<DialogTitle>{ dlgTitle }</DialogTitle>
 		<DialogContent>
@@ -322,23 +248,26 @@ function App() {
 	<Stack direction="column" spacing={2}>
 	<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
 		<Autocomplete
-			disablePortal
 			defaultValue="DELTA"
-			options={['DELTA', 'Zdrávka'].concat(Object.keys(jizdni_rad).filter(n => !['Štrossova', 'K Nemocnici', 'Nemocnice', 'Na Okrouhlíku', 'Pardubice-Pardubičky', 'Zámeček', 'Zdravotnická škola'].includes(n) && typeof jizdni_rad[n] != 'string'))}
+			options={zDelty ? Object.keys(delta_stanice) : Object.keys(delta_prijezdy)}
 			onChange={(event, value) => setStart(value)}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Výchozí stanice" />}
 		/>
 		<Autocomplete
 			disablePortal
-			options={destinace}
+			disabled={!zDelty}
+			options={zDelty ? Object.keys(delta_prijezdy) : Object.keys(delta_prijezdy)}
 			defaultValue="Hradec Králové hl.n."
 			onChange={(event, value) => setSelectedDest(value)}
 			sx={{ width: 250 }}
 			renderInput={(params) => <TextField {...params} label="Destinace" />}
 		/>
 
-		<Stack direction="row" spacing={0.3}>
+	</Stack>
+
+		<Stack direction={{xs: 'column', sm: 'row'}} spacing={3.5}>
+		<Stack direction="row" spacing={{xs: 0.3, md: 3}}>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TimePicker
 					label="Čas odjezdu"
@@ -349,15 +278,16 @@ function App() {
 				/>
 			</LocalizationProvider>
 
-			<FormControlLabel control={<Checkbox disabled />} label="Ceny" />
-		</Stack>
+			<FormControlLabel control={<Checkbox disabled />} label="Zobrazit ceny" />
 
-	</Stack>
+		</Stack>
+			<DoubleLabeledSwitch labelLeft="Na Deltu" labelRight="Z Delty" collapsed={zDelty} setCollapsed={setZDelty} />
+		</Stack>
 
 		<Button
 			variant="contained"
 			size="large"
-			onClick={() => najdi_spojeni(start, selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
+			onClick={() => najdi_spojeni(zDelty ? delta_odjezdy : destinace_na_deltu, start, !zDelty ? "DELTA" : selectedDest, time, {setOpen, setDlgTitle, setDlgContent, setResult})}
 			startIcon={<SearchIcon />}
 		>
 			Hledej, šmudlo!
@@ -396,25 +326,42 @@ function App() {
 					field: 'typ',
 					renderCell: (params) => {
 						return typeToIcon(params);
-    				},
-    				width: 60,
-    				align: 'center',
-    				headerAlign: 'center',
-    			},
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'N/K', field: 'nastupiste', width: 40 },
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Odjezd', field: 'odjezd', width: 72 },
-				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Příjezd', field: 'prijezd', width: 72 },
-				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1},
+					},
+					width: 70,
+					align: 'center',
+					headerAlign: 'center',
+				},
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'N/K', field: 'nastupiste', width: 1, renderCell: (params) => <Typography>{params.value}</Typography> },
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Odjezd', field: 'odjezd', width: 72, renderCell: (params) => <Typography>{params.value}</Typography> },
+				{ headerAlign: 'center', align: 'center', sortable: false, headerName: 'Příjezd', field: 'prijezd', width: 72, renderCell: (params) => <Typography>{params.value}</Typography> },
+				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1, renderCell: (params) => {
+					let c = params.value.join(' - ')
+					return <a href='#' onClick={(e) => {
+						e.preventDefault()
+						setSidebarTitle("Cesta " + c)
+						setMarkers(
+							Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
+								if(typeof v != 'string') {
+									return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: v.info.coords[1], longitude: v.info.coords[0] }} />
+								}
+								return <></>
+							}
+						))
+						setSidebar(true)
+					}}>
+						{c}
+					</a>
+				}},
 			]}
-	  		rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
-	  			id: Math.random(),
-	  			typ: entry[0][0],
+			rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
+				id: Math.random(),
+				typ: entry[0][0],
 				odjezd: entry[0][1],
 				prijezd: entry[0][2],
 				nastupiste: entry[0][3],
-				cesta: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')
-	  		}})}
-	  		rowHeight={48}
+				cesta: [entry[1][0], entry[1][entry[1].length-1]]
+			}})}
+			rowHeight={58}
 		/>
 		</Card>
 		</div>
@@ -425,6 +372,52 @@ function App() {
 
 	<br />
 	<br />
+
+	{
+		!isGeolocationAvailable ? <font size="20rem" color="red">Geolokace není dostupná. Funkce budou omezeny.</font>
+		: !isGeolocationEnabled ? <font size="20rem" color="red">Geolokace není povolená. Funkce budou omezeny.</font>
+		: !coords ? <font size="20rem" color="red">Nelze získat pozici.</font>
+		: <Slider
+			title={sidebarTitle}
+			footer={
+				<div style={{padding: '15px'}}>
+					<Button variant="outlined" onClick={() => setSidebar(false)}>Zavřít</Button>
+				</div>
+			}
+			isOpen={sidebar}
+			onOutsideClick={() => setSidebar(false)}
+		>
+		<center><h3>Mapka</h3></center>
+		<MapProvider center={{lat: coords.latitude, lng: coords.longitude }} mapLayers={[BASE_LAYERS.TURIST_NEW]} zoom={16} >
+			<Map height="100%">
+				<MarkerLayer>
+					<Marker enableCard={true} cardHeaderText="Moje pozice" coords={{ latitude: coords.latitude, longitude: coords.longitude }} />
+					{markers}
+					{/*
+						//[...new Set(Object.entries(jizdni_rad_z_delty).concat(Object.entries(jizdni_rad_na_deltu)))].map(st =>
+						Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
+							if(typeof v != 'string') {
+								return
+								<Marker
+									enableCard={true}
+									cardHeaderText={k}
+									coords={{
+										latitude: 0, longitude: 0
+									}
+									}
+								/>
+							}
+						}
+						)
+					*/}
+				</MarkerLayer>
+				<ZoomControl />
+				<KeyboardControl />
+				<MouseControl zoom pan wheel />
+			</Map>
+		</MapProvider>
+		</Slider>
+	}
 
 	</div>
 	);
