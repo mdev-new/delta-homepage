@@ -41,6 +41,6 @@ h4 {
   width: 40%;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 820px) {
   .hello { width: 100%; }
 }

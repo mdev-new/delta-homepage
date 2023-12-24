@@ -96,7 +96,7 @@ const delta_odjezdy = {
 
 const delta_prijezdy = {
 	"Intr": [],
-	"Zdrávka": ["Zdravotnická škola", "Zámeček"],
+	"Zdrávka": ["Zdravotnická škola", "Zámeček", "ERA - Zámeček"],
 	"Hradec Králové hl.n.": ["Hradec Králové hl.n."],
 	"Všestary": ["Všestary"],
 	//"Opatovice nad Labem",
@@ -113,16 +113,16 @@ const destinace_na_deltu = {
 	"DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
 };
 
-function typeToIcon(params) {
+function typeToIcon(params, size = "medium") {
 	if (params.value.startsWith('Autobus')) {
-		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize="large" /></Badge>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize={size} /></Badge>;
 	} else if(params.value.startsWith('Vlak')) {
 		if(params.value.split(' ')[1] !== undefined)
-			return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><TrainTwoToneIcon fontSize="large" /></Badge>;
+			return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><TrainTwoToneIcon fontSize={size} /></Badge>;
 		else
-			return <TrainTwoToneIcon fontSize="large" />;
+			return <TrainTwoToneIcon fontSize={size} />;
 	} else if(params.value.startsWith('Trolejbus')) {
-		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize="large" /></Badge>;
+		return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize={size} /></Badge>;
 	}
 }
 
@@ -149,7 +149,7 @@ function App() {
 	const [searchParams, setSearchParams] = useState({time: dayjs(), start: "DELTA", dest: "Hradec Králové hl.n.", zDelty: true});
 
 	const [result, setResult] = useState([]);
-	const [markers, setMarkers] = useState([]);
+	const [markers, setMarkers] = useState()
 
 	const theme = useTheme()
 
@@ -165,24 +165,6 @@ function App() {
 		},
 		userDecisionTimeout: 5000,
 	});
-
-	function renderCell (params) {
-		let c = params.value.join(' - ')
-		return <a href='#' onClick={(e) => {
-			e.preventDefault()
-			setMarkers(
-				Object.entries(jizdni_rad_z_delty).map(([k, v]) => {
-					if(typeof v != 'string') {
-						return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: v.info.coords[1], longitude: v.info.coords[0] }} />
-					}
-					return <></>
-				}
-			))
-			setSidebar(prev => ({...prev, title: "Cesta " + c, open: true}))
-		}}>
-			{c}
-		</a>
-	}
 
 	const normalCellRender = (params) => <Typography>{params.value}</Typography>
 	const genericCell = {headerAlign: 'center', align: 'center', sortable: false, renderCell: normalCellRender}
@@ -232,11 +214,11 @@ function App() {
 			title={sidebar.title}
 			footer={
 				<div style={{padding: '15px'}}>
-					<Button variant="contained" onClick={() => setSidebar(false)}>Zavřít</Button>
+					<Button variant="contained" onClick={() => setSidebar(prev => ({...prev, open: false}))}>Zavřít</Button>
 				</div>
 			}
 			isOpen={sidebar.open}
-			onOutsideClick={() => setSidebar(false)}
+			onOutsideClick={() => setSidebar(prev => ({...prev, open: false}))}
 		>
 		<Typography><center><p>Mapka</p></center></Typography>
 		<MapProvider center={{lat: coords.latitude, lng: coords.longitude }} mapLayers={[BASE_LAYERS.TURIST_NEW]} zoom={16} >
@@ -293,7 +275,8 @@ function App() {
 				labelLeft="Na Deltu"
 				labelRight="Z Delty"
 				collapsed={searchParams.zDelty}
-				setCollapsed={() => setSearchParams(prev => ({...prev, zDelty: true}))} />
+				setCollapsed={() => setSearchParams(prev => ({...prev, zDelty: !prev.zDelty}))}
+			/>
 		</Stack>
 
 		<Button
@@ -305,6 +288,7 @@ function App() {
 					searchParams.start,
 					!searchParams.zDelty ? "DELTA" : searchParams.dest,
 					searchParams.time,
+					searchParams.zDelty,
 					{setDialog, setResult}
 				)}
 			startIcon={<SearchIcon />}
@@ -318,7 +302,6 @@ function App() {
 	<br />
 	<br />
 
-
 	<Stack direction="column" alignItems="center" spacing={3}>
 	{
 		Object.entries(result).filter(([k, v]) => v[0].length != 0).map(([stanice, cesty]) => (
@@ -328,13 +311,26 @@ function App() {
 			<CardContent>
 				<Typography><center><h4>{stanice}</h4></center></Typography>
 			</CardContent>
-		{
-			cesty.filter(c => !_.isEmpty(c)).map(entry => 
+			{
+				cesty.filter(c => !_.isEmpty(c)).map(entry => 
 					<Box>
 						<Card>
-							<CardActionArea onClick={() => setSidebar(prev => ({...prev, open: true, title: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')}))}>
+							<CardActionArea onClick={() => {
+								setSidebar(prev => ({...prev, open: true, title: [entry[1][0], entry[1][entry[1].length-1]].join(' - ')}))
+
+								let jr_joined = {...jizdni_rad_z_delty, ...jizdni_rad_na_deltu}
+								console.log(jizdni_rad_na_deltu)
+
+								setMarkers(entry[1].map(k => {
+									if(typeof jr_joined[k] != 'string') {
+										return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: jr_joined[k].info.coords[0], longitude: jr_joined[k].info.coords[1] }} />
+									}
+									return <></>
+								}))
+							}}>
 								<CardContent>
 									<Typography>
+									{typeToIcon({value: entry[0][0]})}&nbsp;&nbsp;&nbsp;&nbsp;{entry[0][0]}
 										<List sx={{ width: '100%' }}>
 										{
 											[entry[1][0], entry[1][entry[1].length-1]].map((value) => {
@@ -343,10 +339,8 @@ function App() {
 													<ListItem
 														disablePadding
 													>
-														<ListItemIcon>
-															{typeToIcon({value: entry[0][0]})}
-														</ListItemIcon>
-														<ListItemText primary={`${value} ${entry[0][1]}`} />
+														<ListItemIcon></ListItemIcon>
+														<ListItemText primary={<>{value} {entry[0][1]} <font color="green">{entry[0][3]}</font></>} />
 													</ListItem>
 												);
 											})
@@ -357,51 +351,10 @@ function App() {
 							</CardActionArea>
 						</Card>
 					</Box>
-			)
-		}
+				)
+			}
 		</Card>
-		
 
-		{/*<div className="hello">
-		<Card>
-		<DataGrid
-			autoHeight
-			disableColumnFilter
-			disableColumnMenu
-			disableColumnSelector
-			disableDensitySelector
-			disableRowSelectionOnClick
-			hideFooterSelectedRowCount={true}
-			hideFooterPagination={true}
-			hideFooter={true}
-			disableColumnResize={true}
-			sx={{'& .MuiDataGrid-columnSeparator': {display: 'none'}}}
-			columns={[
-				{
-					...genericCell,
-					headerName: 'Typ',
-					field: 'typ',
-					renderCell: (params) => {
-						return typeToIcon(params);
-					},
-					width: 60,
-				},
-				{ ...genericCell, headerName: 'N/K', field: 'nastupiste', width: 1 },
-				{ ...genericCell, headerName: 'Odjezd', field: 'odjezd', width: 72 },
-				{ ...genericCell, headerName: 'Příjezd', field: 'prijezd', width: 72 },
-				{ sortable: false, headerName: 'Trasa', field: 'cesta', flex: 1, renderCell: renderCell },
-			]}
-			rows={cesty.filter(c => !_.isEmpty(c)).map(entry => { return {
-				id: Math.random(),
-				typ: entry[0][0],
-				odjezd: entry[0][1],
-				prijezd: entry[0][2],
-				nastupiste: entry[0][3],
-				cesta: [entry[1][0], entry[1][entry[1].length-1]]
-			}})}
-			rowHeight={58}
-		/>
-		</Card>*/}
 		</>
 
 		))

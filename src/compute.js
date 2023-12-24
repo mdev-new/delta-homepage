@@ -1,7 +1,7 @@
-import { jizdni_rad_z_delty } from './jr.js'
+import { jizdni_rad_z_delty, jizdni_rad_na_deltu } from './jr.js'
 import log from './log.js'
 
-const jizdni_rad = jizdni_rad_z_delty;
+let jizdni_rad;
 
 const hours_minutes = (mins) => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`
 
@@ -10,11 +10,11 @@ const objectMap = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v
 const closest = (array, pivot) => array.sort((a, b) => a - b).filter(e => (e >= pivot))[0];
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-function najdi(zacatek, konec, cas, nast = "") {
+function najdi(jr, zacatek, konec, cas, prevStanice) {
 
-	if(!(zacatek in jizdni_rad)) return null
+	if(!(zacatek in jr)) return null
 
-	let linka = jizdni_rad[zacatek].spoje; // toto je garantovano
+	let linka = jr[zacatek].spoje; // toto je garantovano
 
 	log("linka", linka)
 
@@ -41,34 +41,38 @@ function najdi(zacatek, konec, cas, nast = "") {
 		typ += " " + spoj.cislo_linky;
 
 	//console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
+	let _prevZastavka = zastavky[0]
 
 	let cesta = [
 		[
 			typ,
 			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+(spoj.zastavky.filter(f => f.name != zacatek)[0].time))}`,
-			zastavky[zastavky.indexOf(zastavky.filter(f => f.name != zacatek)[0])-1].nastupiste
+			`${hours_minutes(spoj.cas+((prevStanice != undefined) ? prevStanice.time : _prevZastavka.time))}`,
+			(prevStanice != undefined) ? prevStanice.nastupiste : _prevZastavka.nastupiste
 		],
 		[...(zastavky.map(z => z.name))]
 	]
 
 	let _moznosti = {}
 
-	for(const stanice of zastavky.slice(1)) {
+
+	for (var i = 1; i < zastavky.length; i++) {
+		let stanice = zastavky[i]
 
 		if(stanice.name == konec) {
 			_moznosti[stanice.name] = {prijezd: cesta};
 			break;
 		}
 
-		let s = (typeof jizdni_rad[stanice.name] == 'string') ? jizdni_rad[stanice.name] : stanice.name;
+		let s = (typeof jr[stanice.name] == 'string') ? jr[stanice.name] : stanice.name;
 
-		let found = najdi(s, konec, spoj.cas + stanice.time, stanice.nastupiste)
+		let found = najdi(jr, s, konec, spoj.cas + stanice.time, _prevZastavka)
 
 		if(found != null) { // found == null = tudy cesta fakt nevede
 			_moznosti[s] = {prijezd: cesta, odjezd: found}
 		}
 
+		_prevZastavka = stanice
 	}
 
 	return _moznosti;
@@ -113,7 +117,7 @@ function parse(storage, object, zacatek = "", depth = 0) {
 }
 
 
-export function najdi_spojeni (destinace, zacatek, konec, cas, controls) {
+export function najdi_spojeni (destinace, zacatek, konec, cas, zDelty, controls) {
 
 	if(konec == zacatek) {
 		controls.setDialog({title: "Jseš kokot?", content: "Podívej se z okna nebo na mapu a MOŽNÁ ti dojde proč jseš debil...", open: true})
@@ -125,7 +129,12 @@ export function najdi_spojeni (destinace, zacatek, konec, cas, controls) {
 
 	let cesty = {}
 
-	destinace[zacatek].forEach(dest => cesty[dest] = {odjezd: najdi(dest, konec, time)})
+	if(zDelty) {
+		destinace[zacatek].forEach(dest => cesty[dest] = {odjezd: najdi(jizdni_rad_z_delty, dest, konec, time)})
+	}
+	else {
+		destinace[konec].forEach(dest => cesty[dest] = {odjezd: najdi(jizdni_rad_na_deltu, zacatek, dest, time)})
+	}
 
 	log(cesty, JSON.stringify(cesty))
 

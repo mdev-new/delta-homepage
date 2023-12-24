@@ -245,7 +245,7 @@ const jizdni_rad_z_delty_template = {
 
 	"Hradec Králové hl.n.": {
 		info: {
-			coords: [22, 50]
+			coords: [50.214594716716235, 15.81094084598341]
 		},
 		spoje: [
 			{
@@ -280,7 +280,137 @@ const jizdni_rad_z_delty_template = {
 };
 
 const jizdni_rad_na_deltu_template = {
+	"Všestary": {
+		info: {
+			coords: [50.25248110217282, 15.76429743090196]
+		},
+		spoje: [
+			{
+				cislo_linky: "V50",
+				typ: "vlak",
+				casy: [
+					545,
+					645,
+					745,
+					845,
+					945,
+					1145,
+					1245,
+					1345,
+					1445, 1437,
+					1545,
+					1645,
+					1745,
+					1845,
+					1945,
+					2045,
+					2145,
+					2240
+				],
+				zastavky: [
+					{ name: "Všestary", time: 0, nastupiste: "2"},
+					{ name: "Hradec Králové hl.n.", time: 8, nastupiste: ""},
+				]
+			},
+		]
+	},
 
+	"Hradec Králové hl.n.": {
+		info: {
+			coords: [50.214594716716235, 15.81094084598341]
+		},
+		spoje: [
+			{
+				cislo_linky: "V50",
+				typ: "vlak",
+				casy: [
+					545,
+					645,
+					745,
+					845,
+					945,
+					1145,
+					1245,
+					1345,
+					1445, 1437,
+					1545,
+					1645,
+					1745,
+					1845,
+					1945,
+					2045,
+					2145,
+					2240
+				],
+				zastavky: [
+					{ name: "Hradec Králové hl.n.", time: 0, nastupiste: "3"},
+					{ name: "Pardubice hl.n.", time: 20, nastupiste: ""},
+				]
+			},
+		]
+	},
+
+	"Pardubice hl.n.": {
+		info: {
+			coords: [50.03233238152318, 15.755917658783927]
+		},
+		spoje: [
+			{
+				cislo_linky: 12,
+				typ: "vlak",
+				casy: [
+					545,
+					645,
+					745,
+					845,
+					945,
+					1145,
+					1245,
+					1345,
+					1445, 1437,
+					1545,
+					1645,
+					1745,
+					1845,
+					1945,
+					2045,
+					2145,
+					2240
+				],
+				zastavky: [
+					{ name: "Pardubice hl.n.", time: 0, nastupiste: ""},
+					{ name: "Štrossova", time: 10, nastupiste: ""},
+				]
+			},
+			{
+				cislo_linky: 12,
+				typ: "vlak",
+				casy: [
+					545,
+					645,
+					745,
+					845,
+					945,
+					1145,
+					1245,
+					1345,
+					1445, 1437,
+					1545,
+					1645,
+					1745,
+					1845,
+					1945,
+					2045,
+					2145,
+					2240
+				],
+				zastavky: [
+					{ name: "Pardubice hl.n.", time: 0, nastupiste: ""},
+					{ name: "Pardubice-Pardubičky", time: 10, nastupiste: ""},
+				]
+			},
+		]
+	}
 };
 
 const _process = (jizdni_rad, aliases) => {
@@ -329,6 +459,6 @@ export const jizdni_rad_z_delty = _process(jizdni_rad_z_delty_template, {
 	"Zámeček": ["ERA - Zámeček"]
 })
 
-export const jizdni_rad_na_deltu = {}
+export const jizdni_rad_na_deltu = _process(jizdni_rad_na_deltu_template, {})
 
-console.log(jizdni_rad_z_delty)
+console.log(jizdni_rad_z_delty, jizdni_rad_na_deltu)
