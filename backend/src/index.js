@@ -1,118 +1,57 @@
-const app = require("express")();
-const mysql = require('mysql');
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
-const con = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "root"
-});
+const express = require('express');
+const passport = require('passport');
+const session = require('express-session');
+const methodOverride = require('method-override');
 
-con.connect(function(err) {
-	if (err) {
-		throw err;
-	} else {
-		console.log("MySQL connected!");
-	}
-});
+const apiV1 = require('./api/v1');
+const initializePassport = require('../passport-config');
 
-// maybe storovat data v js obj...
+const cors = require('cors')
 
-/// Account
+const app = express();
 
-const register = (req, res, next) => {
-	res.json({
+const users = require('../database/users.json');
+//const helpdesk_posts = require('./database/helpdesk.json');
+//const social_posts = require('./database/social.json');
 
-	});
-}
-
-const login = (req, res, next) => {
-	res.json({
-		apiKey: 0
-	});
-}
-
-/// Social
-
-const getPosts = (req, res, next) => {
-	res.json({
-
-	});
-}
-
-const post = (req, res, next) => {
-	res.json({
-
-	});
-}
-
-const getMessages = (req, res, next) => {
-	res.json({
-
-	});
-}
-
-const message = (req, res, next) => {
-	res.json({
-
-	});
-}
-
-const getProfile = (req, res, next) => {
-	res.json({
-
-	});
-}
-
-const initSql = `
-CREATE TABLE IF NOT EXISTS users(
-	ID PRIMARY KEY NOT NULL,
-	username TEXT,
-	password TEXT,
-	email TEXT,
-	class TEXT,
-	bakalari_username TEXT,
-	bakalari_pass TEXT,
-	mtb_username TEXT,
-	mtb_pass TEXT,
-	moodle_username TEXT,
-	moodle_pass TEXT,
-	domjudge_username TEXT,
-	domjudge_pass TEXT,
-	role TEXT,
-	topgun BOOLEAN,
-	post_ids TEXT,
-	search_history TEXT,
-	following TEXT,
-	followers TEXT,
-	likes TEXT,
-	comments TEXT);
-
-CREATE TABLE IF NOT EXISTS social_posts(
-	id INTEGER PRIMARY KEY,
-	poster INT,
-	text_content TEXT,
-	binary_content BLOB,
-	likes TEXT,
-	comments TEXT
+initializePassport(
+	passport,
+	email => users.find(user => user.email === email),
+	id => users.find(user => user.id === id)
 );
 
-CREATE TABLE IF NOT EXISTS helpdesk_posts(
-	id INTEGER PRIMARY KEY,
-	poster INT,
-	content TEXT,
-	place TEXT,
-	likes TEXT -- text representation of an array of ints (ids)
+app.use(express.urlencoded({ limit: '10gb', extended: true }));
+app.use(express.json({limit: '10gb', extended: true }));
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	cookie: { sameSite: 'strict' },
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(methodOverride('_method'));
+
+app.use(cors({
+    origin: "https://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
+    credentials: true,
+})
 );
-`
 
-app.get("/register", register);
-app.get("/login", login);
+app.use('/api/v1', apiV1);
+app.listen(process.env.PORT || 8080);
 
-app.get("/getPosts", getPosts);
-app.get("/post", post);
-app.get("/getMessages", getMessages);
-app.get("/message", message);
+process.stdin.resume();
 
-app.listen(8080, () => {
-	console.log("Server running");
-});
+function exitHandler(options, exitCode) {
+	// todo save the json
+	process.exit();
+}
+
+[`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`].forEach((eventType) => {
+  process.on(eventType, exitHandler.bind(null, eventType));
+})

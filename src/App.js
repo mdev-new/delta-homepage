@@ -4,6 +4,8 @@ import {
 	Route
 } from "react-router-dom";
 
+import { useState } from 'react';
+
 import Toolbar from '@mui/material/Toolbar';
 import { Box } from "@mui/material"
 
@@ -22,11 +24,14 @@ import ReditelskyFB from "./pages/fb";
 import Bakalar from "./pages/bakalar";
 
 function App() {
+	const [auth, setAuth] = useState(false);
+
 	return (
 		<Router>
 			<Box sx={{ display: 'flex' }}>
 				<Navbar
 					drawer={Drawer}
+					auth={auth}
 				/>
 				<Box
 					component="main"
@@ -36,12 +41,15 @@ function App() {
 					<Routes>
 						<Route exact path="/" element={<Home />} />
 						<Route exact path="/zdd" element={<ZDD />} />
-						<Route exact path="/topgun" element={<TopGun />} />
-						<Route exact path="/account" element={<Account />} />
-						<Route exact path="/moodle" element={<Moodle />} />
-						<Route exact path="/bakalar" element={<Bakalar />} />
-						<Route exact path="/helpdesk" element={<Helpdesk />} />
-						<Route exact path="/social" element={<Social />} />
+						{auth ? <>
+							<Route exact path="/helpdesk" element={<Helpdesk auth={auth} />} />
+							<Route exact path="/bakalar" element={<Bakalar />} />
+							<Route exact path="/social" element={<Social />} />
+							<Route exact path="/moodle" element={<Moodle />} />
+							<Route exact path="/topgun" element={<TopGun />} />
+							</> : <></>
+						}
+						<Route exact path="/account" element={<Account auth={auth} setAuth={setAuth}/>} />
 						<Route exact path="/wiki" element={<Wiki />} />
 						<Route exact path="/fb" element={<ReditelskyFB />} />
 					</Routes>

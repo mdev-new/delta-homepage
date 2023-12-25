@@ -5,7 +5,7 @@ import {
 	MenuItem
 } from '@mui/material'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
 	Box,
@@ -16,19 +16,42 @@ import {
 	FormControlLabel
 } from '@mui/material'
 
-function Account() {
+function Account({auth, setAuth}) {
 	const [mailPostfix, setMailPostfix] = useState('@delta-studenti.cz');
 
 	const handleChange = (event) => {
 		setMailPostfix(event.target.value);
 	};
 
+	useEffect(() => {
+		fetch("http://localhost:8080/api/v1/authOk", {
+			method:"GET", 
+			credentials: "include",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Credentials": true,
+			},
+		})
+		.then((response) => {
+			if (response.status === 200) return response.json();
+			throw new Error("authentication has been failed!");
+		})
+		.then((res) => {
+			setAuth(res);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	}, []);
+
 	return (
 	<Box>
-		<form action="http://localhost:8080/api/account">
+	{!auth ?
+		<form action="http://localhost:8080/api/v1/login" method="POST">
 			<Stack direction="column" spacing={2}>
 				<Stack direction="row" spacing={2}>
-					<TextField name="email" label="E-Mail" variant="outlined" />
+					<TextField name="email" label="E-Mail" variant="outlined" required />
 					<FormControl>
 						<InputLabel>Doména</InputLabel>
 						<Select
@@ -41,6 +64,7 @@ function Account() {
 							<MenuItem value="@delta-skola.cz">@delta-skola.cz</MenuItem>
 						</Select>
 					</FormControl>
+					<TextField name="password" label="Heslo" type="password" variant="outlined" required />
 					<FormControlLabel control={<Checkbox name="register" value="yes" />} label="Registrovat?" />
 				</Stack>
 				<Stack direction="row" spacing={2}>
@@ -48,6 +72,10 @@ function Account() {
 				</Stack>
 			</Stack>
 		</form>
+	: 	<form action="http://localhost:8080/api/v1/logout?_method=DELETE" method="POST">
+			<Button variant="contained" type="submit">Odhlásit</Button>
+		</form>
+	}
 	</Box>
 	);
 }
