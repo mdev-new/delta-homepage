@@ -11,7 +11,7 @@ import { NavLink as Link } from 'react-router-dom'
 export default <div>
 					<List>
 					{
-						[['Spojení', '/zdd'], ['Helpdesk', '/helpdesk'], ['Social', '/social'], ['Moodle', '/moodle'], ['Mount Blue', '/mb'], ['TopGun', '/topgun'], ['Účet', '/account']].map(([text, val]) => (
+						[['Social', '/social'], ['Helpdesk', '/helpdesk'], ['Bakalář', '/bakalar'], ['Moodle', '/moodle'], ['Mount Blue', '/mb'], ['TopGun', '/topgun'], ['Wiki', '/wiki'], ['Ředitelský FB', '/fb'], ['Spojení', '/zdd'], ['Účet', '/account']].map(([text, val]) => (
 							<ListItem key={text} disablePadding>
 								<Link to={val}>
 									<ListItemButton>

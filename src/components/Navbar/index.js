@@ -19,7 +19,7 @@ import Typography from '@mui/material/Typography';
 
 import { NavLink as Link } from "react-router-dom";
 
-const drawerWidth = 240;
+const drawerWidth = 120;
 
 function ResponsiveDrawer(props) {
 	const [mobileOpen, setMobileOpen] = useState(false);
