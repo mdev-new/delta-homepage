@@ -24,7 +24,7 @@ function Account({auth, setAuth}) {
 	};
 
 	useEffect(() => {
-		fetch("http://localhost:8080/api/v1/authOk", {
+		fetch("http://localhost:8080/api/v1/account/authOk", {
 			method:"GET", 
 			credentials: "include",
 			headers: {
@@ -38,7 +38,7 @@ function Account({auth, setAuth}) {
 			throw new Error("authentication has been failed!");
 		})
 		.then((res) => {
-			setAuth(res);
+			setAuth(res.auth);
 		})
 		.catch((err) => {
 			console.log(err);
@@ -48,7 +48,7 @@ function Account({auth, setAuth}) {
 	return (
 	<Box>
 	{!auth ?
-		<form action="http://localhost:8080/api/v1/login" method="POST">
+		<form action="http://localhost:8080/api/v1/account/login" method="POST">
 			<Stack direction="column" spacing={2}>
 				<Stack direction="row" spacing={2}>
 					<TextField name="email" label="E-Mail" variant="outlined" required />
@@ -72,7 +72,7 @@ function Account({auth, setAuth}) {
 				</Stack>
 			</Stack>
 		</form>
-	: 	<form action="http://localhost:8080/api/v1/logout?_method=DELETE" method="POST">
+	: 	<form action="http://localhost:8080/api/v1/account/logout?_method=DELETE" method="POST">
 			<Button variant="contained" type="submit">Odhlásit</Button>
 		</form>
 	}

@@ -2,25 +2,12 @@ const express = require('express');
 const passport = require('passport')
 const router = express.Router();
 
-router.post('/login', passport.authenticate('local',
-{
-	successRedirect: 'https://localhost:3000/account',
-	failureRedirect: 'https://localhost:3000/'
-}));
+const account = require('./v1/account')
+const helpdesk = require('./v1/helpdesk')
+const social = require('./v1/social')
 
-router.post('/register', (req, res) => {
-
-})
-
-router.delete('/logout', (req, res) => {
-	req.logOut(err => {
-    	if (err) return next(err);
-    	res.redirect('https://localhost:3000/');
- 	});
-})
-
-router.get('/authOk', (req, res) => {
-	res.status(200).json({auth: req.isAuthenticated()});
-})
+router.use('/account', account)
+router.use('/social', social)
+router.use('/helpdesk', helpdesk)
 
 module.exports = router;

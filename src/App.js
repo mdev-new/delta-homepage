@@ -41,8 +41,8 @@ function App() {
 					<Routes>
 						<Route exact path="/" element={<Home />} />
 						<Route exact path="/zdd" element={<ZDD />} />
+						<Route exact path="/helpdesk" element={<Helpdesk auth={auth} />} />
 						{auth ? <>
-							<Route exact path="/helpdesk" element={<Helpdesk auth={auth} />} />
 							<Route exact path="/bakalar" element={<Bakalar />} />
 							<Route exact path="/social" element={<Social />} />
 							<Route exact path="/moodle" element={<Moodle />} />

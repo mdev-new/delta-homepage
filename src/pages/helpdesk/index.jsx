@@ -26,14 +26,19 @@ const rows = [
 	{zavada: 'nefunkcni wc', misto: '2. patro'}
 ]
 
-function Helpdesk() {
+function Helpdesk({auth}) {
 	return (
 		<Box>
+		{
+			auth?
 			<Stack direction="row">
 				<TextField label="Závada" variant="outlined" />
 				<TextField label="Místo" variant="outlined" />
 				<Button variant="contained">Přidat</Button>
 			</Stack>
+
+			: <></>
+		}
 
 			<TableContainer component={Paper}>
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
