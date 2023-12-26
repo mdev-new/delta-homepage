@@ -22,6 +22,21 @@ import Social from "./pages/social";
 import Wiki from "./pages/wiki";
 import ReditelskyFB from "./pages/fb";
 import Bakalar from "./pages/bakalar";
+import Pocasi from "./pages/pocasi";
+
+const routes = (auth) => [
+	['Social', '/social', true],
+	['Helpdesk', '/helpdesk', true],
+	['Bakalář', '/bakalar', true],
+	['Moodle', '/moodle', true],
+	['Mount Blue', '/mb', true],
+	['TopGun', '/topgun', true],
+	['Wiki', '/wiki', true],
+	['Ředitelský FB', '/fb', true],
+	['Spojení', '/zdd', true],
+	['Účet', '/account', true],
+	['Počasí', '/pocasi', true]
+]
 
 function App() {
 	const [auth, setAuth] = useState(false);
@@ -30,7 +45,7 @@ function App() {
 		<Router>
 			<Box sx={{ display: 'flex' }}>
 				<Navbar
-					drawer={Drawer}
+					drawer={<Drawer routes={routes(auth)} auth={auth} />}
 					auth={auth}
 				/>
 				<Box
@@ -42,16 +57,17 @@ function App() {
 						<Route exact path="/" element={<Home />} />
 						<Route exact path="/zdd" element={<ZDD />} />
 						<Route exact path="/helpdesk" element={<Helpdesk auth={auth} />} />
-						{auth ? <>
+						<Route exact path="/social" element={<Social auth={auth} />} />
+						{auth && <>
 							<Route exact path="/bakalar" element={<Bakalar />} />
-							<Route exact path="/social" element={<Social />} />
 							<Route exact path="/moodle" element={<Moodle />} />
 							<Route exact path="/topgun" element={<TopGun />} />
-							</> : <></>
+							</>
 						}
 						<Route exact path="/account" element={<Account auth={auth} setAuth={setAuth}/>} />
 						<Route exact path="/wiki" element={<Wiki />} />
 						<Route exact path="/fb" element={<ReditelskyFB />} />
+						<Route exact path="/pocasi" element={<Pocasi />} />
 					</Routes>
 				</Box>
 			</Box>

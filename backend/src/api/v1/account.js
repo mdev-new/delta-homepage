@@ -20,7 +20,7 @@ router.delete('/logout', (req, res) => {
 })
 
 router.get('/authOk', (req, res) => {
-	console.log(req.isAuthenticated())
+	//console.log(req.isAuthenticated())
 	res.status(200).json({auth: req.isAuthenticated()});
 })
 

@@ -325,7 +325,6 @@ function ZDD() {
 									if(typeof jr_joined[k] != 'string' && jr_joined[k] != undefined) {
 										return <Marker enableCard={true} cardHeaderText={k} coords={{ latitude: jr_joined[k].info.coords[0], longitude: jr_joined[k].info.coords[1] }} />
 									}
-									return <></>
 								}))
 							}}>
 								<CardContent>

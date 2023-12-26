@@ -8,18 +8,22 @@ import Toolbar from '@mui/material/Toolbar';
 
 import { NavLink as Link } from 'react-router-dom'
 
-export default <div>
-					<List>
-					{
-						[['Social', '/social'], ['Helpdesk', '/helpdesk'], ['Bakalář', '/bakalar'], ['Moodle', '/moodle'], ['Mount Blue', '/mb'], ['TopGun', '/topgun'], ['Wiki', '/wiki'], ['Ředitelský FB', '/fb'], ['Spojení', '/zdd'], ['Účet', '/account']].map(([text, val]) => (
-							<ListItem key={text} disablePadding>
-								<Link to={val}>
-									<ListItemButton>
-										<ListItemText primary={text} />
-									</ListItemButton>
-								</Link>
-							</ListItem>
-						))
-					}
-					</List>
-				</div>
+export default function Drawer({auth, routes}) {
+	return (<div>
+				<List>
+				{
+					routes.map(([text, val, perm]) => (
+						perm &&
+						<ListItem key={text} disablePadding>
+							<Link to={val}>
+								<ListItemButton>
+									<ListItemText primary={text} />
+								</ListItemButton>
+							</Link>
+						</ListItem>
+					))
+				}
+				</List>
+			</div>
+	);
+}

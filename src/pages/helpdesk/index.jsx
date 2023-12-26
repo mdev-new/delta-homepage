@@ -30,14 +30,12 @@ function Helpdesk({auth}) {
 	return (
 		<Box>
 		{
-			auth?
+			auth &&
 			<Stack direction="row">
 				<TextField label="Závada" variant="outlined" />
 				<TextField label="Místo" variant="outlined" />
 				<Button variant="contained">Přidat</Button>
 			</Stack>
-
-			: <></>
 		}
 
 			<TableContainer component={Paper}>
