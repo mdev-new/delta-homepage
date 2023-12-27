@@ -10,6 +10,7 @@
     "@mui/x-data-grid": "^6.18.5",
     "@mui/x-date-pickers": "^6.18.5",
     "dayjs": "^1.11.10",
+    "jquery": "^3.7.1",
     "lodash-es": "^4.17.21",
     "mapy-cz-react": "^0.1.1",
     "million": "^2.6.4",

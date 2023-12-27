@@ -7,14 +7,14 @@ const nodemailer = require('nodemailer')
 const ObjectId = require('mongodb').ObjectId;
 
 let smtpTransport = nodemailer.createTransport({
-  pool: true,
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // use TLS
-  auth: {
-    user: "delta.homepage.verify",
-    pass: "fcmwbzvtjyxofnmp",
-  },
+	pool: true,
+	host: "smtp.gmail.com",
+	port: 465,
+	secure: true, // use TLS
+	auth: {
+		user: "delta.homepage.verify",
+		pass: "fcmwbzvtjyxofnmp",
+	},
 });
 
 router.post('/login', (req, res, next) => {
@@ -23,7 +23,7 @@ router.post('/login', (req, res, next) => {
 		bcrypt.hash(req.body.password, 10, async function(err, hash) {
 
 			const user = {
-				email: req.body.email,
+				email: req.body.email + req.body.domain,
 				password: hash,
 				accountActive: false // todo auth mail
 			}

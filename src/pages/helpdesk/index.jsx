@@ -1,6 +1,8 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
+import $ from 'jquery';
+
 import {
 	TextField,
 	Stack,
@@ -54,14 +56,27 @@ function Helpdesk({auth}) {
 		});
 	}, []);
 
+	const submit = (what) => $.ajax({
+		type: "POST",
+		url: process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update",
+		data: what,
+		xhrFields: { withCredentials:true },
+		statusCode: {
+			401: () => {
+				alert("401 Unauthorized");
+			}
+  		}
+	});
+
 	return (
 		<Box>
 		{
 			auth &&
-			<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/post"}>
+			<form onSubmit={(e) => e.stopPropagation()} method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/post"}>
 				<Stack direction="row">
 					<TextField name="problem" label="Závada" variant="outlined" />
 					<TextField name="place" label="Místo" variant="outlined" />
+					<TextField name="assignee" label="Přiřazená osoba (e-mail)" variant="outlined" />
 					<Button type="submit" variant="contained">Přidat</Button>
 				</Stack>
 			</form>
@@ -71,20 +86,32 @@ function Helpdesk({auth}) {
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
 					<TableHead>
 						<TableRow>
-							<TableCell>Závada</TableCell>
-							<TableCell align="right">Místo</TableCell>
+							<TableCell><b>Závada</b></TableCell>
+							<TableCell><b>Místo</b></TableCell>
+							<TableCell><b>Datum a čas</b></TableCell>
+							<TableCell><b>Přiřazená osoba</b></TableCell>
+							<TableCell><b>Nahlásil</b></TableCell>
+							<TableCell><b>Souhlasí</b></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{posts.map((post) => (
 							<TableRow
 								key={post.problem}
-								sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+								sx={post.solved && {backgroundColor: 'green', color: 'white'}}
 							>
-								<TableCell component="th" scope="row">
-									{post.problem}
-								</TableCell>
-								<TableCell align="right">{post.place}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.problem}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.place}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.datetime.split('GMT')[0]}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.assigned}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.reporter.split('@')[0]}</TableCell>
+								<TableCell sx={post.solved && {color: 'white'}}>{post.liked_by.map(l => l.split('@')[0]).join(', ')}</TableCell>
+								{!post.solved &&
+									<TableCell>
+										<Button variant='outlined' onClick={() => submit({variant: 'souhlas', id: post._id})}>Souhlasit</Button>
+										<Button variant='outlined' onClick={() => submit({variant: 'vyreseno', id: post._id})}>Vyřešeno</Button>
+									</TableCell>
+								}
 							</TableRow>
 						))}
 					</TableBody>
