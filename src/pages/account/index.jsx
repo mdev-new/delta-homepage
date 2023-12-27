@@ -39,6 +39,7 @@ function Account({auth, setAuth}) {
 		})
 		.then((res) => {
 			setAuth(res.auth);
+			console.log(res.user)
 		})
 		.catch((err) => {
 			console.log(err);

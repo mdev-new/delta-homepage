@@ -5,21 +5,24 @@ const passport = require('passport');
 const session = require('express-session');
 const methodOverride = require('method-override');
 
+const Database = require("./database.js");
+global.database = new Database("mongodb://127.0.0.1:27017", 'delta-homepage');
+
 const apiV1 = require('./api/v1');
 const initializePassport = require('../passport-config');
+
+const ObjectId = require('mongodb').ObjectId;
+
+const fs = require('fs')
 
 const cors = require('cors')
 
 const app = express();
 
-const users = require('../database/users.json');
-//const helpdesk_posts = require('./database/helpdesk.json');
-//const social_posts = require('./database/social.json');
-
 initializePassport(
 	passport,
-	email => users.find(user => user.email === email),
-	id => users.find(user => user.id === id)
+	email => database.findOne('users', {email: email}),
+	id => database.findOne('users', {_id: new ObjectId(id)})
 );
 
 app.use(express.urlencoded({ limit: '10gb', extended: true }));
@@ -44,14 +47,3 @@ app.use(cors({
 
 app.use('/api/v1', apiV1);
 app.listen(process.env.PORT || 8080);
-
-process.stdin.resume();
-
-function exitHandler(options, exitCode) {
-	// todo save the json
-	process.exit();
-}
-
-[`exit`, `SIGINT`, `SIGUSR1`, `SIGUSR2`, `uncaughtException`, `SIGTERM`].forEach((eventType) => {
-  process.on(eventType, exitHandler.bind(null, eventType));
-})

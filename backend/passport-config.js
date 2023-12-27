@@ -5,22 +5,27 @@ function initialize(passport, getUserByEmail, getUserById)
 {
 	const authenticateUser = async (email, password, done) =>
 	{
-		const user = getUserByEmail(email);
-		if (user == null) return done(null, false, { message: 'No user with that email' });
+		const user = await getUserByEmail(email);
+		if (user == null) return done(null, false);
 
 		try
 		{
 			if (await bcrypt.compare(password, user.password)) return done(null, user);
-			else return done(null, false, { message: 'Password incorrect' });
+			else return done(null, false);
 		} catch (e) { return done(e); }
 	}
 
 	passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, authenticateUser));
-	passport.serializeUser((user, done) => done(null, user.id));
+	passport.serializeUser((user, done) => {
+		console.log(user);
+		return done(null, user._id.valueOf())
+	});
 	
-	passport.deserializeUser((id, done) =>
+	passport.deserializeUser(async (id, done) =>
 	{
-		return done(null, getUserById(id));
+		const user = await getUserById(id)
+		console.log(id, user)
+		return done(null, user);
 	});
 }
 
