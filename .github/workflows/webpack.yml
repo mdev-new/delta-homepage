@@ -5,9 +5,9 @@ env:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "zdd" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "zdd" ]
   workflow_dispatch:
 
 permissions:
