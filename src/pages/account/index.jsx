@@ -23,29 +23,6 @@ function Account({auth, setAuth}) {
 		setMailPostfix(event.target.value);
 	};
 
-	useEffect(() => {
-		fetch("http://localhost:8080/api/v1/account/authOk", {
-			method:"GET", 
-			credentials: "include",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Credentials": true,
-			},
-		})
-		.then((response) => {
-			if (response.status === 200) return response.json();
-			throw new Error("authentication has been failed!");
-		})
-		.then((res) => {
-			setAuth(res.auth);
-			console.log(res.user)
-		})
-		.catch((err) => {
-			console.log(err);
-		});
-	}, []);
-
 	return (
 	<Box>
 	{!auth ?

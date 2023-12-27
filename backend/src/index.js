@@ -6,7 +6,11 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 
 const Database = require("./database.js");
+
+// global vars
 global.database = new Database("mongodb://127.0.0.1:27017", 'delta-homepage');
+global.frontendPublic = 'https://localhost:3000'
+global.backendPubluc = 'http://localhost:8080'
 
 const apiV1 = require('./api/v1');
 const initializePassport = require('../passport-config');
@@ -39,7 +43,7 @@ app.use(passport.session());
 app.use(methodOverride('_method'));
 
 app.use(cors({
-    origin: "https://localhost:3000",
+    origin: global.frontendPublic,
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
     credentials: true,
 })

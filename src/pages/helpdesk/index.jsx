@@ -16,6 +16,11 @@ import {
 	Paper
 } from '@mui/material'
 
+import {
+	useState,
+	useEffect
+} from 'react'
+
 // pokud je dany clovek IT admin nebo reditelstvi
 // tak umoznit odstraneni prispevku
 // checkovano na serveru samozrejme
@@ -27,15 +32,39 @@ const rows = [
 ]
 
 function Helpdesk({auth}) {
+
+	const [posts, setPosts] = useState([]);
+
+	useEffect(() => {
+		fetch("http://localhost:8080/api/v1/helpdesk/posts", {
+			method:"GET", 
+			credentials: "include",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Credentials": true,
+			},
+		})
+		.then((response) => response.json())
+		.then((res) => {
+			setPosts(res);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	}, []);
+
 	return (
 		<Box>
 		{
 			auth &&
-			<Stack direction="row">
-				<TextField label="Závada" variant="outlined" />
-				<TextField label="Místo" variant="outlined" />
-				<Button variant="contained">Přidat</Button>
-			</Stack>
+			<form method="POST" action="http://localhost:8080/api/v1/helpdesk/post">
+				<Stack direction="row">
+					<TextField name="problem" label="Závada" variant="outlined" />
+					<TextField name="place" label="Místo" variant="outlined" />
+					<Button type="submit" variant="contained">Přidat</Button>
+				</Stack>
+			</form>
 		}
 
 			<TableContainer component={Paper}>
@@ -47,15 +76,15 @@ function Helpdesk({auth}) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.map((row) => (
+						{posts.map((post) => (
 							<TableRow
-								key={row.zavada}
+								key={post.problem}
 								sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
 							>
 								<TableCell component="th" scope="row">
-									{row.zavada}
+									{post.problem}
 								</TableCell>
-								<TableCell align="right">{row.misto}</TableCell>
+								<TableCell align="right">{post.place}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>

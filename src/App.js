@@ -4,7 +4,7 @@ import {
 	Route
 } from "react-router-dom";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Toolbar from '@mui/material/Toolbar';
 import { Box } from "@mui/material"
@@ -23,6 +23,7 @@ import Wiki from "./pages/wiki";
 import ReditelskyFB from "./pages/fb";
 import Bakalar from "./pages/bakalar";
 import Pocasi from "./pages/pocasi";
+import NotAuth from "./pages/not_auth";
 
 const routes = (auth) => [
 	['Social', '/social', true],
@@ -40,6 +41,29 @@ const routes = (auth) => [
 
 function App() {
 	const [auth, setAuth] = useState(false);
+
+	useEffect(() => {
+		fetch("http://localhost:8080/api/v1/account/authOk", {
+			method:"GET", 
+			credentials: "include",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Credentials": true,
+			},
+		})
+		.then((response) => {
+			if (response.status === 200) return response.json();
+			throw new Error("authentication has been failed!");
+		})
+		.then((res) => {
+			setAuth(res.auth);
+			console.log(res.user)
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	}, []);
 
 	return (
 		<Router>
@@ -68,6 +92,7 @@ function App() {
 						<Route exact path="/wiki" element={<Wiki />} />
 						<Route exact path="/fb" element={<ReditelskyFB />} />
 						<Route exact path="/pocasi" element={<Pocasi />} />
+						<Route exact path="/unauthorized" element={<NotAuth />} />
 					</Routes>
 				</Box>
 			</Box>

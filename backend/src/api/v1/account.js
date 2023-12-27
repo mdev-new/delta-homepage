@@ -33,8 +33,8 @@ router.post('/login', (req, res, next) => {
 			const mailOptions = {
 				from: "delta.homepage.verify@gmail.com",
 				to: req.body.email + req.body.domain, 
-				subject: 'Verifikace účet',
-				html: '<a href="https://localhost:8080/api/v1/account/verify/' + user._id.valueOf() + '">Klikni zde</a>'
+				subject: 'Verifikace účtu',
+				html: '<a href="' + global.backendPublic + '/api/v1/account/verify/' + user._id.valueOf() + '">Klikni zde</a>'
 			}
 			smtpTransport.sendMail(mailOptions, function(error, response){
 				if(error) {
@@ -45,12 +45,12 @@ router.post('/login', (req, res, next) => {
 
 		});
 
-		res.status(200).redirect('https://localhost:3000/account')
+		res.status(200).redirect(global.frontendPublic + '/account')
 
 	} else {
 		passport.authenticate('local', {
-			successRedirect: 'https://localhost:3000/account',
-			failureRedirect: 'https://localhost:3000/'
+			successRedirect: global.frontendPublic + '/account',
+			failureRedirect: global.frontendPublic
 		})(req, res, next)
 	}
 });
@@ -58,13 +58,13 @@ router.post('/login', (req, res, next) => {
 router.get('/verify/:id', async (req, res, next) => {
 	console.log('verified', req.params.id)
 	await database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {accountActive: true}})
-	res.status(200).redirect('https://localhost:3000/account')
+	res.status(200).redirect(global.frontendPublic + '/account')
 })
 
 router.delete('/logout', (req, res, next) => {
 	req.logOut(err => {
     	if (err) return next(err);
-    	res.redirect('https://localhost:3000/account');
+    	res.redirect(global.frontendPublic + '/account');
  	});
 })
 
