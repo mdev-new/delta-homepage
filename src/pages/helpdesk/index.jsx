@@ -36,7 +36,7 @@ function Helpdesk({auth}) {
 	const [posts, setPosts] = useState([]);
 
 	useEffect(() => {
-		fetch("http://localhost:8080/api/v1/helpdesk/posts", {
+		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/posts", {
 			method:"GET", 
 			credentials: "include",
 			headers: {
@@ -58,7 +58,7 @@ function Helpdesk({auth}) {
 		<Box>
 		{
 			auth &&
-			<form method="POST" action="http://localhost:8080/api/v1/helpdesk/post">
+			<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/post"}>
 				<Stack direction="row">
 					<TextField name="problem" label="Závada" variant="outlined" />
 					<TextField name="place" label="Místo" variant="outlined" />

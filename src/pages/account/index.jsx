@@ -26,7 +26,7 @@ function Account({auth, setAuth}) {
 	return (
 	<Box>
 	{!auth ?
-		<form action="http://localhost:8080/api/v1/account/login" method="POST">
+		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/login"} method="POST">
 			<Stack direction="column" spacing={2}>
 				<Stack direction="row" spacing={2}>
 					<TextField name="email" label="E-Mail" variant="outlined" required />
@@ -50,7 +50,7 @@ function Account({auth, setAuth}) {
 				</Stack>
 			</Stack>
 		</form>
-	: 	<form action="http://localhost:8080/api/v1/account/logout?_method=DELETE" method="POST">
+	: 	<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
 			<Button variant="contained" type="submit">Odhlásit</Button>
 		</form>
 	}

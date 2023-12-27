@@ -26,12 +26,12 @@ import Pocasi from "./pages/pocasi";
 import NotAuth from "./pages/not_auth";
 
 const routes = (auth) => [
-	['Social', '/social', true],
+	['Social', '/social', auth],
 	['Helpdesk', '/helpdesk', true],
-	['Bakalář', '/bakalar', true],
-	['Moodle', '/moodle', true],
-	['Mount Blue', '/mb', true],
-	['TopGun', '/topgun', true],
+	['Bakalář', '/bakalar', auth],
+	['Moodle', '/moodle', auth],
+	['Mount Blue', '/mb', auth],
+	['TopGun', '/topgun', auth],
 	['Wiki', '/wiki', true],
 	['Ředitelský FB', '/fb', true],
 	['Spojení', '/zdd', true],
