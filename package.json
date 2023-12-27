@@ -1,6 +1,6 @@
 {
-  "name": "zdeltydom",
-  "version": "0.1.0",
+  "name": "delta-homepage",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -10,6 +10,7 @@
     "@mui/x-data-grid": "^6.18.5",
     "@mui/x-date-pickers": "^6.18.5",
     "dayjs": "^1.11.10",
+    "jquery": "^3.7.1",
     "lodash-es": "^4.17.21",
     "mapy-cz-react": "^0.1.1",
     "million": "^2.6.4",
@@ -17,6 +18,7 @@
     "react-dom": "^18.2.0",
     "react-geolocated": "^4.1.2",
     "react-helmet": "^6.1.0",
+    "react-router-dom": "^6.21.1",
     "react-scripts": "5.0.1",
     "react-slide-out": "^0.1.4",
     "web-vitals": "^2.1.4",
@@ -37,7 +39,7 @@
     "@craco/craco": "^7.1.0"
   },
   "scripts": {
-    "start": "set HTTPS=true&&craco start",
+    "start": "craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
@@ -63,6 +65,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "homepage": "/zdeltydom/"
+  }
 }
