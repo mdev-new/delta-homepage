@@ -47,7 +47,7 @@ function Helpdesk({auth}) {
 		})
 		.then((response) => response.json())
 		.then((res) => {
-			setPosts(res);
+			setPosts(res.reverse());
 		})
 		.catch((err) => {
 			console.log(err);

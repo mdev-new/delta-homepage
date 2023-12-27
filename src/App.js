@@ -43,7 +43,8 @@ function App() {
 	const [auth, setAuth] = useState(false);
 
 	useEffect(() => {
-		fetch("http://localhost:8080/api/v1/account/authOk", {
+		console.log(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk")
+		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk", {
 			method:"GET", 
 			credentials: "include",
 			headers: {

@@ -9,8 +9,8 @@ const Database = require("./database.js");
 
 // global vars
 global.database = new Database("mongodb://127.0.0.1:27017", 'delta-homepage');
-global.frontendPublic = 'https://localhost:3000'
-global.backendPubluc = 'http://localhost:8080'
+global.frontendPublic = 'http://192.168.1.54:3000'
+global.backendPubluc = 'http://192.168.1.54:8080'
 
 const apiV1 = require('./api/v1');
 const initializePassport = require('../passport-config');
