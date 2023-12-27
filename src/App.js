@@ -29,14 +29,14 @@ const routes = (auth) => [
 	['Social', '/social', auth],
 	['Helpdesk', '/helpdesk', true],
 	['Bakalář', '/bakalar', auth],
-	['Moodle', '/moodle', auth],
-	['Mount Blue', '/mb', auth],
-	['TopGun', '/topgun', auth],
-	['Wiki', '/wiki', true],
-	['Ředitelský FB', '/fb', true],
+//	['Mount Blue', '/mb', auth],
 	['Spojení', '/zdd', true],
+	['Moodle', 'https://student.delta-studenti.cz', auth],
+	['TopGun', 'https://domjudge.zapotocnylubos.com', auth],
+	['Ředitelský FB', '/fb', true],
+	['Wiki', '/wiki', true],
+	['Počasí', '/pocasi', true],
 	['Účet', '/account', true],
-	['Počasí', '/pocasi', true]
 ]
 
 function App() {
@@ -58,8 +58,8 @@ function App() {
 			throw new Error("authentication has been failed!");
 		})
 		.then((res) => {
-			setAuth(res.auth);
-			console.log(res.user)
+			setAuth(res.user.accountActive ? res.auth : false);
+			//console.log(res.user)
 		})
 		.catch((err) => {
 			console.log(err);

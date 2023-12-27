@@ -15,11 +15,20 @@ export default function Drawer({auth, routes}) {
 					routes.map(([text, val, perm]) => (
 						perm &&
 						<ListItem key={text} disablePadding>
-							<Link to={val}>
-								<ListItemButton>
-									<ListItemText primary={text} />
-								</ListItemButton>
-							</Link>
+							{
+								val.startsWith('/') ?
+								<Link to={val}>
+									<ListItemButton>
+										<ListItemText primary={text} />
+									</ListItemButton>
+								</Link>
+								: <a href={val} target="_blank" rel="noopener noreferrer">
+									<ListItemButton>
+										<ListItemText primary={text} />
+									</ListItemButton>
+								</a>
+							}
+
 						</ListItem>
 					))
 				}

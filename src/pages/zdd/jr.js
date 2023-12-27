@@ -425,7 +425,7 @@ const _process = (jizdni_rad, aliases) => {
 	for (const [k, v] of Object.entries(jizdni_rad)) {
 
 		jr[k].info = {...v}.info;
-		console.log(k, v, jr[k])
+		//console.log(k, v, jr[k])
 
 		for (const [k1, v1] of Object.entries(v.spoje)) {
 			log(v1.casy)
@@ -461,4 +461,4 @@ export const jizdni_rad_z_delty = _process(jizdni_rad_z_delty_template, {
 
 export const jizdni_rad_na_deltu = _process(jizdni_rad_na_deltu_template, {})
 
-console.log(jizdni_rad_z_delty, jizdni_rad_na_deltu)
+//console.log(jizdni_rad_z_delty, jizdni_rad_na_deltu)

@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 function isAuth(req, res, next)
 {
 	if (req.isAuthenticated()) return next();
-	res.redirect(global.frontendPublic + '/unauthorized');
+	res.status(401).redirect(global.frontendPublic + '/unauthorized');
 }
 
 function isAuth_headless(req, res, next)
@@ -14,6 +14,8 @@ function isAuth_headless(req, res, next)
 	if (req.isAuthenticated()) return next();
 	res.status(401).json();
 }
+
+// todo kazdych 24h poslat mail nevyresenym prirazenym ticketum
 
 // todo check if authenticated
 router.post('/post', isAuth, async (req, res) => {

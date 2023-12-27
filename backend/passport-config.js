@@ -8,6 +8,8 @@ function initialize(passport, getUserByEmail, getUserById)
 		const user = await getUserByEmail(email + req.body.domain);
 		if (user == null) return done(null, false);
 
+		if(!user.accountActive) return done(null, false);
+
 		try
 		{
 			if (await bcrypt.compare(password, user.password)) return done(null, user);
@@ -24,7 +26,7 @@ function initialize(passport, getUserByEmail, getUserById)
 	passport.deserializeUser(async (id, done) =>
 	{
 		const user = await getUserById(id)
-		console.log(id, user)
+		//console.log(id, user)
 		return done(null, user);
 	});
 }
