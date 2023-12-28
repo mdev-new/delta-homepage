@@ -62,7 +62,6 @@ app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false,
-	cookie: { sameSite: 'strict' },
 	store: MongoStore.create({
 		client: global.database.dbClient,
 		dbName: process.env.MONGODB_DBNAME
@@ -74,7 +73,7 @@ app.use(passport.session());
 app.use(methodOverride('_method'));
 
 app.use(cors({
-    origin: global.frontendPublic,
+    origin: true,
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
     credentials: true,
 })

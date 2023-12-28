@@ -43,7 +43,7 @@ jobs:
     - name: Build
       run: |
         npm install
-        CI=false npm run build
+        CI=false npm run frontend_prod
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

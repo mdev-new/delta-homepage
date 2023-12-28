@@ -42,12 +42,12 @@
     "serve": "^14.2.1"
   },
   "scripts": {
-    "frontend": "craco start",
-    "frontend_prod": "craco build",
+    "frontend": "npx craco start",
+    "frontend_prod": "npx craco build",
     "backend": "cd backend && npm run watch",
     "backend_prod": "cd backend && npm run run",
-    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
-    "run_prod": "concurrently \"npm run frontend_prod && npx serve -s build\" \"npm run backend_prod\""
+    "start": "npx concurrently \"npm run frontend\" \"npm run backend\"",
+    "run_prod": "npx concurrently \"npm run frontend_prod && npx serve -s build -l 0.0.0.0:80\" \"npm run backend_prod\""
   },
   "eslintConfig": {
     "extends": [

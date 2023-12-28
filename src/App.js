@@ -45,7 +45,7 @@ function App() {
 	useEffect(() => {
 		console.log(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk")
 		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk", {
-			method:"GET", 
+			method: "GET", 
 			credentials: "include",
 			headers: {
 				Accept: "application/json",
@@ -58,7 +58,7 @@ function App() {
 			throw new Error("authentication has been failed!");
 		})
 		.then((res) => {
-			setAuth(res.user.accountActive ? res.auth : false);
+			setAuth(/*res.user.accountActive ? */res.auth/* : false*/);
 			//console.log(res.user)
 		})
 		.catch((err) => {

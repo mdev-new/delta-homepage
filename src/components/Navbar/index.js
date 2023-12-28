@@ -54,7 +54,6 @@ function DrawerAppBar({auth, user, items}) {
 					))}
 				</Box>
 				{
-					auth && (
 					<div>
 						<IconButton
 							size="large"
@@ -81,11 +80,10 @@ function DrawerAppBar({auth, user, items}) {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 						>
-							<MenuItem onClick={handleClose}>Profile</MenuItem>
 							<Link to="/account"><MenuItem onClick={handleClose}>My account</MenuItem></Link>
 						</Menu>
 					</div>
-				)}
+				}
 				</Toolbar>
 			</AppBar>
 		</Box>
