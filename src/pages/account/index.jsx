@@ -54,6 +54,7 @@ function Account({auth, setAuth}) {
 			<Button variant="contained" type="submit">Odhlásit</Button>
 		</form>
 	}
+	<iframe name="dummyframe" id="dummyframe" style={{display: 'none', width: 0, height: 0}}></iframe>
 	</Box>
 	);
 }

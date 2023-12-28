@@ -1,16 +1,43 @@
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+require('dotenv').config();
 
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const nodemailer = require('nodemailer')
 
 const Database = require("./database.js");
 
+const MongoStore = require('connect-mongo');
+
 // global vars
-global.database = new Database("mongodb://127.0.0.1:27017", 'delta-homepage');
-global.frontendPublic = 'http://34.75.222.9:3000'
-global.backendPublic = 'http://34.75.222.9:8080'
+global.database = new Database(process.env.MONGODB_ADDR, process.env.MONGODB_DBNAME);
+global.frontendPublic = process.env.FRONTEND_PUBLIC
+global.backendPublic = process.env.BACKEND_PUBLIC
+
+global.smtpTransport = nodemailer.createTransport({
+	pool: true,
+	host: process.env.MAIL_HOST,
+	port: process.env.MAIL_PORT,
+	secure: true, // use TLS
+	auth: {
+		user: process.env.MAIL_USERNAME,
+		pass: process.env.MAIL_PASS,
+	},
+});
+
+global.isAuth = function(req, res, next)
+{
+	if (req.isAuthenticated()) return next();
+	res.status(401).redirect(global.frontendPublic);
+}
+
+global.isAuth_headless = function(req, res, next)
+{
+	if (req.isAuthenticated()) return next();
+	res.status(401).json();
+}
+
 
 const apiV1 = require('./api/v1');
 const initializePassport = require('../passport-config');
@@ -29,13 +56,17 @@ initializePassport(
 	id => database.findOne('users', {_id: new ObjectId(id)})
 );
 
-app.use(express.urlencoded({ limit: '10gb', extended: true }));
-app.use(express.json({limit: '10gb', extended: true }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
+app.use(express.json({limit: '25mb', extended: true }));
 app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false,
 	cookie: { sameSite: 'strict' },
+	store: MongoStore.create({
+		client: global.database.dbClient,
+		dbName: process.env.MONGODB_DBNAME
+	})
 }));
 
 app.use(passport.initialize());
@@ -50,4 +81,4 @@ app.use(cors({
 );
 
 app.use('/api/v1', apiV1);
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT);

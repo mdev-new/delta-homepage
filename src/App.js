@@ -1,5 +1,5 @@
 import {
-	BrowserRouter as Router,
+	MemoryRouter as Router,
 	Routes,
 	Route
 } from "react-router-dom";
@@ -26,17 +26,19 @@ import Pocasi from "./pages/pocasi";
 import NotAuth from "./pages/not_auth";
 
 const routes = (auth) => [
+	['Domov', '/', true],
 	['Social', '/social', auth],
 	['Helpdesk', '/helpdesk', true],
 	['Bakalář', '/bakalar', auth],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/zdd', true],
-	['Moodle', 'https://student.delta-studenti.cz', auth],
-	['TopGun', 'https://domjudge.zapotocnylubos.com', auth],
 	['Ředitelský FB', '/fb', true],
 	['Wiki', '/wiki', true],
 	['Počasí', '/pocasi', true],
 	['Účet', '/account', true],
+	['divider', 'divider'],
+	['Moodle', 'https://student.delta-studenti.cz', auth],
+	['TopGun', 'https://domjudge.zapotocnylubos.com', auth],
 ]
 
 function App() {

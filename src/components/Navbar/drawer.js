@@ -13,16 +13,16 @@ export default function Drawer({auth, routes}) {
 				<List>
 				{
 					routes.map(([text, val, perm]) => (
-						perm &&
+						perm ?
 						<ListItem key={text} disablePadding>
 							{
 								val.startsWith('/') ?
-								<Link to={val}>
+								<Link style={({ isActive }) => (isActive ? {color: 'white', backgroundColor: 'red'} : {color: 'black'})} to={val}>
 									<ListItemButton>
 										<ListItemText primary={text} />
 									</ListItemButton>
 								</Link>
-								: <a href={val} target="_blank" rel="noopener noreferrer">
+								: <a style={{color: 'black'}} href={val} target="_blank" rel="noopener noreferrer">
 									<ListItemButton>
 										<ListItemText primary={text} />
 									</ListItemButton>
@@ -30,6 +30,7 @@ export default function Drawer({auth, routes}) {
 							}
 
 						</ListItem>
+						: (text == 'divider' && val == 'divider') && <Divider />
 					))
 				}
 				</List>

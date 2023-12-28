@@ -3,19 +3,7 @@ const passport = require('passport')
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
-const nodemailer = require('nodemailer')
 const ObjectId = require('mongodb').ObjectId;
-
-let smtpTransport = nodemailer.createTransport({
-	pool: true,
-	host: "smtp.gmail.com",
-	port: 465,
-	secure: true, // use TLS
-	auth: {
-		user: "delta.homepage.verify",
-		pass: "fcmwbzvtjyxofnmp",
-	},
-});
 
 router.post('/login', (req, res, next) => {
 	if(req.body.register) {
@@ -25,46 +13,44 @@ router.post('/login', (req, res, next) => {
 			const user = {
 				email: req.body.email + req.body.domain,
 				password: hash,
-				accountActive: false // todo auth mail
+				accountActive: false
 			}
 
 			await database.insertOne('users', user).catch(console.error);
 
 			const mailOptions = {
-				from: "delta.homepage.verify@gmail.com",
+				from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
 				to: req.body.email + req.body.domain, 
 				subject: 'Verifikace účtu',
 				html: '<a href="' + global.backendPublic + '/api/v1/account/verify/' + user._id.valueOf() + '">Klikni zde</a>'
 			}
-			smtpTransport.sendMail(mailOptions, function(error, response){
+			global.smtpTransport.sendMail(mailOptions, function(error, response){
 				if(error) {
 					console.log(error);
 				}
-				console.log(response)
 			});
 
 		});
 
-		res.status(200).redirect(global.frontendPublic + '/account')
+		res.status(200).redirect(global.frontendPublic)
 
 	} else {
 		passport.authenticate('local', {
-			successRedirect: global.frontendPublic + '/account',
+			successRedirect: global.frontendPublic,
 			failureRedirect: global.frontendPublic
 		})(req, res, next)
 	}
 });
 
 router.get('/verify/:id', async (req, res, next) => {
-	console.log('verified', req.params.id)
 	await database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {accountActive: true}})
-	res.status(200).redirect(global.frontendPublic + '/account')
+	res.status(200).redirect(global.frontendPublic)
 })
 
 router.delete('/logout', (req, res, next) => {
 	req.logOut(err => {
     	if (err) return next(err);
-    	res.redirect(global.frontendPublic + '/account');
+    	res.redirect(global.frontendPublic);
  	});
 })
 

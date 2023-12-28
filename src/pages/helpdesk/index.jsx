@@ -72,7 +72,7 @@ function Helpdesk({auth}) {
 		<Box>
 		{
 			auth &&
-			<form onSubmit={(e) => e.stopPropagation()} method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/post"}>
+			<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/post"}>
 				<Stack direction="row">
 					<TextField name="problem" label="Závada" variant="outlined" />
 					<TextField name="place" label="Místo" variant="outlined" />
@@ -106,10 +106,12 @@ function Helpdesk({auth}) {
 								<TableCell sx={post.solved && {color: 'white'}}>{post.assigned}</TableCell>
 								<TableCell sx={post.solved && {color: 'white'}}>{post.reporter.split('@')[0]}</TableCell>
 								<TableCell sx={post.solved && {color: 'white'}}>{post.liked_by.map(l => l.split('@')[0]).join(', ')}</TableCell>
-								{!post.solved &&
+								{!post.solved && auth &&
 									<TableCell>
-										<Button variant='outlined' onClick={() => submit({variant: 'souhlas', id: post._id})}>Souhlasit</Button>
-										<Button variant='outlined' onClick={() => submit({variant: 'vyreseno', id: post._id})}>Vyřešeno</Button>
+										<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update"}>
+											<Button type='submit' variant='outlined' name='action' value={`{"variant": "souhlas", "id": "${post._id}"}`}>Souhlasit</Button>
+											<Button type='submit' variant='outlined' name='action' value={`{"variant": "vyreseno", "id": "${post._id}"}`}>Vyřešeno</Button>
+										</form>
 									</TableCell>
 								}
 							</TableRow>
