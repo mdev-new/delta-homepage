@@ -36,13 +36,18 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@craco/craco": "^7.1.0"
+    "@craco/craco": "^7.1.0",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2",
+    "serve": "^14.2.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "craco eject"
+    "frontend": "craco start",
+    "frontend_prod": "craco build",
+    "backend": "cd backend && npm run watch",
+    "backend_prod": "cd backend && npm run run",
+    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "run_prod": "concurrently \"npm run frontend_prod && npx serve -s build\" \"npm run backend_prod\""
   },
   "eslintConfig": {
     "extends": [

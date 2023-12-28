@@ -16,12 +16,21 @@ import {
 	FormControlLabel
 } from '@mui/material'
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 function Account({auth, setAuth}) {
 	const [mailPostfix, setMailPostfix] = useState('@delta-studenti.cz');
 
 	const handleChange = (event) => {
 		setMailPostfix(event.target.value);
 	};
+
+	const [changePass_open, openChangePass] = useState(false);
+	const handleClose = () => openChangePass(false);
 
 	return (
 	<Box>
@@ -50,11 +59,44 @@ function Account({auth, setAuth}) {
 				</Stack>
 			</Stack>
 		</form>
-	: 	<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
-			<Button variant="contained" type="submit">Odhlásit</Button>
-		</form>
+	: 	<Box>
+			<Stack spacing={2} direction="column">
+				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/updateInfo"} method="POST">
+					<Stack spacing={2} direction="row">
+						<TextField name="name" label="Jmeno" variant="outlined" required />
+						<TextField name="surname" label="Prijmeni" variant="outlined" required />
+						<TextField name="bakalari_user" label="Uzivatelske jmeno Bakalaru" variant="outlined" required />
+						<TextField name="bakalari_pass" label="Heslo Bakalaru" type="password" variant="outlined" required />
+						<Button variant="contained" type="submit">Aktualizovat</Button>
+						<Button variant="contained" onClick={() => openChangePass(true)}>Změnit heslo na Delta Homepage</Button>
+					</Stack>
+				</form>
+				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
+					<Button variant="contained" type="submit">Odhlásit</Button>
+				</form>
+			</Stack>
+		</Box>
 	}
-	<iframe name="dummyframe" id="dummyframe" style={{display: 'none', width: 0, height: 0}}></iframe>
+	<Dialog
+		open={changePass_open}
+		onClose={handleClose}
+		sx={{margin: 'auto'}}
+		fullWidth={true}
+	>
+		<DialogTitle>Změna hesla</DialogTitle>
+		<DialogContent>
+			<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/changePass"} method="POST">
+				<Stack spacing={2} direction="row">
+					<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
+					<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />
+					<Button variant="contained" type="submit">Aktualizovat</Button>
+				</Stack>
+			</form>
+		</DialogContent>
+		<DialogActions>
+			<Button variant="contained" disableElevation onClick={handleClose}>OK</Button>
+		</DialogActions>
+	</Dialog>
 	</Box>
 	);
 }

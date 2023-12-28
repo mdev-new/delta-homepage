@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -6,87 +6,90 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
-import { NavLink as Link } from "react-router-dom";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
 
-const drawerWidth = 120;
+import { NavLink as Link } from 'react-router-dom'
 
-function ResponsiveDrawer(props) {
-	const [mobileOpen, setMobileOpen] = useState(false);
+function DrawerAppBar({auth, user, items}) {
+	const [anchorEl, setAnchorEl] = React.useState(null);
 
-	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
+	const handleMenu = (event) => {
+		setAnchorEl(event.currentTarget);
 	};
 
-	const drawer = props.drawer;
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	return (
-		<>
-			<AppBar
-				position="fixed"
-				sx={{
-					width: { sm: `calc(100% - ${drawerWidth}px)` },
-					height: {sm : 0},
-					ml: { sm: `${drawerWidth}px` },
-				}}
-			>
-				<IconButton
-					color="inherit"
-					aria-label="open drawer"
-					edge="start"
-					onClick={handleDrawerToggle}
-					sx={{ mr: 2, display: { sm: 'none' } }}
-				>
-					<MenuIcon />
-				</IconButton>
+		<Box sx={{ display: 'flex' }}>
+			<CssBaseline />
+			<AppBar component="nav">
+				<Toolbar>
+				<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>Delta Homepage</Typography>
+ 				<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+					{
+						items.map((item) => (
+						item[0] !== 'divider' ?
+						<Link style={({ isActive }) => (isActive ? {color: 'white', backgroundColor: 'red'} : {color: 'black'})} to={item[1]}>
+							<Button key={item[0]} sx={{ color: '#fff' }}>
+								{item[0]}
+							</Button>
+						</Link>
+						: <Divider orientation="vertical" sx={{display: "inline"}} flexItem />
+					))}
+				</Box>
+				{
+					auth && (
+					<div>
+						<IconButton
+							size="large"
+							aria-label="account of current user"
+							aria-controls="menu-appbar"
+							aria-haspopup="true"
+							onClick={handleMenu}
+							color="inherit"
+						>
+							<AccountCircle />
+						</IconButton>
+						<Menu
+							id="menu-appbar"
+							anchorEl={anchorEl}
+							anchorOrigin={{
+								vertical: 'top',
+								horizontal: 'right',
+							}}
+							keepMounted
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'right',
+							}}
+							open={Boolean(anchorEl)}
+							onClose={handleClose}
+						>
+							<MenuItem onClick={handleClose}>Profile</MenuItem>
+							<Link to="/account"><MenuItem onClick={handleClose}>My account</MenuItem></Link>
+						</Menu>
+					</div>
+				)}
+				</Toolbar>
 			</AppBar>
-			<Box
-				component="nav"
-				sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-				aria-label="mailbox folders"
-			>
-				{/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-				<Drawer
-					variant="temporary"
-					open={mobileOpen}
-					onClose={handleDrawerToggle}
-					ModalProps={{
-						keepMounted: true, // Better open performance on mobile.
-					}}
-					sx={{
-						display: { xs: 'block', sm: 'none' },
-						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-					}}
-				>
-					{ drawer }
-				</Drawer>
-				<Drawer
-					variant="permanent"
-					sx={{
-						display: { xs: 'none', sm: 'block' },
-						'& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-					}}
-					open
-				>
-					{ drawer }
-				</Drawer>
-			</Box>
-		</>
+		</Box>
 	);
 }
 
-function Navbar(props) {
-	return ResponsiveDrawer(props)
-}
-
-export default Navbar;
+export default DrawerAppBar;

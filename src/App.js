@@ -10,7 +10,6 @@ import Toolbar from '@mui/material/Toolbar';
 import { Box } from "@mui/material"
 
 import Navbar from "./components/Navbar";
-import Drawer from "./components/Navbar/drawer.js";
 
 import Home from "./pages";
 import ZDD from "./pages/zdd";
@@ -35,7 +34,6 @@ const routes = (auth) => [
 	['Ředitelský FB', '/fb', true],
 	['Wiki', '/wiki', true],
 	['Počasí', '/pocasi', true],
-	['Účet', '/account', true],
 	['divider', 'divider'],
 	['Moodle', 'https://student.delta-studenti.cz', auth],
 	['TopGun', 'https://domjudge.zapotocnylubos.com', auth],
@@ -72,7 +70,7 @@ function App() {
 		<Router>
 			<Box sx={{ display: 'flex' }}>
 				<Navbar
-					drawer={<Drawer routes={routes(auth)} auth={auth} />}
+					items={routes(auth)}
 					auth={auth}
 				/>
 				<Box

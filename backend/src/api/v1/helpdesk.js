@@ -2,8 +2,21 @@ const express = require('express');
 const passport = require('passport')
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectId;
+const cron = require('node-cron');
 
-// todo kazdych 24h poslat mail nevyresenym prirazenym ticketum
+// 1. den v tydnu 8:00
+// cron.schedule('0 0 8 * * 1', async () => {
+// 	const helpdeskAlert = {
+// 		from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
+// 		to: req.body.assignee,
+// 		subject: 'Problemy na helpdesku',
+// 		html: `${await global.database.queryAll('problems').join(', ')} <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
+// 	}
+
+// 	global.smtpTransport.sendMail(helpdeskAlert, (error, info) => {
+// 		error && console.log(error)
+// 	});
+// });
 
 // todo check if authenticated
 router.post('/post', global.isAuth, async (req, res) => {
