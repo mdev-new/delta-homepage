@@ -50,6 +50,13 @@ const cors = require('cors')
 
 const app = express();
 
+const privateKey  = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/fullchain.pem', 'utf8');
+
+const credentials = {key: privateKey, cert: certificate};
+
+const httpsServer = https.createServer(credentials, app);
+
 initializePassport(
 	passport,
 	email => database.findOne('users', {email: email}),
@@ -80,4 +87,4 @@ app.use(cors({
 );
 
 app.use('/api/v1', apiV1);
-app.listen(process.env.PORT);
+httpsServer.listen(process.env.PORT);
