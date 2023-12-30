@@ -13,7 +13,8 @@ router.post('/login', (req, res, next) => {
 			const user = {
 				email: req.body.email + req.body.domain,
 				password: hash,
-				accountActive: false
+				accountActive: false,
+				role: "student"
 			}
 
 			await database.insertOne('users', user).catch(console.error);
@@ -22,7 +23,7 @@ router.post('/login', (req, res, next) => {
 				from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
 				to: req.body.email + req.body.domain, 
 				subject: 'Verifikace účtu',
-				html: '<a href="' + global.backendPublic + '/api/v1/account/verify/' + user._id.valueOf() + '">Klikni zde</a>'
+				html: 'Pro verifikaci účtu na Delta Homepage <a href="' + global.backendPublic + '/api/v1/account/verify/' + user._id.valueOf() + '">klikněte zde</a>.'
 			}
 			global.smtpTransport.sendMail(mailOptions, function(error, response){
 				if(error) {
@@ -32,25 +33,25 @@ router.post('/login', (req, res, next) => {
 
 		});
 
-		res.status(200).redirect(global.frontendPublic)
+		res.status(200).redirect(global.frontendPublic + '/')
 
 	} else {
 		passport.authenticate('local', {
-			successRedirect: global.frontendPublic,
-			failureRedirect: global.frontendPublic
+			successRedirect: global.frontendPublic + '/',
+			failureRedirect: global.frontendPublic + '/account'
 		})(req, res, next)
 	}
 });
 
 router.get('/verify/:id', async (req, res, next) => {
 	await database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {accountActive: true}})
-	res.status(200).redirect(global.frontendPublic)
+	res.status(200).redirect(global.frontendPublic + '/account')
 })
 
 router.delete('/logout', (req, res, next) => {
 	req.logOut(err => {
     	if (err) return next(err);
-    	res.redirect(global.frontendPublic);
+    	res.redirect(global.frontendPublic + '/account');
  	});
 })
 

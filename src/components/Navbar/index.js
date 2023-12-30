@@ -24,7 +24,7 @@ import Menu from '@mui/material/Menu';
 
 import { NavLink as Link } from 'react-router-dom'
 
-function DrawerAppBar({auth, user, items}) {
+function DrawerAppBar({user, items}) {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const handleMenu = (event) => {

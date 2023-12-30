@@ -1,5 +1,5 @@
 import {
-	MemoryRouter as Router,
+	BrowserRouter as Router,
 	Routes,
 	Route
 } from "react-router-dom";
@@ -40,7 +40,7 @@ const routes = (auth) => [
 ]
 
 function App() {
-	const [auth, setAuth] = useState(false);
+	const [user, setUser] = useState(false);
 
 	useEffect(() => {
 		console.log(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk")
@@ -58,7 +58,7 @@ function App() {
 			throw new Error("authentication has been failed!");
 		})
 		.then((res) => {
-			setAuth(/*res.user.accountActive ? */res.auth/* : false*/);
+			setUser(res.user.accountActive ? res.user : null);
 			//console.log(res.user)
 		})
 		.catch((err) => {
@@ -70,8 +70,8 @@ function App() {
 		<Router>
 			<Box sx={{ display: 'flex' }}>
 				<Navbar
-					items={routes(auth)}
-					auth={auth}
+					items={routes(user)}
+					user={user}
 				/>
 				<Box
 					component="main"
@@ -81,15 +81,15 @@ function App() {
 					<Routes>
 						<Route exact path="/" element={<Home />} />
 						<Route exact path="/zdd" element={<ZDD />} />
-						<Route exact path="/helpdesk" element={<Helpdesk auth={auth} />} />
-						<Route exact path="/social" element={<Social auth={auth} />} />
-						{auth && <>
+						<Route exact path="/helpdesk" element={<Helpdesk user={user} />} />
+						<Route exact path="/social" element={<Social user={user} />} />
+						{user && <>
 							<Route exact path="/bakalar" element={<Bakalar />} />
 							<Route exact path="/moodle" element={<Moodle />} />
 							<Route exact path="/topgun" element={<TopGun />} />
 							</>
 						}
-						<Route exact path="/account" element={<Account auth={auth} setAuth={setAuth}/>} />
+						<Route exact path="/account" element={<Account user={user} />} />
 						<Route exact path="/wiki" element={<Wiki />} />
 						<Route exact path="/fb" element={<ReditelskyFB />} />
 						<Route exact path="/pocasi" element={<Pocasi />} />

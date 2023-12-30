@@ -11,10 +11,10 @@ import {
     CardMedia, 
 } from '@mui/material'
 
-function Social({auth}) {
+function Social({user}) {
 	return (
 		<Box>
-			{ auth &&
+			{ user &&
 				<Box>
 					<Card sx={{width: 300, height: 300}}>
 						<CardContent>

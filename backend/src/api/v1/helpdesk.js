@@ -20,14 +20,16 @@ const cron = require('node-cron');
 
 // todo check if authenticated
 router.post('/post', global.isAuth, async (req, res) => {
+	const date = new Date();
 	global.database.insertOne('problems', {
 		problem: req.body.problem,
 		place: req.body.place,
 		reporter: req.user.email,
 		assigned: req.body.assignee,
-		datetime: new Date().toString(),
+		datetime: `${date.getDate()}.${date.getMonth()}. ${date.getFullYear()}`,
 		liked_by: [],
-		solved: false
+		status: "unsolved",
+		type: req.body.type
 	}).catch(console.error);
 
 	const mailOptions = {
@@ -40,28 +42,25 @@ router.post('/post', global.isAuth, async (req, res) => {
 		error && console.log(error)
 	});
 
-	res.status(200).redirect(global.frontendPublic)
+	res.status(200).redirect(global.frontendPublic + '/helpdesk')
 })
 
 router.post('/update', global.isAuth_headless, async (req, res) => {
-	console.log(req.body.action)
 	const action = JSON.parse(req.body.action)
-	console.log(action)
+	const problem = await global.database.findOne('problems', {_id: new ObjectId(action.id)})
 	if(action.variant === 'souhlas') {
-		global.database.updateOne('problems', {_id: new ObjectId(req.body.id)}, {$push: {liked_by: req.user.email}})
-	} else if(action.variant === 'vyreseno') { // todo check perms
-
-		const problem = await global.database.findOne('problems', {_id: new ObjectId(action.id)})
-
+		console.log("email", req.user.email)
+		global.database.updateOne('problems', problem, {$push: {liked_by: req.user.email}})
+	} else if(action.variant === 'vyreseno' || action.variant === 'prace') {
 		console.log(problem, problem.assigned, req.user.email, problem.assigned == req.user.email)
 		if(problem.assigned == req.user.email) {
-			global.database.updateOne('problems', problem, {$set: {solved: true}})
+			global.database.updateOne('problems', problem, {$set: {status: action.variant === 'vyreseno' ? "solved" : "work"}})
 
 			const mailOptions = {
 				from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
 				to: problem.reporter,
 				subject: 'Helpdesk',
-				html: `Váš problém <b>${problem.problem}</b> na Helpdesku nahlášený ${problem.datetime} byl označen jako vyřešený. <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
+				html: `Váš problém <b>${problem.problem}</b> na Helpdesku nahlášený ${problem.datetime} byl označen jako <b>${action.variant === 'vyreseno' ? "vyřešený" : "🚧🛠️🏗️"}</b>. <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
 			}
 			global.smtpTransport.sendMail(mailOptions, function(error, response){
 				error && console.log(error)
@@ -69,8 +68,21 @@ router.post('/update', global.isAuth_headless, async (req, res) => {
 		}
 	}
 
-	res.redirect(global.frontendPublic)
+	res.redirect(global.frontendPublic + '/helpdesk')
 })
+
+router.delete('/delete', global.isAuth_headless, async (req, res) => {
+
+	const id = req.body.id;
+
+	const problem = await global.database.findOne('problems', {_id: new ObjectId(id)})
+
+	if(req.user.email == problem.reporter) {
+		global.database.deleteOne('problems', problem);
+	}
+
+	res.status(200).redirect(global.frontendPublic + '/helpdesk')
+});
 
 router.get('/posts', async (req, res) => {
 	res.status(200).json(await global.database.queryAll('problems'))

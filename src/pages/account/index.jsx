@@ -22,19 +22,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-function Account({auth, setAuth}) {
-	const [mailPostfix, setMailPostfix] = useState('@delta-studenti.cz');
-
-	const handleChange = (event) => {
-		setMailPostfix(event.target.value);
-	};
+function Account({user}) {
 
 	const [changePass_open, openChangePass] = useState(false);
 	const handleClose = () => openChangePass(false);
 
 	return (
 	<Box>
-	{!auth ?
+	{!user ?
 		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/login"} method="POST">
 			<Stack direction="column" spacing={2}>
 				<Stack direction="row" spacing={2}>
@@ -42,10 +37,9 @@ function Account({auth, setAuth}) {
 					<FormControl>
 						<InputLabel>Doména</InputLabel>
 						<Select
-							value={mailPostfix}
 							label="Doména"
 							name="domain"
-							onChange={handleChange}
+							value="@delta-studenti.cz"
 						>
 							<MenuItem value="@delta-studenti.cz">@delta-studenti.cz</MenuItem>
 							<MenuItem value="@delta-skola.cz">@delta-skola.cz</MenuItem>
@@ -84,18 +78,15 @@ function Account({auth, setAuth}) {
 		fullWidth={true}
 	>
 		<DialogTitle>Změna hesla</DialogTitle>
+		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/changePass"} method="POST">
 		<DialogContent>
-			<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/changePass"} method="POST">
-				<Stack spacing={2} direction="row">
-					<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
-					<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />
-					<Button variant="contained" type="submit">Aktualizovat</Button>
-				</Stack>
-			</form>
+			<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
+			<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />
 		</DialogContent>
 		<DialogActions>
-			<Button variant="contained" disableElevation onClick={handleClose}>OK</Button>
+			<Button variant="contained" type="submit">Aktualizovat</Button>
 		</DialogActions>
+		</form>
 	</Dialog>
 	</Box>
 	);

@@ -19,6 +19,10 @@ Database.prototype.updateOne = async function(col, search, replace) {
 	return await this.db.collection(col).updateOne(search, replace)
 }
 
+Database.prototype.deleteOne = async function(col, doc) {
+	return await this.db.collection(col).deleteOne(doc)
+}
+
 Database.prototype.queryAll = async function(col) {
 	return await this.db.collection(col).find({}).toArray()
 }

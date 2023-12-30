@@ -5,7 +5,6 @@ const passport = require('passport');
 const session = require('express-session');
 const methodOverride = require('method-override');
 const nodemailer = require('nodemailer')
-const https = require('https');
 
 const Database = require("./database.js");
 
@@ -51,12 +50,16 @@ const cors = require('cors')
 
 const app = express();
 
-const privateKey  = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/privkey.pem', 'utf8');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/fullchain.pem', 'utf8');
+const server = app;
 
-const credentials = {key: privateKey, cert: certificate};
+if(!process.env.DEBUG) {
+	const https = require('https');
+	const privateKey  = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/privkey.pem', 'utf8');
+	const certificate = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/fullchain.pem', 'utf8');
 
-const httpsServer = https.createServer(credentials, app);
+	const credentials = {key: privateKey, cert: certificate};
+	server = https.createServer(credentials, app);
+}
 
 initializePassport(
 	passport,
@@ -88,4 +91,4 @@ app.use(cors({
 );
 
 app.use('/api/v1', apiV1);
-httpsServer.listen(process.env.PORT);
+server.listen(process.env.PORT);
