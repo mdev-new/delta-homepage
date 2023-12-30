@@ -45,20 +45,19 @@ const initializePassport = require('../passport-config');
 const ObjectId = require('mongodb').ObjectId;
 
 const fs = require('fs')
-
+const https = require('https');
 const cors = require('cors')
 
 const app = express();
 
-const server = app;
-
-if(!process.env.DEBUG) {
-	const https = require('https');
+if(process.env.DEBUG === 'false') {
 	const privateKey  = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/privkey.pem', 'utf8');
 	const certificate = fs.readFileSync('/etc/letsencrypt/live/api.delta.home.kg/fullchain.pem', 'utf8');
 
 	const credentials = {key: privateKey, cert: certificate};
-	server = https.createServer(credentials, app);
+	global.server = https.createServer(credentials, app);
+} else {
+	global.server = app;
 }
 
 initializePassport(
