@@ -26,7 +26,7 @@ router.post('/post', global.isAuth, async (req, res) => {
 		place: req.body.place,
 		reporter: req.user.email,
 		assigned: req.body.assignee,
-		datetime: `${date.getDate()}.${date.getMonth()}. ${date.getFullYear()}`,
+		datetime: `${date.getDate()}.${date.getMonth()}. ${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`,
 		liked_by: [],
 		status: "unsolved",
 		type: req.body.type
@@ -45,7 +45,7 @@ router.post('/post', global.isAuth, async (req, res) => {
 	res.status(200).redirect(global.frontendPublic + '/helpdesk')
 })
 
-router.post('/update', global.isAuth_headless, async (req, res) => {
+router.post('/update', global.isAuth, async (req, res) => {
 	const action = JSON.parse(req.body.action)
 	const problem = await global.database.findOne('problems', {_id: new ObjectId(action.id)})
 	if(action.variant === 'souhlas') {
@@ -71,7 +71,7 @@ router.post('/update', global.isAuth_headless, async (req, res) => {
 	res.redirect(global.frontendPublic + '/helpdesk')
 })
 
-router.delete('/delete', global.isAuth_headless, async (req, res) => {
+router.delete('/delete', global.isAuth, async (req, res) => {
 
 	const id = req.body.id;
 

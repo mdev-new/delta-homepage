@@ -23,6 +23,8 @@ import ReditelskyFB from "./pages/fb";
 import Bakalar from "./pages/bakalar";
 import Pocasi from "./pages/pocasi";
 import NotAuth from "./pages/not_auth";
+import Zapisky from "./pages/zapisky";
+import AdminPanel from "./pages/admin";
 
 const routes = (auth) => [
 	['Domov', '/', true],
@@ -31,8 +33,10 @@ const routes = (auth) => [
 	['Bakalář', '/bakalar', auth],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/zdd', true],
-	['Ředitelský FB', '/fb', true],
+	['divider', 'divider'],
 	['Wiki', '/wiki', true],
+	['Ředitelský FB', '/fb', true],
+	['Zápisky', '/zapisky', true],
 	['Počasí', '/pocasi', true],
 	['divider', 'divider'],
 	['Moodle', 'https://student.delta-studenti.cz', auth],
@@ -94,6 +98,14 @@ function App() {
 						<Route exact path="/fb" element={<ReditelskyFB />} />
 						<Route exact path="/pocasi" element={<Pocasi />} />
 						<Route exact path="/unauthorized" element={<NotAuth />} />
+						<Route exact path="/zapisky" element={<Zapisky />} />
+						{ user.role === 'admin' &&
+							<Route exact path="/admin" element={<AdminPanel />} />
+						}
+						<Route
+							path="*"
+							element={<h2>Not found or authorized</h2>}
+						/>
 					</Routes>
 				</Box>
 			</Box>

@@ -14,7 +14,12 @@ router.post('/login', (req, res, next) => {
 				email: req.body.email + req.body.domain,
 				password: hash,
 				accountActive: false,
-				role: "student"
+				role: "student",
+				male: true,
+				name: "",
+				surname: "",
+				bakalari_user: "",
+				bakalari_pass: ""
 			}
 
 			await database.insertOne('users', user).catch(console.error);
@@ -58,6 +63,29 @@ router.delete('/logout', (req, res, next) => {
 router.get('/authOk', async (req, res) => {
 	const user = await req.user
 	res.status(200).json({auth: req.isAuthenticated(), user: user});
+})
+
+router.post('/accountInfo/update', (req, res, next) => {
+	database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {
+		name: req.body.name,
+		surname: req.body.surname,
+		bakalari_user: req.body.bakalari_user,
+		bakalari_pass: req.body.bakalari_pass // todo
+	}})
+})
+
+router.post('/accountInfo/changePass', async (req, res, next) => {
+	if(await bcrypt.compare(req.body.oldpass, req.user.password)) {
+		bcrypt.hash(req.body.newpass, 10, async function(err, hash) {
+			database.updateOne('users', {_id: new ObjectId(req.user._id)}, {$set: { password: hash }})
+		})
+	}
+
+	res.redirect(global.frontendPublic + '/account')
+})
+
+router.get('/accountInfo/get', global.isAuth, (req, res, next) => {
+
 })
 
 module.exports = router;

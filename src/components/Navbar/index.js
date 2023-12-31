@@ -27,13 +27,8 @@ import { NavLink as Link } from 'react-router-dom'
 function DrawerAppBar({user, items}) {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
-	const handleMenu = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
+	const handleMenu = (event) => setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
 
 	return (
 		<Box sx={{ display: 'flex' }}>
@@ -50,7 +45,7 @@ function DrawerAppBar({user, items}) {
 								{item[0]}
 							</Button>
 						</Link>
-						: <Divider orientation="vertical" sx={{display: "inline"}} flexItem />
+						: <Divider orientation="vertical" sx={{display: "inline", borderLeftWidth: 2, borderRightWidth: 2, bgcolor: "black" }} flexItem />
 					))}
 				</Box>
 				{
@@ -80,7 +75,15 @@ function DrawerAppBar({user, items}) {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 						>
-							<Link to="/account"><MenuItem onClick={handleClose}>My account</MenuItem></Link>
+							<Link to="/account" style={{ all: 'unset'}}><MenuItem onClick={handleClose}>{user ? <Typography>My account</Typography> : <Typography>Login</Typography>}</MenuItem></Link>
+							{ user.role === 'admin' &&
+								<Link to="/admin"><MenuItem onClick={handleClose}>Admin panel</MenuItem></Link>
+							}
+							{ user &&
+								<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
+									<MenuItem onClick={handleClose}><button type="submit" style={{ all: 'unset'}}>Log off</button></MenuItem>
+								</form>
+							}
 						</Menu>
 					</div>
 				}

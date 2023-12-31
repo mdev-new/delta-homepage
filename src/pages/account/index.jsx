@@ -55,7 +55,7 @@ function Account({user}) {
 		</form>
 	: 	<Box>
 			<Stack spacing={2} direction="column">
-				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/updateInfo"} method="POST">
+				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/update"} method="POST">
 					<Stack spacing={2} direction="row">
 						<TextField name="name" label="Jmeno" variant="outlined" required />
 						<TextField name="surname" label="Prijmeni" variant="outlined" required />
@@ -65,27 +65,25 @@ function Account({user}) {
 						<Button variant="contained" onClick={() => openChangePass(true)}>Změnit heslo na Delta Homepage</Button>
 					</Stack>
 				</form>
-				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
-					<Button variant="contained" type="submit">Odhlásit</Button>
-				</form>
 			</Stack>
 		</Box>
 	}
 	<Dialog
 		open={changePass_open}
 		onClose={handleClose}
-		sx={{margin: 'auto'}}
+		sx={{width: 558, margin: 'auto'}}
 		fullWidth={true}
 	>
 		<DialogTitle>Změna hesla</DialogTitle>
-		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/changePass"} method="POST">
-		<DialogContent>
-			<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
-			<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />
-		</DialogContent>
-		<DialogActions>
-			<Button variant="contained" type="submit">Aktualizovat</Button>
-		</DialogActions>
+		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/changePass"} method="POST">
+			<DialogContent>
+				<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
+				<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />
+			</DialogContent>
+			<DialogActions>
+				<Button variant="contained" type="submit">Aktualizovat</Button>
+				<div style={{flex: '0.02 0 0'}} />
+			</DialogActions>
 		</form>
 	</Dialog>
 	</Box>

@@ -29,7 +29,7 @@ global.smtpTransport = nodemailer.createTransport({
 global.isAuth = function(req, res, next)
 {
 	if (req.isAuthenticated()) return next();
-	res.status(401).redirect(global.frontendPublic);
+	res.status(401).redirect(global.frontendPublic + '/unauthorized');
 }
 
 global.isAuth_headless = function(req, res, next)
