@@ -118,10 +118,11 @@ function Helpdesk({user}) {
 									<>
 									<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update"}>
 										{user.email != post.reporter && <Button type='submit' variant='outlined' name='action' value={`{"variant": "souhlas", "id": "${post._id}"}`}>Souhlasit</Button> }
-										{user.role != 'student' && <>
+										{user.role != 'student' && post.status != 'work' &&
 										<Button type='submit' variant='outlined' name='action' value={`{"variant": "prace", "id": "${post._id}"}`}>Pracuje se na tom</Button>
+										}
+										{user.role != 'student' &&
 										<Button type='submit' variant='outlined' name='action' value={`{"variant": "vyreseno", "id": "${post._id}"}`}>Vyřešeno</Button>
-										</>
 										}
 									</form>
 									{ user && user.role === 'admin' &&

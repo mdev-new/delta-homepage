@@ -26,21 +26,21 @@ import NotAuth from "./pages/not_auth";
 import Zapisky from "./pages/zapisky";
 import AdminPanel from "./pages/admin";
 
-const routes = (auth) => [
+const routes = (user) => [
 	['Domov', '/', true],
-	['Social', '/social', auth],
+	['Social', '/social', true],
 	['Helpdesk', '/helpdesk', true],
-	['Bakalář', '/bakalar', auth],
+	['Bakalář', '/bakalar', user],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/zdd', true],
 	['divider', 'divider'],
 	['Wiki', '/wiki', true],
-	['Ředitelský FB', '/fb', true],
 	['Zápisky', '/zapisky', true],
+	['Ředitelský FB', '/fb', true],
 	['Počasí', '/pocasi', true],
 	['divider', 'divider'],
-	['Moodle', 'https://student.delta-studenti.cz', auth],
-	['TopGun', 'https://domjudge.zapotocnylubos.com', auth],
+	['Moodle', 'https://student.delta-studenti.cz', true],
+	['TopGun', 'https://domjudge.zapotocnylubos.com', true],
 ]
 
 function App() {

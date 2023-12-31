@@ -8,11 +8,11 @@ import {
 	Stack,
 	Card,
 	CardActionArea,
-    CardActions,
-    CardContent,
-    CardMedia,
-    CardHeader,
-    Typography
+	CardActions,
+	CardContent,
+	CardMedia,
+	CardHeader,
+	Typography
 } from '@mui/material'
 
 import {
@@ -73,12 +73,18 @@ function Social({user}) {
 						<Card sx={{width: 700, minHeight: 20}}>
 							<CardHeader
 								avatar={<AccountCircle />}
-								title="Post"
-								subheader={`${post.poster} • ${post.datetime}`}
+								title={post.poster}
+								subheader={`${post.datetime} • ${0} to se mi líbí`}
 							/>
 							<CardContent>
 								<Typography>{post.text}</Typography>
 							</CardContent>
+							<CardActions>
+							<Button variant="outlined">Zobrazit odpovědi</Button>
+							{user &&
+								<Button variant="outlined">To se mi líbí</Button>
+							}
+							</CardActions>
 						</Card>
 						<br />
 					</Box>

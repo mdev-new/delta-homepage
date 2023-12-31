@@ -1,5 +1,8 @@
 import {
-	Box
+	Box,
+	Card,
+	CardContent,
+	CardHeader
 } from '@mui/material'
 
 import {
@@ -21,11 +24,18 @@ function Pocasi() {
 	}, [])
 
 	return (
-		<Box>
-		<p>Pardubice</p>
-		<p>{pocasi.FeelsLikeC}</p>
-		<p>{pocasi.humidity}</p>
-		</Box>
+		<Card sx={{width: 400}}>
+		<CardHeader title="Pardubice" />
+		<CardContent>
+		<p>Timestamp: {pocasi.localObsDateTime}</p>
+		<p>Pocitová teplota: {pocasi.FeelsLikeC} °C</p>
+		<p>Vlhkost: {pocasi.humidity}</p>
+		<p>Tlak: {pocasi.pressure}</p>
+		<p>UV index: {pocasi.uvIndex}</p>
+		<p>Tlak: {pocasi.pressure}</p>
+		<p>Viditelnost: {pocasi.visibility} km</p>
+		</CardContent>
+		</Card>
 	);
 }
 

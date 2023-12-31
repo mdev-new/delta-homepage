@@ -186,9 +186,6 @@ function ZDD() {
 		}}
 	>
 
-	<h1>Delta Jede Domů</h1>
-	<h2>Najdi si efektivní spojení domů</h2>
-
 	<Dialog
 		open={dialog.open}
 		onClose={handleClose}

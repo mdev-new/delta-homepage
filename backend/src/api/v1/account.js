@@ -35,7 +35,6 @@ router.post('/login', (req, res, next) => {
 					console.log(error);
 				}
 			});
-
 		});
 
 		res.status(200).redirect(global.frontendPublic + '/')

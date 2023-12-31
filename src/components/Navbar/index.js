@@ -39,7 +39,7 @@ function DrawerAppBar({user, items}) {
  				<Box sx={{ display: { xs: 'none', sm: 'block' } }}>
 					{
 						items.map((item) => (
-						item[0] !== 'divider' ?
+						item[0] !== 'divider' ? item[2] &&
 						<Link style={({ isActive }) => (isActive ? {color: 'white', backgroundColor: 'red'} : {color: 'black'})} to={item[1]}>
 							<Button key={item[0]} sx={{ color: '#fff' }}>
 								{item[0]}
@@ -75,13 +75,13 @@ function DrawerAppBar({user, items}) {
 							open={Boolean(anchorEl)}
 							onClose={handleClose}
 						>
-							<Link to="/account" style={{ all: 'unset'}}><MenuItem onClick={handleClose}>{user ? <Typography>My account</Typography> : <Typography>Login</Typography>}</MenuItem></Link>
+							<Link to="/account" style={{ all: 'unset'}}><MenuItem onClick={handleClose}>{user ? <Typography>Účet</Typography> : <Typography>Přihlásit se</Typography>}</MenuItem></Link>
 							{ user.role === 'admin' &&
 								<Link to="/admin"><MenuItem onClick={handleClose}>Admin panel</MenuItem></Link>
 							}
 							{ user &&
 								<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/logout?_method=DELETE"} method="POST">
-									<MenuItem onClick={handleClose}><button type="submit" style={{ all: 'unset'}}>Log off</button></MenuItem>
+									<MenuItem onClick={handleClose}><button type="submit" style={{ all: 'unset'}}>Odhlásit se</button></MenuItem>
 								</form>
 							}
 						</Menu>
