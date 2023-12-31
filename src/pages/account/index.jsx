@@ -29,31 +29,8 @@ function Account({user}) {
 
 	return (
 	<Box>
-	{!user ?
-		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/login"} method="POST">
-			<Stack direction="column" spacing={2}>
-				<Stack direction="row" spacing={2}>
-					<TextField name="email" label="E-Mail" variant="outlined" required />
-					<FormControl>
-						<InputLabel>Doména</InputLabel>
-						<Select
-							label="Doména"
-							name="domain"
-							value="@delta-studenti.cz"
-						>
-							<MenuItem value="@delta-studenti.cz">@delta-studenti.cz</MenuItem>
-							<MenuItem value="@delta-skola.cz">@delta-skola.cz</MenuItem>
-						</Select>
-					</FormControl>
-					<TextField name="password" label="Heslo" type="password" variant="outlined" required />
-					<FormControlLabel control={<Checkbox name="register" value="yes" />} label="Registrovat?" />
-				</Stack>
-				<Stack direction="row" spacing={2}>
-					<Button type="submit" variant="contained">Odeslat</Button>
-				</Stack>
-			</Stack>
-		</form>
-	: 	<Box>
+	{user &&
+		<Box>
 			<Stack spacing={2} direction="column">
 				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/update"} method="POST">
 					<Stack spacing={2} direction="row">

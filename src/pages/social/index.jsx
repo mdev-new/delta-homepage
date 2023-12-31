@@ -27,12 +27,7 @@ function Social({user}) {
 	useEffect(() => {
 		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/social/posts", {
 			method:"GET", 
-			credentials: "include",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Credentials": true,
-			},
+			credentials: "include"
 		})
 		.then((response) => response.json())
 		.then((res) => {
@@ -42,6 +37,11 @@ function Social({user}) {
 			console.log(err);
 		});
 	}, []);
+
+	const like = (p) => fetch(process.env.REACT_APP_API_ADDR + `/api/v1/social/posts/${p}/like`, {
+		method:"POST",
+		credentials: "include"
+	})
 
 	return (
 		<Box>
@@ -74,7 +74,7 @@ function Social({user}) {
 							<CardHeader
 								avatar={<AccountCircle />}
 								title={post.poster}
-								subheader={`${post.datetime} • ${0} to se mi líbí`}
+								subheader={`${post.datetime} • ${post.likes.length} to se mi líbí`}
 							/>
 							<CardContent>
 								<Typography>{post.text}</Typography>
@@ -82,7 +82,7 @@ function Social({user}) {
 							<CardActions>
 							<Button variant="outlined">Zobrazit odpovědi</Button>
 							{user &&
-								<Button variant="outlined">To se mi líbí</Button>
+								<Button variant="outlined" onClick={() => like(post._id)}>To se mi líbí</Button>
 							}
 							</CardActions>
 						</Card>

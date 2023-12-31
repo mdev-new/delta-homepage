@@ -55,7 +55,7 @@ router.get('/verify/:id', async (req, res, next) => {
 router.delete('/logout', (req, res, next) => {
 	req.logOut(err => {
     	if (err) return next(err);
-    	res.redirect(global.frontendPublic + '/account');
+    	res.redirect(global.frontendPublic + (req.query.return || '/account'));
  	});
 })
 

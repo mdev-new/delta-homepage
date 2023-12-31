@@ -50,12 +50,7 @@ function App() {
 		console.log(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk")
 		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/account/authOk", {
 			method: "GET", 
-			credentials: "include",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Credentials": true,
-			},
+			credentials: "include"
 		})
 		.then((response) => {
 			if (response.status === 200) return response.json();

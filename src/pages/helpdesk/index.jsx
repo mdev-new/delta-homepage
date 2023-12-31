@@ -40,12 +40,7 @@ function Helpdesk({user}) {
 	useEffect(() => {
 		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/posts", {
 			method:"GET", 
-			credentials: "include",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Credentials": true,
-			},
+			credentials: "include"
 		})
 		.then((response) => response.json())
 		.then((res) => {
