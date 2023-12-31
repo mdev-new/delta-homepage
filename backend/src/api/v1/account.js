@@ -41,8 +41,8 @@ router.post('/login', (req, res, next) => {
 
 	} else {
 		passport.authenticate('local', {
-			successRedirect: global.frontendPublic + '/',
-			failureRedirect: global.frontendPublic + '/account'
+			successRedirect: global.frontendPublic + (req.query.return || '/account'),
+			failureRedirect: global.frontendPublic + (req.query.return || '/account')
 		})(req, res, next)
 	}
 });
@@ -69,7 +69,7 @@ router.post('/accountInfo/update', (req, res, next) => {
 		name: req.body.name,
 		surname: req.body.surname,
 		bakalari_user: req.body.bakalari_user,
-		bakalari_pass: req.body.bakalari_pass // todo
+		bakalari_pass: req.body.bakalari_pass // todo hash?
 	}})
 })
 

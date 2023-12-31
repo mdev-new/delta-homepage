@@ -57,7 +57,7 @@ function DrawerAppBar({user, items}) {
 		>
 			<DialogTitle>Přihlášení / registrace</DialogTitle>
 			<DialogContent>
-			<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/login"} method="POST">
+			<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/login?return=" + location.pathname} method="POST">
 				<Stack direction="column" spacing={2}>
 					<Stack direction="row" spacing={2}>
 						<TextField name="email" label="E-Mail" variant="outlined" required />
