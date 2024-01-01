@@ -11,12 +11,13 @@ function Bakalar({user}) {
 	const [rozvrh, setRozvrh] = useState({});
 
 	useEffect(() => {
+		if(!user) return;
 		fetch("https://delta-skola.bakalari.cz/api/login", {
 			method:"POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded"
 			},
-			body: "client_id=ANDR&grant_type=password&username=17Hroud06513&password=cnyKtezc2x"
+			body: `client_id=ANDR&grant_type=password&username=${user.bakalari_user}&password=${user.bakalari_pass}`
 		})
 		.then((response) => response.json())
 		.then((res) => {

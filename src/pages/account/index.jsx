@@ -32,7 +32,7 @@ function Account({user}) {
 	{user &&
 		<Box>
 			<Stack spacing={2} direction="column">
-				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/update"} method="POST">
+				<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/update?_method=PUT"} method="POST">
 					<Stack spacing={2} direction="row">
 						<TextField name="name" label="Jmeno" variant="outlined" required />
 						<TextField name="surname" label="Prijmeni" variant="outlined" required />
@@ -52,7 +52,7 @@ function Account({user}) {
 		fullWidth={true}
 	>
 		<DialogTitle>Změna hesla</DialogTitle>
-		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/changePass"} method="POST">
+		<form action={process.env.REACT_APP_API_ADDR + "/api/v1/account/accountInfo/changePass?_method=PUT"} method="POST">
 			<DialogContent>
 				<TextField name="oldpass" label="Staré heslo" type="password" variant="outlined" required />
 				<TextField name="newpass" label="Nové heslo" type="password" variant="outlined" required />

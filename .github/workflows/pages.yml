@@ -33,16 +33,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        CI: false
+    - uses: oven-sh/setup-bun@v1
 
     - name: Build
       run: |
-        npm install
+        CI=false npm install
         CI=false npm run frontend_prod
 
     - name: Setup Pages

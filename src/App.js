@@ -83,7 +83,7 @@ function App() {
 						<Route exact path="/helpdesk" element={<Helpdesk user={user} />} />
 						<Route exact path="/social" element={<Social user={user} />} />
 						{user && <>
-							<Route exact path="/bakalar" element={<Bakalar />} />
+							<Route exact path="/bakalar" element={<Bakalar user={user} />} />
 							<Route exact path="/moodle" element={<Moodle />} />
 							<Route exact path="/topgun" element={<TopGun />} />
 							</>

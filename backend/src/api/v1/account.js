@@ -64,16 +64,18 @@ router.get('/authOk', async (req, res) => {
 	res.status(200).json({auth: req.isAuthenticated(), user: user});
 })
 
-router.post('/accountInfo/update', (req, res, next) => {
-	database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {
+router.put('/accountInfo/update', global.isAuth, (req, res, next) => {
+	database.updateOne('users', {_id: new ObjectId(req.user._id)}, {$set: {
 		name: req.body.name,
 		surname: req.body.surname,
 		bakalari_user: req.body.bakalari_user,
 		bakalari_pass: req.body.bakalari_pass // todo hash?
 	}})
+
+	res.redirect(global.frontendPublic + '/account')
 })
 
-router.post('/accountInfo/changePass', async (req, res, next) => {
+router.put('/accountInfo/changePass', global.isAuth, async (req, res, next) => {
 	if(await bcrypt.compare(req.body.oldpass, req.user.password)) {
 		bcrypt.hash(req.body.newpass, 10, async function(err, hash) {
 			database.updateOne('users', {_id: new ObjectId(req.user._id)}, {$set: { password: hash }})
@@ -83,7 +85,7 @@ router.post('/accountInfo/changePass', async (req, res, next) => {
 	res.redirect(global.frontendPublic + '/account')
 })
 
-router.get('/accountInfo/get', global.isAuth, (req, res, next) => {
+router.get('/accountInfo', global.isAuth, (req, res, next) => {
 
 })
 

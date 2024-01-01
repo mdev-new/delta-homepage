@@ -2,6 +2,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import CommentIcon from '@mui/icons-material/Comment';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import NotesIcon from '@mui/icons-material/Notes';
+import SendIcon from '@mui/icons-material/Send';
 
 import {
 	TextField,
@@ -24,6 +30,8 @@ function Social({user}) {
 
 	const [posts, setPosts] = useState([]);
 
+	const [showResponse, setShowResponse] = useState(false);
+
 	useEffect(() => {
 		fetch(process.env.REACT_APP_API_ADDR + "/api/v1/social/posts", {
 			method:"GET", 
@@ -38,7 +46,12 @@ function Social({user}) {
 		});
 	}, []);
 
-	const like = (p) => fetch(process.env.REACT_APP_API_ADDR + `/api/v1/social/posts/${p}/like`, {
+	const like = (p) => fetch(process.env.REACT_APP_API_ADDR + `/api/v1/social/posts/${p}/like?_method=PUT`, {
+		method:"POST",
+		credentials: "include"
+	})
+
+	const del = (p) => fetch(process.env.REACT_APP_API_ADDR + `/api/v1/social/posts/${p}?_method=DELETE`, {
 		method:"POST",
 		credentials: "include"
 	})
@@ -47,19 +60,19 @@ function Social({user}) {
 		<Box>
 			{ user &&
 				<Box>
-					<Card sx={{width: 700, minHeight: 150, margin: 'auto'}}>
+					<Card sx={{width: 550, minHeight: 65, margin: 'auto', position: 'relative'}}>
 						<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/social/post"}>
-							<CardContent>
+							<CardContent sx={{display: 'inline'}}>
 								<TextField
 									label="Text příspěvku"
 									multiline
 									variant="standard"
 									name="text"
-									sx={{width: '100%', margin: 'auto'}}
+									sx={{width: '75%', margin: 'auto'}}
 								/>
 							</CardContent>
-							<CardActions>
-								<Button sx={{marginLeft: 'auto'}} variant="contained" type="submit">Šérnout</Button>
+							<CardActions sx={{display: 'inline', position: 'absolute', bottom: 0, right: '5%'}}>
+								<IconButton variant="contained" type="submit"><SendIcon /></IconButton>
 							</CardActions>
 						</form>
 					</Card>
@@ -69,7 +82,7 @@ function Social({user}) {
 
 			<Stack direction="column" alignItems="center">
 				{posts.map(post =>
-					<Box>
+					<Box key={post._id}>
 						<Card sx={{width: 700, minHeight: 20}}>
 							<CardHeader
 								avatar={<AccountCircle />}
@@ -80,9 +93,16 @@ function Social({user}) {
 								<Typography>{post.text}</Typography>
 							</CardContent>
 							<CardActions>
-							<Button variant="outlined">Zobrazit odpovědi</Button>
-							{user &&
-								<Button variant="outlined" onClick={() => like(post._id)}>To se mi líbí</Button>
+							{user && <>
+								<IconButton onClick={() => like(post._id)}><ThumbUpIcon /></IconButton>
+								<IconButton onClick={() => setShowResponse(true)}><NotesIcon /></IconButton>
+								</>
+							}
+							<IconButton><CommentIcon /></IconButton>
+							{ user.email === post.poster && <>
+								<IconButton><EditIcon /></IconButton>
+								<IconButton color="error"><DeleteIcon /></IconButton>
+								</>
 							}
 							</CardActions>
 						</Card>

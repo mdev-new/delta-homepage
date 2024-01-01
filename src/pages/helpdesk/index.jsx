@@ -99,7 +99,7 @@ function Helpdesk({user}) {
 							const s = (post.status == "solved") ? solvedStyle : (post.status == "work") ? workStyle : unsolvedStyle;
 							return (
 							<TableRow
-								key={post.problem}
+								key={post._id}
 							>
 								<TableCell sx={s}><Typography>{post.problem}</Typography></TableCell>
 								<TableCell sx={s}><Typography>{post.type}</Typography></TableCell>
@@ -107,8 +107,7 @@ function Helpdesk({user}) {
 								<TableCell sx={s}><Typography>{post.datetime.split('GMT')[0]}</Typography></TableCell>
 								<TableCell sx={s}><Typography>{post.assigned}</Typography></TableCell>
 								<TableCell sx={s}><Typography>{post.reporter.split('@')[0]}</Typography></TableCell>
-								<TableCell sx={s}><Typography>{post.liked_by.map(l => l.split('@')[0]).join(', ')}</Typography></TableCell>
-								<TableCell sx={s} align="right">
+								<TableCell sx={s}><Typography>{post.liked_by.map(l => l.split('@')[0]).join(', ')}</Typography>
 								{post.status != 'solved' && user &&
 									<>
 									<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update"}>
