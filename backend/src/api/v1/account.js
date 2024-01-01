@@ -5,12 +5,14 @@ const bcrypt = require('bcrypt');
 
 const ObjectId = require('mongodb').ObjectId;
 
+const User = require('./../../models/user.js')
+
 router.post('/login', (req, res, next) => {
 	if(req.body.register) {
 
 		bcrypt.hash(req.body.password, 10, async function(err, hash) {
 
-			const user = {
+			const user = new User({
 				email: req.body.email + req.body.domain,
 				password: hash,
 				accountActive: false,
@@ -20,9 +22,9 @@ router.post('/login', (req, res, next) => {
 				surname: "",
 				bakalari_user: "",
 				bakalari_pass: ""
-			}
+			})
 
-			await database.insertOne('users', user).catch(console.error);
+			user.save()
 
 			const mailOptions = {
 				from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
@@ -30,6 +32,7 @@ router.post('/login', (req, res, next) => {
 				subject: 'Verifikace účtu',
 				html: 'Pro verifikaci účtu na Delta Homepage <a href="' + global.backendPublic + '/api/v1/account/verify/' + user._id.valueOf() + '">klikněte zde</a>.'
 			}
+
 			global.smtpTransport.sendMail(mailOptions, function(error, response){
 				if(error) {
 					console.log(error);
@@ -48,7 +51,7 @@ router.post('/login', (req, res, next) => {
 });
 
 router.get('/verify/:id', async (req, res, next) => {
-	await database.updateOne('users', {_id: new ObjectId(req.params.id)}, {$set: {accountActive: true}})
+	await User.findByIdAndUpdate(req.params.id, {accountActive: true})
 	res.status(200).redirect(global.frontendPublic + '/account')
 })
 

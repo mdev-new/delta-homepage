@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const User = require('./models/user.js')
+
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
@@ -10,8 +12,11 @@ const Database = require("./database.js");
 
 const MongoStore = require('connect-mongo');
 
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_ADDR).catch(err => console.err(err))
+
 // global vars
-global.database = new Database(process.env.MONGODB_ADDR, process.env.MONGODB_DBNAME);
 global.frontendPublic = process.env.FRONTEND_PUBLIC
 global.backendPublic = process.env.BACKEND_PUBLIC
 
@@ -62,8 +67,8 @@ if(process.env.DEBUG === 'false') {
 
 initializePassport(
 	passport,
-	email => database.findOne('users', {email: email}),
-	id => database.findOne('users', {_id: new ObjectId(id)})
+	email => User.findOne({email: email}),
+	id => User.findById(id)
 );
 
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
@@ -73,8 +78,7 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false,
 	store: MongoStore.create({
-		client: global.database.dbClient,
-		dbName: process.env.MONGODB_DBNAME
+		client: mongoose.connection.getClient()
 	})
 }));
 

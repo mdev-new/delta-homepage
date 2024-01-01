@@ -3,12 +3,10 @@ const passport = require('passport')
 const router = express.Router();
 const ObjectId = require('mongodb').ObjectId;
 
+const Post = require('./../../models/social_post.js');
+
 router.get('/posts', async (req, res) => {
-	const posts = await global.database.queryAll('social_posts')
-	if(!req.query.topLevel)
-		res.status(200).json(posts.filter(p => p.responseTo == null))
-	else
-		res.status(200).json(posts.filter(p => p.responseTo == req.query.topLevel))
+	Post.find().then(posts => res.status(200).json(posts.filter(p => p.responseTo == (!req.query.topLevel) ? null : req.query.topLevel)))
 })
 
 router.get('/posts/:post', async (req, res) => {

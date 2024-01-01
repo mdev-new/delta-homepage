@@ -4,6 +4,8 @@ const router = express.Router();
 const ObjectId = require('mongodb').ObjectId;
 const cron = require('node-cron');
 
+const Problem = require('./../../models/helpdesk_post.js')
+
 // 1. den v tydnu 8:00
 // cron.schedule('0 0 8 * * 1', async () => {
 // 	const helpdeskAlert = {
@@ -21,7 +23,7 @@ const cron = require('node-cron');
 // todo check if authenticated
 router.post('/post', global.isAuth, async (req, res) => {
 	const date = new Date();
-	global.database.insertOne('problems', {
+	const problem = new Problem({
 		problem: req.body.problem,
 		place: req.body.place,
 		reporter: req.user.email,
@@ -30,7 +32,9 @@ router.post('/post', global.isAuth, async (req, res) => {
 		liked_by: [],
 		status: "unsolved",
 		type: req.body.type
-	}).catch(console.error);
+	});
+
+	problem.save();
 
 	const mailOptions = {
 		from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
@@ -47,7 +51,7 @@ router.post('/post', global.isAuth, async (req, res) => {
 
 router.put('/update', global.isAuth, async (req, res) => {
 	const action = JSON.parse(req.body.action)
-	const problem = await global.database.findOne('problems', {_id: new ObjectId(action.id)})
+	const problem = Problem.findById(action.id)
 	if(action.variant === 'souhlas') {
 		console.log("email", req.user.email)
 		global.database.updateOne('problems', problem, {$push: {liked_by: req.user.email}})
@@ -85,7 +89,7 @@ router.delete('/delete', global.isAuth, async (req, res) => {
 });
 
 router.get('/posts', async (req, res) => {
-	res.status(200).json(await global.database.queryAll('problems'))
+	Problem.find().then(problems => res.status(200).json(problems))
 })
 
 module.exports = router;
