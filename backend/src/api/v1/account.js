@@ -69,9 +69,9 @@ router.put('/accountInfo/update', global.isAuth, async (req, res, next) => {
 	await User.findByIdAndUpdate(req.user._id, {
 		name: req.body.name,
 		surname: req.body.surname,
-		bakalari_user: req.body.bakalari_user,
-		bakalari_pass: req.body.bakalari_pass // todo hash?
-	})
+		bk_user: req.body.bakalari_user,
+		bk_pass: req.body.bakalari_pass // todo hash?
+	}, {new: true})
 
 	res.redirect(global.frontendPublic + '/account')
 })

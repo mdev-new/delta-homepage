@@ -10,8 +10,8 @@ router.get('/posts', async (req, res) => {
 })
 
 router.get('/posts/:post', async (req, res) => {
-	const post = await global.database.findOne('social_posts', {_id: new ObjectId(req.params.post)})
-	const replies = await global.database.query('social_posts', {repliesTo: new ObjectId(req.params.post)})
+	const post = await Post.findOneById(req.params.post)
+	const replies = await Post.find({repliesTo: new ObjectId(req.params.post)})
 	res.status(200).json({post, replies})
 })
 
@@ -25,7 +25,7 @@ router.put('/posts/:post/like', global.isAuth, async (req, res) => {
 })
 
 router.put('/posts/:post', global.isAuth, async (req, res) => {
-	global.database.updateOne('social_posts', {_id: new ObjectId(req.params.post)}, {
+	Post.findByIdAndUpdate(req.params.post, {
 		$set: {
 			text: req.body.text,
 			tagged_people: req.body.oznaceni,
@@ -38,7 +38,7 @@ router.put('/posts/:post', global.isAuth, async (req, res) => {
 })
 
 router.delete('/posts/:post', global.isAuth, async (req, res) => {
-	global.database.deleteOne('social_posts', {_id: new ObjectId(req.params.post)})
+	Post.findByIdAndDelete(req.params.post)
 
 	res.status(200).json()
 })

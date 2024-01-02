@@ -7,18 +7,21 @@ const cron = require('node-cron');
 const Problem = require('./../../models/helpdesk_post.js')
 
 // 1. den v tydnu 8:00
-// cron.schedule('0 0 8 * * 1', async () => {
-// 	const helpdeskAlert = {
-// 		from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
-// 		to: req.body.assignee,
-// 		subject: 'Problemy na helpdesku',
-// 		html: `${await global.database.queryAll('problems').join(', ')} <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
-// 	}
+cron.schedule('0 0 8 * * 1', async () => {
 
-// 	global.smtpTransport.sendMail(helpdeskAlert, (error, info) => {
-// 		error && console.log(error)
-// 	});
-// });
+	Problems.find().then(problems => problems.forEach(p => {
+		const helpdeskAlert = {
+			from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
+			to: p.assignee,
+			subject: 'Neuzavreny problem na helpdesku - pravidelne upozorneni',
+			html: `Problem ${p.text} v umisteni ${p.place} nahlaseny uzivatelem <i>${p.reporter}</i> z ${p.datetime}. <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
+		}
+
+		global.smtpTransport.sendMail(helpdeskAlert, (error, info) => {
+			error && console.log(error)
+		});
+	}))
+});
 
 // todo check if authenticated
 router.post('/post', global.isAuth, async (req, res) => {
@@ -53,12 +56,11 @@ router.put('/update', global.isAuth, async (req, res) => {
 	const action = JSON.parse(req.body.action)
 	const problem = Problem.findById(action.id)
 	if(action.variant === 'souhlas') {
-		console.log("email", req.user.email)
-		global.database.updateOne('problems', problem, {$push: {liked_by: req.user.email}})
+		await Problem.updateOne(problem, { $addToSet: {liked_by: req.user.email}})
 	} else if(action.variant === 'vyreseno' || action.variant === 'prace') {
 		console.log(problem, problem.assigned, req.user.email, problem.assigned == req.user.email)
 		if(problem.assigned == req.user.email) {
-			global.database.updateOne('problems', problem, {$set: {status: action.variant === 'vyreseno' ? "solved" : "work"}})
+			await Problem.updateOne(problem, { $set: {status: action.variant === 'vyreseno' ? "solved" : "work"}})
 
 			const mailOptions = {
 				from: `${process.env.MAIL_USERNAME}@${process.env.MAIL_DOMAIN}`,
@@ -78,11 +80,10 @@ router.put('/update', global.isAuth, async (req, res) => {
 router.delete('/delete', global.isAuth, async (req, res) => {
 
 	const id = req.body.id;
+	const problem = await Problem.findById(id)
 
-	const problem = await global.database.findOne('problems', {_id: new ObjectId(id)})
-
-	if(req.user.email == problem.reporter) {
-		global.database.deleteOne('problems', problem);
+	if(req.user.email == problem.reporter || req.user.role === 'admin') {
+		await Problem.findByIdAndRemove(req.body.id);
 	}
 
 	res.status(200).redirect(global.frontendPublic + '/helpdesk')

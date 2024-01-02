@@ -110,8 +110,8 @@ function Helpdesk({user}) {
 								<TableCell sx={s}><Typography>{post.liked_by.map(l => l.split('@')[0]).join(', ')}</Typography>
 								{post.status != 'solved' && user &&
 									<>
-									<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update"}>
-										{user.email != post.reporter && <Button type='submit' variant='outlined' name='action' value={`{"variant": "souhlas", "id": "${post._id}"}`}>Souhlasit</Button> }
+									<form method="POST" action={process.env.REACT_APP_API_ADDR + "/api/v1/helpdesk/update?_method=PUT"}>
+										{true && <Button type='submit' variant='outlined' name='action' value={`{"variant": "souhlas", "id": "${post._id}"}`}>Souhlasit</Button> }
 										{user.role != 'student' && post.status != 'work' && post.assigned == user.email &&
 										<Button type='submit' variant='outlined' name='action' value={`{"variant": "prace", "id": "${post._id}"}`}>Pracuje se na tom</Button>
 										}

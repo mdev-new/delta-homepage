@@ -17,7 +17,7 @@ function Bakalar({user}) {
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded"
 			},
-			body: `client_id=ANDR&grant_type=password&username=${user.bakalari_user}&password=${user.bakalari_pass}`
+			body: `client_id=ANDR&grant_type=password&username=${user.bk_user}&password=${user.bk_pass}`
 		})
 		.then((response) => response.json())
 		.then((res) => {
