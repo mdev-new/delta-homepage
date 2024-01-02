@@ -8,8 +8,6 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const nodemailer = require('nodemailer')
 
-const Database = require("./database.js");
-
 const MongoStore = require('connect-mongo');
 
 const mongoose = require('mongoose');

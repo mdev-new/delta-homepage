@@ -6,7 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 const Post = require('./../../models/social_post.js');
 
 router.get('/posts', async (req, res) => {
-	Post.find().then(posts => res.status(200).json(posts.filter(p => p.responseTo == (!req.query.topLevel) ? null : req.query.topLevel)))
+	Post.find().then(posts => res.status(200).json(posts.filter(p => p.repliesTo == null)))
 })
 
 router.get('/posts/:post', async (req, res) => {
@@ -16,7 +16,10 @@ router.get('/posts/:post', async (req, res) => {
 })
 
 router.put('/posts/:post/like', global.isAuth, async (req, res) => {
-	global.database.updateOne('social_posts', {_id: new ObjectId(req.params.post)}, {$addToSet: {likes: req.user.email}})
+	const post = Post.findById(req.params.post);
+
+	post.likes.addToSet(req.user.email);
+	post.save()
 
 	res.status(200).json()
 })
@@ -47,16 +50,18 @@ router.post('/post', global.isAuth, async (req, res) => {
 	}
 
 	const date = new Date();
-	global.database.insertOne('social_posts', {
+	const post = new Post({
 		text: req.body.text,
-		datetime: `${date.getDate()}.${date.getMonth()+1} ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
+		datetime: `${date.getDate()}.${date.getMonth()+1}. ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`,
 		poster: req.user.email,
 		hashtags: [],
 		tagged_people: [],
 		attachments: [],
 		likes: [],
 		repliesTo: null
-	}).catch(console.error);
+	})
+
+	post.save()
 
 	res.status(200).redirect(global.frontendPublic + '/social')
 })

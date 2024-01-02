@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
 
 const SocialPost = new mongoose.model('SocialPost', new mongoose.Schema({
-	problem: String,
-	place: String,
-	reporter: String,
-	assigned: String,
+	text: String,
 	datetime: String,
-	liked_by: Array,
-	status: String,
-	type: String
+	poster: String,
+	hashtags: Array,
+	tagged_people: Array,
+	attachments: Array,
+	likes: Array,
+	repliesTo: String
 }))
 
 module.exports = SocialPost;
