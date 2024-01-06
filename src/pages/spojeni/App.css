@@ -1,0 +1,46 @@
+.App {
+  text-align: center;
+
+}
+
+.box {
+  white-space: pre-line;
+}
+
+h1 {
+	font-family:'Courier New';
+	font-size: 9vh;
+  margin: 0px;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+  }
+
+h4 {
+    margin: 0px;
+  -webkit-margin-before: 0px;
+  -webkit-margin-after: 0px;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.MuiDataGrid-columnHeaderTitle {
+  font-weight: bold !important;
+}
+
+.hello {
+  display: inline-block;
+  width: 65%;
+}
+
+@media screen and (max-width: 820px) {
+  .hello { width: 100%; }
+}

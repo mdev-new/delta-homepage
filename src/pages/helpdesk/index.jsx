@@ -24,9 +24,9 @@ export default function Helpdesk({user, firestore}) {
 	const submit = (event) => {
 		event.preventDefault();
 
-    const form = event.target;
-    const formFields = form.elements;
-
+		const form = event.target;
+		const formFields = form.elements;
+	
 		const date = new Date();
 		problemsCol.add({
 			problem: formFields.problem.value,
@@ -41,9 +41,9 @@ export default function Helpdesk({user, firestore}) {
 	}
 
 	return (<>
-					{ user &&
+	{ user &&
            <form onSubmit={submit}>
-             <Stack direction="row">
+             <Stack direction={{xs: 'column', lg: 'row'}} spacing={2}>
                  <FormControl>
                      <FormLabel>
                          Závada
@@ -67,43 +67,45 @@ export default function Helpdesk({user, firestore}) {
                      <Select
                          label="Typ závady"
                          name="type"
+						defaultValue="Software"
                      >
                          <Option value="Hardware">Hardware</Option>
                          <Option value="Software">Software</Option>
                          <Option value="Ostatni">Ostatní</Option>
                      </Select>
                  </FormControl>
-                 <Button type="submit" variant="contained">Přidat</Button>
+                 <Button type="submit" variant="outlined">Přidat</Button>
              </Stack>
            </form>
-					}
+	}
+	<br />
 
-       		 <Table>
-             <thead>
-                <tr>
-                    <th><b>Závada</b></th>
-                    <th><b>Typ závady</b></th>
-                    <th><b>Místo</b></th>
-                    <th><b>Datum a čas</b></th>
-                    <th><b>Přiřazená osoba</b></th>
-                    <th><b>Nahlásil</b></th>
-                    <th><b>Souhlasí</b></th>
-                </tr>
-             </thead>
-             <tbody>
-                 {problems && problems.map((post) => 
-                     <tr style={(post.state == 'waiting') ? {} : (post.state == 'work') ? {color: 'yellow'} : {}}>
-                         <td><Typography>{post.problem}</Typography></td>
-                         <td><Typography>{post.type}</Typography></td>
-                         <td><Typography>{post.place}</Typography></td>
-                         <td><Typography>{post.datetime}</Typography></td>
-                         <td><Typography>{post.assigned}</Typography></td>
-                         <td><Typography>{post.reporter}</Typography></td>
-                         <td><Typography>{post.liked_by}</Typography></td>
-                     </tr>
-                 )}
-             </tbody>
-            </Table>
+	 <Table>
+		 <thead>
+			<tr>
+				<th><b>Závada</b></th>
+				<th><b>Typ závady</b></th>
+				<th><b>Místo</b></th>
+				<th><b>Datum a čas</b></th>
+				<th><b>Přiřazená osoba</b></th>
+				<th><b>Nahlásil</b></th>
+				<th><b>Souhlasí</b></th>
+			</tr>
+		 </thead>
+		 <tbody>
+			 {problems && problems.map((post) => 
+				 <tr style={(post.state == 'waiting') ? {} : (post.state == 'work') ? {backgroundColor: 'yellow'} : {color: 'white', backgroundColor: 'green'}}>
+					 <td><Typography>{post.problem}</Typography></td>
+					 <td><Typography>{post.type}</Typography></td>
+					 <td><Typography>{post.place}</Typography></td>
+					 <td><Typography>{post.datetime}</Typography></td>
+					 <td><Typography>{post.assigned}</Typography></td>
+					 <td><Typography>{post.reporter}</Typography></td>
+					 <td><Typography>{post.liked_by}</Typography></td>
+				 </tr>
+			 )}
+		 </tbody>
+	</Table>
     </>);
 
 }
