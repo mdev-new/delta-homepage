@@ -274,7 +274,7 @@ function Spojeni() {
 		</Stack>
 
 		<Button
-			variant="contained"
+			variant="solid"
 			size="large"
 			onClick={() =>
 				najdi_spojeni(

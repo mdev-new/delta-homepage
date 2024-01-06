@@ -37,12 +37,11 @@ function createWithId(collection, object) {
 
 function Social({user, firestore}) {
 
-	const [showResponse, setShowResponse] = useState(false);
-
 	const postsCol = firestore.collection('posts')
 	const query = postsCol.orderBy('createdAt', 'desc')
 	const [posts] = useCollectionData(query, {idField: 'id'})
 
+	const [responseTo, setResponseTo] = useState(null)
 	const post = (event) => {
 		event.preventDefault();
 
@@ -59,7 +58,9 @@ function Social({user, firestore}) {
 			tagged_people: [],
 			attachments: [],
 			likes: [],
-			createdAt: firebase.firestore.FieldValue.serverTimestamp()
+			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+			createdBy: user.uid,
+			responseTo: responseTo
 		})
 	}
 	
@@ -70,6 +71,7 @@ function Social({user, firestore}) {
 	const del = (p) => {
 		postsCol.doc(p).delete()
 	}
+
 
 	return (
 		<Box>
@@ -99,9 +101,9 @@ function Social({user, firestore}) {
 			}
 			<br />
 
-			{posts &&
+			{(posts && posts.length > 0) &&
 				<Stack direction="column" alignItems="center">
-					{posts.map(post =>
+					{(posts.filter(post => (post.responseTo == responseTo)).length > 0) ? posts.map(post => (post.responseTo == responseTo) &&
 						<Box key={post.id} sx={{width: {xs: '100%', md: '60%'}}}>
 							<Card>
 								<Box>
@@ -109,16 +111,15 @@ function Social({user, firestore}) {
 									<Typography style={{display: 'inline-flex'}}>{post.poster}</Typography>
 									<Typography>{`${post.datetime} • ${post.likes.length} to se mi líbí`}</Typography>
 								</Box>
-								<CardContent>
+								<CardContent onClick={() => setResponseTo(post.id)}>
 									<Typography>{post.text}</Typography>
 								</CardContent>
 								<CardActions>
 								{user && <>
 									<IconButton onClick={() => like(post.id)}><ThumbUpIcon /></IconButton>
-									<IconButton onClick={() => setShowResponse(true)}><NotesIcon /></IconButton>
-									<IconButton><CommentIcon /></IconButton>
+									<IconButton onClick={() => setResponseTo(post.id)}><CommentIcon /></IconButton>
 
-									{ user.email === post.poster && <>
+									{ post.createdBy == user.uid && <>
 										<IconButton><EditIcon /></IconButton>
 										<IconButton onClick={() => del(post.id)}><DeleteIcon /></IconButton>
 									</>
@@ -129,7 +130,9 @@ function Social({user, firestore}) {
 							</Card>
 							<br />
 						</Box>
-					)}
+					)
+					: <h3>Zadne prispevky</h3>
+					}
 				</Stack>
 			}
 		</Box>

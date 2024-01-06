@@ -119,11 +119,14 @@ export default function Header({user, routes}) {
 								</Box>
 							</Box>
 						</MenuItem>
+						{ user && <>
 						<ListDivider />
 						<MenuItem>
 							<LogoutRoundedIcon />
-							Log out
+							<Button style={{all: 'unset' }}>Odhlasit</Button>
 						</MenuItem>
+						</>
+						}
 					</Menu>
 				</Dropdown>
 			</Box>

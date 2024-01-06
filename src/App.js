@@ -2,6 +2,7 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
 import Avatar from '@mui/joy/Avatar';
 import Divider from '@mui/joy/Divider';
+import {Input} from '@mui/joy';
 
 import Layout from './components/Layout';
 import Header from './components/Header';
@@ -14,8 +15,9 @@ import Pocasi from './pages/pocasi'
 import Wiki from './pages/wiki'
 import ReditelskyFB from './pages/fb'
 import Bakalar from './pages/bakalar'
+import Account from './pages/account'
 
-
+import {useState} from 'react'
 
 import {
 	BrowserRouter as Router,
@@ -46,14 +48,23 @@ const firestore = firebase.firestore()
 
 const Auth = () => {
 
-	const signInWithGH = () => {
-		const provider = new firebase.auth.GithubAuthProvider();
-		auth.signInWithPopup(provider);
+	const [email, setEmail] = useState("");
+	const [psw, setPsw] = useState("");
+
+	const signInWithEmailPass = async () => {
+		auth.signInWithEmailAndPassword(email, psw)
+	}
+	const register = () => {
+		auth.createUserWithEmailAndPassword(email, psw)
+			.then(userCredential => userCredential.user.sendEmailVerification())
 	}
 
 	return !auth.currentUser ? (
 		<>
-		<button onClick={signInWithGH}>Prihlasit se s GitHubem</button>
+                <Input value={email} onChange={(e) => setEmail(e.target.value)} variant="outlined" />
+                <Input value={psw} onChange={(e) => setPsw(e.target.value)} variant="outlined" />
+		<button onClick={signInWithEmailPass}>Prihlasit se</button>
+		<button onClick={register}>Registrovat se</button>
 		</>
 	) : (
 		<button onClick={() => auth.signOut()}>Odhlasit se</button>
@@ -106,6 +117,7 @@ export default function App() {
 			<Route exact path="/wiki" element={<Wiki user={auth.currentUser} firestore={firestore} />} />
 			<Route exact path="/fb" element={<ReditelskyFB user={auth.currentUser} firestore={firestore} />} />
 			<Route exact path="/bakalar" element={<Bakalar user={auth.currentUser} firestore={firestore} />} />
+			<Route exact path="/account" element={<Account user={auth.currentUser} firestore={firestore} />} />
 	 	 </Routes>
 	  </Layout.Main>
 	  </Layout.Root>

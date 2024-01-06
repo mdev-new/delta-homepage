@@ -8,7 +8,10 @@ import {
 	FormLabel,
 	Select,
 	MenuItem,
-	Option
+	Option,
+	Box,
+	CardContent,
+	Card
 } from '@mui/joy'
 
 import { useCollectionData } from 'react-firebase-hooks/firestore'
@@ -36,7 +39,8 @@ export default function Helpdesk({user, firestore}) {
 			reporter: user.displayName,
 			datetime: `${date.getDate()}.${date.getMonth()+1}. ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, 0)}`,
 			state: 'waiting',
-			createdAt: firebase.firestore.FieldValue.serverTimestamp()
+			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+			createdBy: user.uid
 		})
 	}
 
@@ -80,7 +84,8 @@ export default function Helpdesk({user, firestore}) {
 	}
 	<br />
 
-	 <Table>
+	<Box sx={{display: {xs: 'none', sm: 'block'}}}>
+	<Table>
 		 <thead>
 			<tr>
 				<th><b>Závada</b></th>
@@ -106,6 +111,28 @@ export default function Helpdesk({user, firestore}) {
 			 )}
 		 </tbody>
 	</Table>
+	</Box>
+	
+	<Box sx={{display: {xs: 'block', sm: 'none'}}}>
+	{problems && problems.map((post) => 
+		<Card style={(post.state == 'waiting') ? {} : (post.state == 'work') ? {backgroundColor: 'yellow'} : {color: 'white', backgroundColor: 'green'}}>
+		<CardContent>
+		<Table>
+		<tbody style={(post.state == 'waiting') ? {} : (post.state == 'work') ? {backgroundColor: 'yellow'} : {color: 'white', backgroundColor: 'green'}}>
+	       	<tr><td><Typography>Problem</Typography></td><td><Typography>{post.problem}</Typography></td></tr>
+	       	<tr><td><Typography>Typ</Typography></td><td><Typography>{post.type}</Typography></td></tr>
+	       	<tr><td><Typography>Misto</Typography></td><td><Typography>{post.place}</Typography></td></tr>
+	       	<tr><td><Typography>Datum a cas</Typography></td><td><Typography>{post.datetime}</Typography></td></tr>
+	       	<tr><td><Typography>Prirazena osoba</Typography></td><td><Typography>{post.assigned}</Typography></td></tr>
+	       	<tr><td><Typography>Nahlasovatel</Typography></td><td><Typography>{post.reporter}</Typography></td></tr>
+	       	<tr><td><Typography>Souhlasi</Typography></td><td><Typography>{post.liked_by}</Typography></td></tr>
+		</tbody>
+		</Table>
+	        </CardContent>
+		</Card>
+	)}
+	<br />
+	</Box>
     </>);
 
 }
