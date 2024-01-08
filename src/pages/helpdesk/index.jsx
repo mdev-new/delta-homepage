@@ -17,6 +17,11 @@ import {
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import firebase from 'firebase/compat/app'
 
+function createWithId(collection, object) {
+	const ref = collection.doc()
+	ref.set({...object, id: ref.id}, {merge: true})
+}
+
 export default function Helpdesk({user, firestore}) {
 
 	const problemsCol = firestore.collection('problems')
@@ -31,7 +36,7 @@ export default function Helpdesk({user, firestore}) {
 		const formFields = form.elements;
 	
 		const date = new Date();
-		problemsCol.add({
+		createWithId(problemsCol, {
 			problem: formFields.problem.value,
 			type: formFields.type[1].value,
 			place: formFields.place.value,
@@ -42,6 +47,10 @@ export default function Helpdesk({user, firestore}) {
 			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			createdBy: user.uid
 		})
+	}
+
+	const del = (p) => {
+		problemsCol.doc(p).delete()
 	}
 
 	return (<>
@@ -107,6 +116,11 @@ export default function Helpdesk({user, firestore}) {
 					 <td><Typography>{post.assigned}</Typography></td>
 					 <td><Typography>{post.reporter}</Typography></td>
 					 <td><Typography>{post.liked_by}</Typography></td>
+					 <td><Typography>
+						 <Button variant="text" onClick={() => post.delete()}>Pracuje se na tom</Button>
+						 <Button variant="text" onClick={() => post.delete()}>Vyresit</Button>
+						 <Button variant="text" onClick={() => del(post.id)}>Smazat</Button>
+					 </Typography></td>
 				 </tr>
 			 )}
 		 </tbody>

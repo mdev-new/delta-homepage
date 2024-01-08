@@ -40,28 +40,18 @@ function Account({user}) {
                                     Jmeno
                                 </FormLabel>
                                 <Input name="name" variant="outlined" />
-
                             </FormControl>
                             <FormControl required>
                                 <FormLabel>
                                     Prijmeni
                                 </FormLabel>
                                 <Input name="surname" variant="outlined" />
-
                             </FormControl>
                             <FormControl required>
                                 <FormLabel>
                                     Uzivatelske jmeno Bakalaru
                                 </FormLabel>
                                 <Input name="bakalari_user" variant="outlined" />
-
-                            </FormControl>
-                            <FormControl required>
-                                <FormLabel>
-                                    Heslo Bakalaru
-                                </FormLabel>
-                                <Input name="bakalari_pass" type="password" variant="outlined" />
-
                             </FormControl>
                             <Button variant="contained" type="submit">Aktualizovat</Button>
                             <Button variant="contained" onClick={() => openChangePass(true)}>Změnit heslo na Delta Homepage</Button>
@@ -86,14 +76,12 @@ function Account({user}) {
                             Staré heslo
                         </FormLabel>
                         <Input name="oldpass" type="password" variant="outlined" />
-
                     </FormControl>
                     <FormControl required>
                         <FormLabel>
                             Nové heslo
                         </FormLabel>
                         <Input name="newpass" type="password" variant="outlined" />
-
                     </FormControl>
                 </DialogContent>
                 <DialogActions>

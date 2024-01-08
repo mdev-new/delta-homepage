@@ -33,9 +33,46 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { NavLink } from 'react-router-dom'
 
 import Navbar from './Navbar';
+import {useState} from "react";
+import firebase from 'firebase/compat/app'
 
-export default function Header({user, routes}) {
+export default function Header({user, routes, firestore, auth}) {
 	const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+	const [email, setEmail] = useState("");
+	const [psw, setPsw] = useState("");
+
+	const usersCol = firestore.collection('users')
+
+	const signInWithEmailPass = async () => {
+		auth.signInWithEmailAndPassword(email, psw)
+			.then(userCredential => {
+				usersCol.doc(userCredential.user.uid).update({
+					lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp()
+				})
+			})
+	}
+
+	const register = () => {
+		auth.createUserWithEmailAndPassword(email, psw)
+			.then(userCredential => {
+				userCredential.user.sendEmailVerification()
+
+				usersCol.doc(userCredential.user.uid).set({
+					id: userCredential.user.uid,
+					lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp(),
+					name: "",
+					surname: "",
+					bk_username: "",
+					hometown: "",
+					intr: false,
+				}, {merge: true})
+
+				alert('Potvrzeni odeslano na email, prosim odkliknete ho.')
+			})
+	}
+
+	//usersCol.doc(user.uid).getDoc().data().name} {usersCol.doc(user.uid).getDoc().surname
 
 	return (
 		<Box
@@ -54,14 +91,16 @@ export default function Header({user, routes}) {
 			>
 				{ routes.map(r => r[0] != 'divider' &&
 					<NavLink to={r[1]} sx={{ all: 'unset' }}>
-						<Button
-							variant="plain"
-							color="neutral"
-							size="sm"
-							sx={{ alignSelf: 'center' }}
-						>
-							{r[0]}
-						</Button>
+						{({ isActive, isPending, isTransitioning }) => (
+							<Button
+								variant="plain"
+								color="neutral"
+								size="sm"
+								sx={{ color: isActive? "white" : 'black', backgroundColor: isActive? "red" : 'white', alignSelf: 'center' }}
+							>
+								{r[0]}
+							</Button>
+						)}
 					</NavLink>
 				)}
 			</Stack>
@@ -109,22 +148,27 @@ export default function Header({user, routes}) {
 								}}
 							>
 								<AccountCircle color="primary" fontSize="large" />
-								<Box sx={{ ml: 1.5 }}>
-									<Typography level="title-sm" textColor="text.primary">
-										{user ? user.displayName : "Not logged in"}
-									</Typography>
-									<Typography level="body-xs" textColor="text.tertiary">
-										{user && user.email}
-									</Typography>
-								</Box>
+								<Box sx={{ ml: 1.5 }}><Typography level="body-xs" textColor="text.tertiary">
+										{user ? <>{}</> : "Not logged in"}
+								</Typography></Box>
 							</Box>
 						</MenuItem>
-						{ user && <>
+						{ user ?
+						<>
 						<ListDivider />
-						<MenuItem>
+						<MenuItem onClick={() => auth.signOut()}>
 							<LogoutRoundedIcon />
-							<Button style={{all: 'unset' }}>Odhlasit</Button>
+							<Typography>Odhlasit</Typography>
 						</MenuItem>
+						</>
+
+						:
+						<>
+							<ListDivider />
+							<MenuItem><Input value={email} onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
+							<MenuItem><Input value={psw} onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
+							<MenuItem><Button variant="outlined" onClick={signInWithEmailPass}>Prihlasit se</Button></MenuItem>
+							<MenuItem><Button variant="outlined" onClick={register}>Registrovat se</Button></MenuItem>
 						</>
 						}
 					</Menu>

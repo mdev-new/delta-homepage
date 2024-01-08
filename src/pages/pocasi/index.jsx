@@ -29,10 +29,9 @@ function Pocasi() {
 		<CardContent>
 		<Typography>Timestamp: {pocasi.localObsDateTime}</Typography>
 		<Typography>Pocitová teplota: {pocasi.FeelsLikeC} °C</Typography>
-		<Typography>Vlhkost: {pocasi.humidity}</Typography>
+		<Typography>Vlhkost: {pocasi.humidity == 69 ? "nice" : pocasi.humidity} %</Typography>
 		<Typography>Tlak: {pocasi.pressure}</Typography>
 		<Typography>UV index: {pocasi.uvIndex}</Typography>
-		<Typography>Tlak: {pocasi.pressure}</Typography>
 		<Typography>Viditelnost: {pocasi.visibility} km</Typography>
 		</CardContent>
 		</Card>

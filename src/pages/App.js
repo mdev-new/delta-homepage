@@ -1,21 +1,20 @@
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
-import Avatar from '@mui/joy/Avatar';
-import Divider from '@mui/joy/Divider';
-import {Input} from '@mui/joy';
+import {Input, Button} from '@mui/joy';
 
-import Layout from './components/Layout';
-import Header from './components/Header';
+import Layout from '../components/Layout';
+import Header from '../components/Header';
 
-import Helpdesk from './pages/helpdesk'
-import Social from './pages/social'
-import Zapisky from './pages/zapisky'
-import Spojeni from './pages/spojeni'
-import Pocasi from './pages/pocasi'
-import Wiki from './pages/wiki'
-import ReditelskyFB from './pages/fb'
-import Bakalar from './pages/bakalar'
-import Account from './pages/account'
+import Helpdesk from './helpdesk'
+import Social from './social'
+import Zapisky from './zapisky'
+import Spojeni from './spojeni'
+import Pocasi from './pocasi'
+import Wiki from './wiki'
+import ReditelskyFB from './fb'
+import Bakalar from './bakalar'
+import Account from './account'
+import CodeHelp from './code-help'
 
 import {useState} from 'react'
 
@@ -31,8 +30,6 @@ import 'firebase/compat/auth'
 
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import Navbar from './components/Navbar'
-
 firebase.initializeApp({
 	apiKey: "AIzaSyDTmT_TH9iBdX4BRsIvBUTndbP5NG9OD24",
 	authDomain: "delta-homepage.firebaseapp.com",
@@ -46,35 +43,11 @@ firebase.initializeApp({
 const auth = firebase.auth()
 const firestore = firebase.firestore()
 
-const Auth = () => {
-
-	const [email, setEmail] = useState("");
-	const [psw, setPsw] = useState("");
-
-	const signInWithEmailPass = async () => {
-		auth.signInWithEmailAndPassword(email, psw)
-	}
-	const register = () => {
-		auth.createUserWithEmailAndPassword(email, psw)
-			.then(userCredential => userCredential.user.sendEmailVerification())
-	}
-
-	return !auth.currentUser ? (
-		<>
-                <Input value={email} onChange={(e) => setEmail(e.target.value)} variant="outlined" />
-                <Input value={psw} onChange={(e) => setPsw(e.target.value)} variant="outlined" />
-		<button onClick={signInWithEmailPass}>Prihlasit se</button>
-		<button onClick={register}>Registrovat se</button>
-		</>
-	) : (
-		<button onClick={() => auth.signOut()}>Odhlasit se</button>
-	);
-}
-
 const routes = (user) => [
 	['Domov', '/', true],
 	['Social', '/social', true],
 	['Helpdesk', '/helpdesk', true],
+	['Code Help', '/code-help', true],
 	['Bakalář', '/bakalar', user],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/spojeni', true],
@@ -93,12 +66,11 @@ export default function App() {
 	
   return (
 	 <Router>
-	  <Auth />
 	 <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <Layout.Root>
 	  	<Layout.Header>
-          <Header user={user} routes={routes(!!auth.currentUser)} />
+          <Header user={user} firestore={firestore} routes={routes(!!auth.currentUser)} auth={auth} />
         </Layout.Header>
 	  <Layout.Main>
 	 	<Routes>
@@ -118,6 +90,7 @@ export default function App() {
 			<Route exact path="/fb" element={<ReditelskyFB user={auth.currentUser} firestore={firestore} />} />
 			<Route exact path="/bakalar" element={<Bakalar user={auth.currentUser} firestore={firestore} />} />
 			<Route exact path="/account" element={<Account user={auth.currentUser} firestore={firestore} />} />
+			<Route exact path="/code-help" element={<CodeHelp user={auth.currentUser} firestore={firestore} />} />
 	 	 </Routes>
 	  </Layout.Main>
 	  </Layout.Root>

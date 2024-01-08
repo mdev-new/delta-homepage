@@ -20,11 +20,16 @@ import {
 	Typography,
 	FormControl,
 	FormLabel,
+	List,
+	ListItem,
+	ListItemContent,
+	Chip,
 } from '@mui/joy'
 
 import {
 	useState,
-	useEffect
+	useEffect,
+	useRef
 } from 'react';
 
 import { useCollectionData } from 'react-firebase-hooks/firestore'
@@ -37,11 +42,14 @@ function createWithId(collection, object) {
 
 const MAX_LENGTH = 768;
 
-function Social({user, firestore}) {
+function CodeHelp({user, firestore}) {
 
-	const postsCol = firestore.collection('posts')
+	const postsCol = firestore.collection('help_posts')
 	const query = postsCol.orderBy('createdAt', 'desc')
 	const [posts] = useCollectionData(query, {idField: 'id'})
+
+	const [length, setLength] = useState(0);
+	const getLengthText = (<Typography>{length}/{MAX_LENGTH}</Typography>);
 
 	const [responseTo, setResponseTo] = useState(null)
 	const post = (event) => {
@@ -52,42 +60,67 @@ function Social({user, firestore}) {
 	
 		const date = new Date();
 
-		if (formFields.text.value.length > MAX_LENGTH) return;
-
 		createWithId(postsCol, {
 			text: formFields.text.value,
 			datetime: `${date.getDate()}.${date.getMonth()+1}. ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, 0)}`,
 			poster: user.email,
-			hashtags: [],
-			tagged_people: [],
+			tags: [],
 			attachments: [],
-			likes: [],
+			upvotes: [],
 			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			createdBy: user.uid,
 			responseTo: responseTo
 		})
 	}
 	
-	const like = (p) => {
-		postsCol.doc(p).update({likes: firebase.firestore.FieldValue.arrayUnion(user.email)})
+	const upvote = (p) => {
+		postsCol.doc(p).update({upvotes: firebase.firestore.FieldValue.arrayUnion(user.email)})
 	}
 
 	const del = (p) => {
 		postsCol.doc(p).delete()
 	}
 
-	const [length, setLength] = useState(0);
-	const getLengthText = (<Typography>{length}/{MAX_LENGTH}</Typography>);
-
 
 	return (
 		<Box>
 			<Button onClick={() => setResponseTo(null)} variant="text">Zpet nahoru</Button>
+			<Button variant="text">Neuzavrene problemy</Button>
+			<Box>
+				<Typography>Kategorie</Typography>
+				<List orientation="horizontal">
+					{
+						["c", "cpp", "javascript", "docker"].map(item =>
+							<ListItem>
+								<ListItemContent>
+									<Chip color="primary" size="lg" variant="outlined">
+										{item}
+									</Chip>
+								</ListItemContent>
+							</ListItem>
+						)
+					}
+				</List>
+			</Box>
+
 			{ user &&
 				<Box>
 					<Card sx={{margin: 'auto', width: {xs: '100%', md: '60%'}}}>
 						<form onSubmit={post}>
 							<CardContent sx={{display: 'inline'}}>
+								<FormControl>
+									<FormLabel>
+										Titulek
+									</FormLabel>
+									<Input
+										multiline
+										variant="standard"
+										name="text"
+										sx={{width: '90%'}}
+										onChange={(e) => setLength(e.target.value.length)}
+									/>
+								</FormControl>
+
 								<FormControl>
 									<FormLabel>
 										Text příspěvku
@@ -127,7 +160,7 @@ function Social({user, firestore}) {
 								</CardContent>
 								<CardActions>
 								{user && <>
-									<IconButton onClick={() => like(post.id)}><ThumbUpIcon color={post.likes.includes(user.email) ? "primary" : "action"} /></IconButton>
+									<IconButton onClick={() => upvote(post.id)}><ThumbUpIcon /></IconButton>
 									<IconButton onClick={() => setResponseTo(post.id)}><CommentIcon /></IconButton>
 
 									{ post.createdBy == user.uid && <>
@@ -150,4 +183,4 @@ function Social({user, firestore}) {
 	);
 }
 
-export default Social;
+export default CodeHelp;
