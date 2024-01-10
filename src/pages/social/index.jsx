@@ -9,7 +9,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import NotesIcon from '@mui/icons-material/Notes';
 import SendIcon from '@mui/icons-material/Send';
-
+import RecommendIcon from '@mui/icons-material/Recommend';
 import {
 	Input,
 	Stack,
@@ -36,6 +36,24 @@ function createWithId(collection, object) {
 }
 
 const MAX_LENGTH = 768;
+
+function ChatWindow() {
+	return (<p>Chat</p>);
+}
+
+function Chat({style}) {
+	return (
+		<Box style={style}>
+			<Stack direction="row" spacing={4}>
+			{
+				[1, 2, 3, 4, 5, 6].map(c => (
+					<ChatWindow />
+				))
+			}
+			</Stack>
+		</Box>
+	);
+}
 
 function Social({user, firestore}) {
 
@@ -79,8 +97,9 @@ function Social({user, firestore}) {
 	const [length, setLength] = useState(0);
 	const getLengthText = (<Typography>{length}/{MAX_LENGTH}</Typography>);
 
-
 	return (
+		<>
+		<Chat style={{zIndex: 999999, position: "fixed", right: 10, bottom: 10, alignSelf: "flex-end"}} />
 		<Box>
 			<Button onClick={() => setResponseTo(null)} variant="text">Zpet nahoru</Button>
 			{ user &&
@@ -119,8 +138,8 @@ function Social({user, firestore}) {
 							<Card>
 								<Box>
 									<AccountCircle style={{display: 'inline-flex'}} />
-									<Typography style={{display: 'inline-flex'}}>{post.poster}</Typography>
-									<Typography>{`${post.datetime} • ${post.likes.length} to se mi líbí`}</Typography>
+									<Typography style={{display: 'inline-flex', position: 'relative', top: -6.5}}>&nbsp;{post.poster}</Typography>
+									<Typography>{`${post.datetime} • ${post.likes.length} `}<RecommendIcon fontSize="small" sx={{position: 'relative', bottom: -5}} /></Typography>
 								</Box>
 								<CardContent onClick={() => setResponseTo(post.id)}>
 									<Typography>{post.text}</Typography>
@@ -147,6 +166,7 @@ function Social({user, firestore}) {
 				</Stack>
 			}
 		</Box>
+		</>
 	);
 }
 

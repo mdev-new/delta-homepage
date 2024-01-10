@@ -16,7 +16,7 @@ import Bakalar from './bakalar'
 import Account from './account'
 import CodeHelp from './code-help'
 
-import {useState} from 'react'
+import { useState, useEffect } from 'react'
 
 import {
 	BrowserRouter as Router,
@@ -62,35 +62,48 @@ const routes = (user) => [
 ]
 
 export default function App() {
-	const [user, loading, err] = useAuthState(auth);
-	
+	const [authenticatedUser, loading, err] = useAuthState(auth);
+
+	const [userObject, _setUserObject] = useState(null);
+	useEffect(() => {
+		if(authenticatedUser) {
+			firestore.collection('users').doc(authenticatedUser.uid).get().then((docRef) => _setUserObject(docRef.data()))
+
+		} else {
+			_setUserObject(null);
+		}
+
+		console.log(userObject)
+
+	}, [authenticatedUser]);
+
   return (
 	 <Router>
 	 <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
       <Layout.Root>
 	  	<Layout.Header>
-          <Header user={user} firestore={firestore} routes={routes(!!auth.currentUser)} auth={auth} />
+          <Header user={userObject} firestore={firestore} routes={routes(!!userObject)} auth={auth} />
         </Layout.Header>
 	  <Layout.Main>
 	 	<Routes>
 			<Route path="/" element={
 				<>
-				{auth.currentUser &&
-					<h2 style={{textAlign: 'center'}}>Vitej, {auth.currentUser.email}!</h2>
+				{userObject &&
+					<h2 style={{textAlign: 'center'}}>Vitej, {userObject.name}!</h2>
 				}
 				</>
 			} />
-			<Route exact path="/helpdesk" element={<Helpdesk user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/social" element={<Social user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/spojeni" element={<Spojeni user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/pocasi" element={<Pocasi user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/zapisky" element={<Zapisky user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/wiki" element={<Wiki user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/fb" element={<ReditelskyFB user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/bakalar" element={<Bakalar user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/account" element={<Account user={auth.currentUser} firestore={firestore} />} />
-			<Route exact path="/code-help" element={<CodeHelp user={auth.currentUser} firestore={firestore} />} />
+			<Route exact path="/helpdesk" element={<Helpdesk user={userObject} firestore={firestore} />} />
+			<Route exact path="/social" element={<Social user={userObject} firestore={firestore} />} />
+			<Route exact path="/spojeni" element={<Spojeni user={userObject} firestore={firestore} />} />
+			<Route exact path="/pocasi" element={<Pocasi user={userObject} firestore={firestore} />} />
+			<Route exact path="/zapisky" element={<Zapisky user={userObject} firestore={firestore} />} />
+			<Route exact path="/wiki" element={<Wiki user={userObject} firestore={firestore} />} />
+			<Route exact path="/fb" element={<ReditelskyFB user={userObject} firestore={firestore} />} />
+			<Route exact path="/bakalar" element={<Bakalar user={userObject} firestore={firestore} />} />
+			<Route exact path="/account" element={<Account user={userObject} firestore={firestore} />} />
+			<Route exact path="/code-help" element={<CodeHelp user={userObject} firestore={firestore} />} />
 	 	 </Routes>
 	  </Layout.Main>
 	  </Layout.Root>

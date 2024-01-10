@@ -66,6 +66,8 @@ export default function Header({user, routes, firestore, auth}) {
 					bk_username: "",
 					hometown: "",
 					intr: false,
+					credit: 0,
+					email: userCredential.user.email
 				}, {merge: true})
 
 				alert('Potvrzeni odeslano na email, prosim odkliknete ho.')
@@ -119,7 +121,7 @@ export default function Header({user, routes, firestore, auth}) {
 						<Navbar items={routes} />
 					</Box>
 				</Drawer>
-				<Typography style={{fontWeight: 'bold'}}>Delta Homepage</Typography>
+				<Typography style={{fontWeight: 'bold', position: 'relative', top: 5.5}}>Delta Homepage</Typography>
 			</Box>
 
 			<Box>
@@ -153,13 +155,25 @@ export default function Header({user, routes, firestore, auth}) {
 								</Typography></Box>
 							</Box>
 						</MenuItem>
+
 						{ user ?
 						<>
-						<ListDivider />
-						<MenuItem onClick={() => auth.signOut()}>
-							<LogoutRoundedIcon />
-							<Typography>Odhlasit</Typography>
-						</MenuItem>
+							<MenuItem>
+								<Typography>Kredit: {user.credit / 100} kč (po konci měsíce {(user.credit - (user.credit_usage || 0)) / 100} kč)</Typography>
+							</MenuItem>
+
+							<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.uid}`} variant="text">
+								<MenuItem>
+									<Typography>Přidat kredit</Typography>
+								</MenuItem>
+							</Button>
+
+							<ListDivider />
+							<MenuItem onClick={() => auth.signOut()}>
+								<LogoutRoundedIcon />
+								<Typography>Odhlasit</Typography>
+							</MenuItem>
+
 						</>
 
 						:

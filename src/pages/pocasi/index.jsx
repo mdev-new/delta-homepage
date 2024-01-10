@@ -25,15 +25,16 @@ function Pocasi() {
 
 	return (
 		<Card sx={{width: 400}}>
-		<Typography level="title-lg">Pardubice</Typography>	
-		<CardContent>
-		<Typography>Timestamp: {pocasi.localObsDateTime}</Typography>
-		<Typography>Pocitová teplota: {pocasi.FeelsLikeC} °C</Typography>
-		<Typography>Vlhkost: {pocasi.humidity == 69 ? "nice" : pocasi.humidity} %</Typography>
-		<Typography>Tlak: {pocasi.pressure}</Typography>
-		<Typography>UV index: {pocasi.uvIndex}</Typography>
-		<Typography>Viditelnost: {pocasi.visibility} km</Typography>
-		</CardContent>
+			<Typography level="title-lg">Pardubice</Typography>
+			<CardContent>
+				<Typography>Timestamp: {pocasi.localObsDateTime}</Typography>
+				<Typography>Teplota: {pocasi.temp_C} °C</Typography>
+				<Typography>Pocitová teplota: {pocasi.FeelsLikeC} °C</Typography>
+				<Typography>Vlhkost: {pocasi.humidity == 69 ? "nice" : pocasi.humidity} %</Typography>
+				<Typography>Tlak: {pocasi.pressure}</Typography>
+				<Typography>UV index: {pocasi.uvIndex}</Typography>
+				<Typography>Viditelnost: {pocasi.visibility} km</Typography>
+			</CardContent>
 		</Card>
 	);
 }

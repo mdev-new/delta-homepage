@@ -16,12 +16,14 @@ import {
 	FormLabel
 } from '@mui/joy'
 
-import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
-import ModalClose from '@mui/joy/ModalClose';
-import DialogActions from '@mui/joy/DialogActions';
-import DialogContent from '@mui/joy/DialogContent';
-import DialogTitle from '@mui/joy/DialogTitle';
+import {
+    Modal,
+    ModalDialog,
+    ModalClose,
+    DialogActions,
+    DialogContent,
+    DialogTitle
+} from '@mui/joy';
 
 function Account({user}) {
 
