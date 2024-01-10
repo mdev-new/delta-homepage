@@ -41,17 +41,22 @@ export default function Helpdesk({user, firestore}) {
 			type: formFields.type[1].value,
 			place: formFields.place.value,
 			assigned: formFields.assignee.value,
-			reporter: user.displayName,
+			reporter: user.email,
 			datetime: `${date.getDate()}.${date.getMonth()+1}. ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, 0)}`,
 			state: 'waiting',
 			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-			createdBy: user.uid
+			createdBy: user.id
 		})
 	}
 
 	const del = (p) => {
 		problemsCol.doc(p).delete()
 	}
+
+	const status = (p, s) => {
+		problemsCol.doc(p).update({state: s})
+	}
+
 
 	return (<>
 	{ user &&
@@ -117,8 +122,8 @@ export default function Helpdesk({user, firestore}) {
 					 <td><Typography>{post.reporter}</Typography></td>
 					 <td><Typography>{post.liked_by}</Typography></td>
 					 <td><Typography>
-						 <Button variant="text" onClick={() => post.delete()}>Pracuje se na tom</Button>
-						 <Button variant="text" onClick={() => post.delete()}>Vyresit</Button>
+						 <Button variant="text" onClick={() => status(post.id, 'work')}>Pracuje se na tom</Button>
+						 <Button variant="text" onClick={() => status(post.id, 'done')}>Vyresit</Button>
 						 <Button variant="text" onClick={() => del(post.id)}>Smazat</Button>
 					 </Typography></td>
 				 </tr>

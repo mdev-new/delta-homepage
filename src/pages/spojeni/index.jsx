@@ -275,7 +275,7 @@ function Spojeni() {
 
 		<Button
 			variant="solid"
-			size="large"
+			size="md"
 			onClick={() =>
 				najdi_spojeni(
 					searchParams.zDelty ? delta_odjezdy : destinace_na_deltu,

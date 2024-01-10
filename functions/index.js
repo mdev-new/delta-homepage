@@ -6,6 +6,7 @@ const {onCall} = require("firebase-functions/v2/https");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
 const {onRequest} = require("firebase-functions/v2/https");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 
 const logger = require("firebase-functions/logger");
 
@@ -13,33 +14,32 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require('nodemailer')
 
 const admin = require("firebase-admin");
+const FieldValue = admin.firestore.FieldValue;
 admin.initializeApp();
 
 const db = admin.firestore();
-const FieldValue = admin.firestore.FieldValue;
-
-const APP_URL = process.env.APP_URL;
-
-const smtpTransport = nodemailer.createTransport({
-    pool: true,
-    host: process.env.MAIL_HOST,
-    port: process.env.MAIL_PORT,
-    secure: true, // use TLS
-    auth: {
-        user: process.env.MAIL_USERNAME,
-        pass: process.env.MAIL_PASS,
-    }
-});
 
 exports.newHelpdeskProblem = onDocumentCreated("problems/{docId}", (event) => {
 
+    const smtpTransport = nodemailer.createTransport({
+        pool: true,
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        secure: true, // use TLS
+        auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASS,
+        }
+    });
+
     const snapshot = event.data;
-    if (!snapsot) {
-        console.log("No data associated with the event");
+
+    if (!snapshot) {
+        logger.log("No data associated with the event");
         return;
     }
-    const data = snapshot.data();
 
+    const data = snapshot.data();
     const problemText = data.problem;
     const place = data.place;
     const reporter = data.reporter;
@@ -49,18 +49,74 @@ exports.newHelpdeskProblem = onDocumentCreated("problems/{docId}", (event) => {
         from: process.env.MAIL_SENDER,
         to: assigned, // + "@delta-skola.cz"
         subject: 'Nový problém na Helpdesku',
-        html: `Problém: <b>${problemText}</b> v umístění <b>${place}</b>. Nahlášeno uživatelem <i>${reporter}</i> a <b>vy</b> jste byli přiděleni. <a href="${global.frontendPublic}">Přejít do portálu Delta Homepage</a>`
+        html: `Problém: <b>${problemText}</b> v umístění <b>${place}</b>. Nahlášeno uživatelem <i>${reporter}</i> a <b>vy</b> jste byli přiděleni. <a href="${process.env.APP_URL}">Přejít do portálu Delta Homepage</a>`
     }
-    smtpTransport.sendMail(mailOptions, (error, response) => error && console.log(error));
+
+    smtpTransport.sendMail(mailOptions, (error, response) => error && logger.log(error));
 })
 
-//exports.problemUpdated = onDocumentUpdated("problems/{docId}", (event) => {
-//})
+// works
+exports.problemUpdated = onDocumentUpdated("problems/{docId}", (event) => {
+    const newData = event.data.after.data();
 
-//exports.sendAlerts = onSchedule("every monday 08:00", async (event) => {
-//  const assignedPersons = new Set();
-//  const problems = [] // problems per assigned person
-//})
+    const smtpTransport = nodemailer.createTransport({
+        pool: true,
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        secure: true, // use TLS
+        auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASS,
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.MAIL_SENDER,
+        to: newData.reporter,
+        subject: 'Helpdesk',
+        html: `Váš problém <b>${newData.problem}</b> na Helpdesku nahlášený ${newData.datetime} byl označen jako <b>${newData.state === 'done' ? "vyřešený" : "in progress"}</b>. <a href="${process.env.APP_URL}">Přejít do portálu Delta Homepage</a>`
+    }
+
+    smtpTransport.sendMail(mailOptions, (error, response) => error && logger.log(error));
+})
+
+exports.sendAlerts = onSchedule("every monday 08:00", async (event) => {
+    const problems = {}
+
+    const smtpTransport = nodemailer.createTransport({
+        pool: true,
+        host: process.env.MAIL_HOST,
+        port: process.env.MAIL_PORT,
+        secure: true, // use TLS
+        auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASS,
+        }
+    });
+
+    const col = db.collection('problems');
+
+    col.get().then(snapshot => {
+        snapshot.forEach(doc => {
+            const problem = doc.data()
+
+            if(!(problem.assigned in problems)) problems[problem.assigned] = []
+            problems[problem.assigned].push(problem)
+        })
+
+        for(const [k, v] of Object.entries()) {
+
+            const mailOptions = {
+                from: process.env.MAIL_SENDER,
+                to: k,
+                subject: 'Helpdesk',
+                html: `Máte stále nevyřešené problémy: ${v.map(p => p.problem).filter(p => p !== 'done').map(p => '<b>'+p+'</b>').join(', ')}. <a href="${process.env.APP_URL}">Přejít do portálu Delta Homepage</a>`
+            }
+
+            smtpTransport.sendMail(mailOptions, (error, response) => error && logger.log(error));
+        }
+    })
+})
 
 exports.addCredit = onRequest(async (request, response) => {
     const sig = request.headers['stripe-signature'];
