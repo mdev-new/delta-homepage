@@ -17,15 +17,7 @@ class Writing extends Component {
   };
 
   setText = () => {
-    const texts = [
-      `You never read a book on psychology, Tippy. You didn't need to. You knew by some divine instinct that you can make more friends in two months by becoming genuinely interested in other people than you can in two years by trying to get other people interested in you.`,
-      `I know more about the private lives of celebrities than I do about any governmental policy that will actually affect me. I'm interested in things that are none of my business, and I'm bored by things that are important to know.`,
-      `A spider's body consists of two main parts: an anterior portion, the prosoma (or cephalothorax), and a posterior part, the opisthosoma (or abdomen).`,
-      `As customers of all races, nationalities, and cultures visit the Dekalb Farmers Market by the thousands, I doubt that many stand in awe and contemplate the meaning of its existence. But in the capital of the Sunbelt South, the quiet revolution of immigration and food continues to upset and redefine the meanings of local, regional, and global identity.`,
-      `Outside of two men on a train platform there's nothing in sight. They're waiting for spring to come, smoking down the track. The world could come to an end tonight, but that's alright. She could still be there sleeping when I get back.`,
-      `I'm a broke-nose fighter. I'm a loose-lipped liar. Searching for the edge of darkness. But all I get is just tired. I went looking for attention. In all the wrong places. I was needing a redemption. And all I got was just cages.`
-    ];
-    const text = texts[Math.floor(Math.random() * texts.length)];
+    const text = "Hello world"; //texts[Math.floor(Math.random() * texts.length)]; // todo: get next lesson from db
     const words = text.split(" ");
 
     this.setState({
@@ -136,33 +128,22 @@ class Writing extends Component {
     if (!started)
       return (
         <div className="container">
-          <h2>Welcome to the Typing game</h2>
-          <p>
-            <strong>Rules:</strong> <br />
-            Type in the input field the highlighted word. <br />
-            The correct words will turn <span className="green">green</span>.
-            <br />
-            Incorrect letters will turn <span className="red">red</span>.
-            <br />
-            <br />
-            Have fun!
-          </p>
           <button className="start-btn" onClick={this.startGame}>
-            Start game
+            Začít psát
           </button>
         </div>
       );
 
-    if (!text) return <p>Loading...</p>;
+    if (!text) return <p className="p">Loading...</p>;
 
     if (completed) {
       return (
         <div className="container">
-          <h2>
+          <h2 className="h2">
             Your WPM is <strong>{wpm}</strong>
           </h2>
           <button className="start-btn" onClick={this.startGame}>
-            Play again
+            Další cvičení
           </button>
         </div>
       );
@@ -228,6 +209,9 @@ class Writing extends Component {
           <input
             type="text"
             onChange={this.handleChange}
+            onPaste={(e) => e.preventDefault()}
+            onDrop={(e) => e.preventDefault()}
+            autocomplete="off"
             value={inputValue}
             // autoFocus={started ? 'true' : 'false'}
             autoFocus={true}

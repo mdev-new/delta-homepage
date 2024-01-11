@@ -44,6 +44,24 @@ firebase.initializeApp({
 const auth = firebase.auth()
 const firestore = firebase.firestore()
 
+// todo enable only if on trusted device
+// login - ask if on trusted device and enable this conditionally
+firestore.enablePersistence()
+	.catch(err => {
+		switch(err.code) {
+			case 'failed-precondition': {
+				// multiple tabs are open, this is unsupported.
+				break;
+			}
+			case 'unimplemented': {
+				// browser doesn't implement features that enable persistence
+				break;
+			}
+
+			default: break;
+		}
+	})
+
 const routes = (user) => [
 	['Domov', '/', true],
 	['Social', '/social', true],
@@ -52,7 +70,7 @@ const routes = (user) => [
 	['Bakalář', '/bakalar', user],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/spojeni', true],
-	['Psani vsemi deseti', '/writing', true],
+	['Psaní všemi deseti', '/writing', true],
 	['divider', 'divider'],
 	['Wiki', '/wiki', true],
 	['Zápisky', '/zapisky', true],

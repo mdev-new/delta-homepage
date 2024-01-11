@@ -35,9 +35,12 @@ import { NavLink } from 'react-router-dom'
 import Navbar from './Navbar';
 import {useState} from "react";
 import firebase from 'firebase/compat/app'
+import Switch from "@mui/joy/Switch";
 
 export default function Header({user, routes, firestore, auth}) {
 	const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+	const {mode, setMode} = useColorScheme();
 
 	const [email, setEmail] = useState("");
 	const [psw, setPsw] = useState("");
@@ -67,6 +70,8 @@ export default function Header({user, routes, firestore, auth}) {
 					hometown: "",
 					intr: false,
 					credit: 0,
+					mbUploaded: 0.0,
+
 					email: userCredential.user.email
 				}, {merge: true})
 
@@ -123,68 +128,82 @@ export default function Header({user, routes, firestore, auth}) {
 			</Box>
 
 			<Box>
-				<Dropdown>
-					<MenuButton
-						variant="plain"
-						size="sm"
-					>
-						<AccountCircle color="primary" fontSize="large" />
-					</MenuButton>
-					<Menu
-						placement="bottom-end"
-						size="sm"
-						sx={{
-							zIndex: '99999',
-							p: 1,
-							gap: 1,
-							'--ListItem-radius': 'var(--joy-radius-sm)',
-						}}
-					>
-						<MenuItem>
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-								}}
-							>
-								<AccountCircle color="primary" fontSize="large" />
-								<Box sx={{ ml: 1.5 }}><Typography textColor="text.tertiary">
-										{user ? <>{}</> : "Not logged in"}
-								</Typography></Box>
-							</Box>
-						</MenuItem>
-
-						{ user ?
-						<>
-							<MenuItem>
-								<Typography>Kredit: {user.credit / 100} kč (po konci měsíce {(user.credit - (user.credit_usage || 0)) / 100} kč)</Typography>
-							</MenuItem>
-
-							<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.id}`} variant="text">
-								<MenuItem>
-									<Typography>Přidat kredit</Typography>
-								</MenuItem>
-							</Button>
-
-							<ListDivider />
-							<MenuItem onClick={() => auth.signOut()}>
-								<LogoutRoundedIcon />
-								<Typography>Odhlasit</Typography>
-							</MenuItem>
-
-						</>
-
-						:
-						<>
-							<ListDivider />
-							<MenuItem><Input required value={email} type="email" onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
-							<MenuItem><Input required value={psw} type="password" onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
-							<MenuItem onClick={signInWithEmailPass}>Prihlasit se</MenuItem>
-							<MenuItem onClick={register}>Registrovat se</MenuItem>
-						</>
+				<Stack direction="row" spacing={2}>
+					<Typography
+						component="label"
+						endDecorator={
+							<Switch
+								checked={mode == 'dark'}
+								onChange={() => setMode(mode === 'light' ? 'dark' : 'light')}
+							/>
 						}
-					</Menu>
-				</Dropdown>
+					>
+						Tmavý režim
+					</Typography>
+
+					<Dropdown>
+						<MenuButton
+							variant="plain"
+							size="sm"
+						>
+							<AccountCircle color="primary" fontSize="large" />
+						</MenuButton>
+						<Menu
+							placement="bottom-end"
+							size="sm"
+							sx={{
+								zIndex: '99999',
+								p: 1,
+								gap: 1,
+								'--ListItem-radius': 'var(--joy-radius-sm)',
+							}}
+						>
+							<MenuItem>
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+									}}
+								>
+									<AccountCircle color="primary" fontSize="large" />
+									<Box sx={{ ml: 1.5 }}><Typography textColor="text.tertiary">
+											{user ? <>{}</> : "Not logged in"}
+									</Typography></Box>
+								</Box>
+							</MenuItem>
+
+							{ user ?
+							<>
+								<MenuItem>
+									<Typography>Kredit: {user.credit / 100} kč (po konci měsíce {(user.credit - (user.credit_usage || 0)) / 100} kč)</Typography>
+								</MenuItem>
+
+								<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.id}`} variant="text">
+									<MenuItem>
+										<Typography>Přidat kredit</Typography>
+									</MenuItem>
+								</Button>
+
+								<ListDivider />
+								<MenuItem onClick={() => auth.signOut()}>
+									<LogoutRoundedIcon />
+									<Typography>Odhlasit</Typography>
+								</MenuItem>
+
+							</>
+
+							:
+							<>
+								<ListDivider />
+								<MenuItem><Input required value={email} type="email" onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
+								<MenuItem><Input required value={psw} type="password" onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
+								<MenuItem onClick={signInWithEmailPass}>Prihlasit se</MenuItem>
+								<MenuItem onClick={register}>Registrovat se</MenuItem>
+							</>
+							}
+						</Menu>
+					</Dropdown>
+				</Stack>
 			</Box>
 		</Box>
 	);
