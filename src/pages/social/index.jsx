@@ -94,6 +94,17 @@ function Social({user, firestore}) {
 		postsCol.doc(p).delete()
 	}
 
+	// db: kolekce messages kde budou ulozeny zpravy
+	// kazda zprava - autor.
+
+	const newChat = (users) => {
+
+	}
+
+	const message = (chatId) => {
+
+	}
+
 	const [length, setLength] = useState(0);
 	const getLengthText = (<Typography>{length}/{MAX_LENGTH}</Typography>);
 

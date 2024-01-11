@@ -74,8 +74,6 @@ export default function Header({user, routes, firestore, auth}) {
 			})
 	}
 
-	//usersCol.doc(user.uid).getDoc().data().name} {usersCol.doc(user.uid).getDoc().surname
-
 	return (
 		<Box
 			sx={{
@@ -150,7 +148,7 @@ export default function Header({user, routes, firestore, auth}) {
 								}}
 							>
 								<AccountCircle color="primary" fontSize="large" />
-								<Box sx={{ ml: 1.5 }}><Typography level="body-xs" textColor="text.tertiary">
+								<Box sx={{ ml: 1.5 }}><Typography textColor="text.tertiary">
 										{user ? <>{}</> : "Not logged in"}
 								</Typography></Box>
 							</Box>
@@ -162,7 +160,7 @@ export default function Header({user, routes, firestore, auth}) {
 								<Typography>Kredit: {user.credit / 100} kč (po konci měsíce {(user.credit - (user.credit_usage || 0)) / 100} kč)</Typography>
 							</MenuItem>
 
-							<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.uid}`} variant="text">
+							<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.id}`} variant="text">
 								<MenuItem>
 									<Typography>Přidat kredit</Typography>
 								</MenuItem>
@@ -179,10 +177,10 @@ export default function Header({user, routes, firestore, auth}) {
 						:
 						<>
 							<ListDivider />
-							<MenuItem><Input value={email} onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
-							<MenuItem><Input value={psw} onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
-							<MenuItem><Button variant="outlined" onClick={signInWithEmailPass}>Prihlasit se</Button></MenuItem>
-							<MenuItem><Button variant="outlined" onClick={register}>Registrovat se</Button></MenuItem>
+							<MenuItem><Input required value={email} type="email" onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
+							<MenuItem><Input required value={psw} type="password" onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
+							<MenuItem onClick={signInWithEmailPass}>Prihlasit se</MenuItem>
+							<MenuItem onClick={register}>Registrovat se</MenuItem>
 						</>
 						}
 					</Menu>

@@ -131,16 +131,19 @@ exports.addCredit = onRequest(async (request, response) => {
     }
 
     switch (event.type) {
-        case 'checkout.session.completed':
+        // todo failed condition
+        case 'checkout.session.completed': {
             const paymentIntentSucceeded = event.data.object;
             const user = paymentIntentSucceeded.client_reference_id;
             const amount = paymentIntentSucceeded.amount_total;
-            await db.collection('users').doc(`${user}`).update({ credit: FieldValue.increment(amount) });
+            await db.collection('users').doc(`${user}`).update({credit: FieldValue.increment(amount)});
             logger.log(user, amount)
             break;
-        default:
+        }
+        default: {
             response.status(400).send(`Unhandled event type ${event.type}`);
             break;
+        }
     }
 
     response.status(200).send();

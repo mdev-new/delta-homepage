@@ -57,7 +57,6 @@ export default function Helpdesk({user, firestore}) {
 		problemsCol.doc(p).update({state: s})
 	}
 
-
 	return (<>
 	{ user &&
            <form onSubmit={submit}>
@@ -122,9 +121,14 @@ export default function Helpdesk({user, firestore}) {
 					 <td><Typography>{post.reporter}</Typography></td>
 					 <td><Typography>{post.liked_by}</Typography></td>
 					 <td><Typography>
-						 <Button variant="text" onClick={() => status(post.id, 'work')}>Pracuje se na tom</Button>
-						 <Button variant="text" onClick={() => status(post.id, 'done')}>Vyresit</Button>
-						 <Button variant="text" onClick={() => del(post.id)}>Smazat</Button>
+						 {
+							 (user.email === post.assigned) &&
+							 <>
+								 <Button variant="text" onClick={() => status(post.id, 'work')}>Pracuje se na tom</Button>
+								 <Button variant="text" onClick={() => status(post.id, 'done')}>Vyresit</Button>
+							 </>
+						 }
+						 { (user.student === false) && <Button variant="text" onClick={() => del(post.id)}>Smazat</Button> }
 					 </Typography></td>
 				 </tr>
 			 )}

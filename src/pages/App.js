@@ -15,6 +15,7 @@ import ReditelskyFB from './fb'
 import Bakalar from './bakalar'
 import Account from './account'
 import CodeHelp from './code-help'
+import Writing from './ancient-torture'
 
 import { useState, useEffect } from 'react'
 
@@ -51,6 +52,7 @@ const routes = (user) => [
 	['Bakalář', '/bakalar', user],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/spojeni', true],
+	['Psani vsemi deseti', '/writing', true],
 	['divider', 'divider'],
 	['Wiki', '/wiki', true],
 	['Zápisky', '/zapisky', true],
@@ -77,16 +79,16 @@ export default function App() {
 
 	}, [authenticatedUser]);
 
-  return (
+	return (
 	 <Router>
 	 <CssVarsProvider disableTransitionOnChange>
-      <CssBaseline />
-      <Layout.Root>
-	  	<Layout.Header>
-          <Header user={userObject} firestore={firestore} routes={routes(!!userObject)} auth={auth} />
-        </Layout.Header>
+	  <CssBaseline />
+	  <Layout.Root>
+		<Layout.Header>
+		  <Header user={userObject} firestore={firestore} routes={routes(!!userObject)} auth={auth} />
+		</Layout.Header>
 	  <Layout.Main>
-	 	<Routes>
+		<Routes>
 			<Route path="/" element={
 				<>
 				{userObject &&
@@ -104,11 +106,12 @@ export default function App() {
 			<Route exact path="/bakalar" element={<Bakalar user={userObject} firestore={firestore} />} />
 			<Route exact path="/account" element={<Account user={userObject} firestore={firestore} />} />
 			<Route exact path="/code-help" element={<CodeHelp user={userObject} firestore={firestore} />} />
-	 	 </Routes>
+			<Route exact path="/writing" element={<Writing user={userObject} firestore={firestore} />} />
+		 </Routes>
 	  </Layout.Main>
 	  </Layout.Root>
 	  </CssVarsProvider>
 	 </Router>
-  );
+	);
 }
 
