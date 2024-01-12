@@ -8,6 +8,7 @@ class Writing extends Component {
     lastLetter: "",
     words: [],
     completedWords: [],
+    wordStates: [],
     completed: false,
     startTime: undefined,
     timeElapsed: 0,
@@ -17,7 +18,7 @@ class Writing extends Component {
   };
 
   setText = () => {
-    const text = "Hello world"; //texts[Math.floor(Math.random() * texts.length)]; // todo: get next lesson from db
+    const text = "Hello, world."; // todo: get next lesson from db
     const words = text.split(" ");
 
     this.setState({
@@ -27,14 +28,14 @@ class Writing extends Component {
     });
   };
 
-  startGame = () => {
+  startLesson = () => {
     this.setText();
 
     this.setState({
       started: true,
-      startTime: Date.now(),
       completed: false,
-      progress: 0
+      progress: 0,
+      wpm: 0
     });
   };
 
@@ -43,44 +44,38 @@ class Writing extends Component {
     const inputValue = e.target.value;
     const lastLetter = inputValue[inputValue.length - 1];
 
+    if(inputValue.length == 1 && this.state.progress == 0) {
+      console.log("fired!", inputValue)
+      this.setState({
+        startTime: Date.now(),
+        timeElapsed: 0
+      });
+    }
+
     const currentWord = words[0];
-    console.log(currentWord, "currentWord");
 
     // if space or '.', check the word
     if (lastLetter === " " || lastLetter === ".") {
-      // check to see if it matches to the currentWord
-      // trim because it has the space
-      if (inputValue.trim() === currentWord) {
-        // remove the word from the wordsArray
-        // cleanUp the input
-        const newWords = [...words.slice(1)];
-        console.log(newWords, "newWords");
-        console.log(newWords.length, "newWords.length");
-        const newCompletedWords = [...completedWords, currentWord];
-        console.log(newCompletedWords, "newCompletedWords");
-        console.log("----------------");
 
-        // Get the total progress by checking how much words are left
-        const progress =
-          (newCompletedWords.length /
-            (newWords.length + newCompletedWords.length)) *
-          100;
-        this.setState({
-          words: newWords,
-          completedWords: newCompletedWords,
-          inputValue: "",
-          completed: newWords.length === 0,
-          progress: progress
-        });
-      }
+      const newWords = [...words.slice(1)];
+      const newCompletedWords = [...completedWords, currentWord];
+
+      // Get the total progress by checking how much words are left
+      const progress = (newCompletedWords.length / (newWords.length + newCompletedWords.length)) * 100;
+      this.setState({
+        words: newWords,
+        completedWords: newCompletedWords,
+        inputValue: "",
+        completed: newWords.length === 0,
+        progress: progress,
+        wordStates: [...this.state.wordStates, inputValue.trim() === currentWord]
+      });
+
     } else {
       this.setState({
         inputValue: inputValue,
         lastLetter: lastLetter
       });
-      console.log(this.state.inputValue, "this.state.inputValue");
-      console.log(this.state.lastLetter, "this.state.lastLetter");
-      console.log("================================");
     }
 
     this.calculateWPM();
@@ -90,10 +85,6 @@ class Writing extends Component {
     const { startTime, completedWords } = this.state;
     const now = Date.now();
     const diff = (now - startTime) / 1000 / 60; // 1000 ms / 60 s
-    console.log(now, "now");
-    console.log(startTime, "startTime");
-    console.log(diff, "diff");
-    console.log("**************");
 
     // every word is considered to have 5 letters
     // so here we are getting all the letters in the words and divide them by 5
@@ -101,9 +92,6 @@ class Writing extends Component {
     const wordsTyped = Math.ceil(
       completedWords.reduce((acc, word) => (acc += word.length), 0) / 5
     );
-    console.log(completedWords, "completedWords");
-    console.log(wordsTyped, "wordsTyped");
-    console.log("+=+=+=+=+=+=");
 
     const wpm = Math.ceil(wordsTyped / diff);
 
@@ -122,13 +110,14 @@ class Writing extends Component {
       timeElapsed,
       started,
       completed,
-      progress
+      progress,
+      wordStates
     } = this.state;
 
     if (!started)
       return (
         <div className="container">
-          <button className="start-btn" onClick={this.startGame}>
+          <button className="start-btn" onClick={this.startLesson}>
             Začít psát
           </button>
         </div>
@@ -142,7 +131,7 @@ class Writing extends Component {
           <h2 className="h2">
             Your WPM is <strong>{wpm}</strong>
           </h2>
-          <button className="start-btn" onClick={this.startGame}>
+          <button className="start-btn" onClick={this.startLesson}>
             Další cvičení
           </button>
         </div>
@@ -151,34 +140,32 @@ class Writing extends Component {
 
     return (
       <div>
-        <div className="wpm">
-          <strong>WPM: </strong>
-          {wpm}
-          <br />
-          <strong>Time: </strong>
-          {Math.floor(timeElapsed * 60)}s
-        </div>
         <div className="container">
-          <h4>Type the text below</h4>
+          {/*<div className="wpm">
+            <strong>WPM: </strong>
+            {wpm}
+            <br />
+            <strong>Time: </strong>
+            {Math.floor(timeElapsed * 60)}s
+          </div>*/}
+          <h4>Opiš.</h4>
           <progress value={progress} max="100" />
           <p className="text">
             {text.split(" ").map((word, w_idx) => {
-              let highlight = false;
+              let highlight = "";
               let currentWord = false;
 
               // this means that the word is completed, so turn it green
               if (completedWords.length > w_idx) {
-                highlight = true;
-              }
-
-              if (completedWords.length === w_idx) {
+                highlight = wordStates[w_idx] ? "green" : "red";
+              } else if (completedWords.length === w_idx) {
                 currentWord = true;
               }
 
               return (
                 <span
                   className={`word 
-                                ${highlight && "green"} 
+                                ${highlight} 
                                 ${currentWord && "underline"}`}
                   key={w_idx}
                 >
@@ -209,11 +196,15 @@ class Writing extends Component {
           <input
             type="text"
             onChange={this.handleChange}
+            onKeyDown={(event) => {
+              if (event.which == 8 || event.which == 46) { 
+                event.preventDefault();
+              }
+            }}
             onPaste={(e) => e.preventDefault()}
             onDrop={(e) => e.preventDefault()}
             autocomplete="off"
             value={inputValue}
-            // autoFocus={started ? 'true' : 'false'}
             autoFocus={true}
           />
         </div>
