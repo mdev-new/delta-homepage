@@ -46,8 +46,6 @@ const auth = app.auth()
 const firestore = app.firestore()
 const functions = app.functions('europe-west1')
 
-// todo enable only if on trusted device
-// login - ask if on trusted device and enable this conditionally
 firestore.enablePersistence()
 	.catch(err => {
 		switch(err.code) {
