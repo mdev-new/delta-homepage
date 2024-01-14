@@ -69,10 +69,10 @@ const routes = (user) => [
 	['Social', '/social', true],
 	['Helpdesk', '/helpdesk', true],
 	['Code Help', '/code-help', true],
-	['Bakalář', '/bakalar', user],
+	['Bakalář', '/bakalar', user != null],
 //	['Mount Blue', '/mb', auth],
 	['Spojení', '/spojeni', true],
-	['Psaní všemi deseti', '/writing', true],
+	['Psaní všemi deseti', '/writing', user != null],
 	['divider', 'divider'],
 	['Wiki', '/wiki', true],
 //	['Zápisky', '/zapisky', true],
@@ -103,7 +103,7 @@ export default function App() {
 	  <CssBaseline />
 	  <Layout.Root>
 		<Layout.Header>
-		  <Header user={userObject} firestore={firestore} routes={routes(!!userObject)} auth={auth} />
+		  <Header user={userObject} firestore={firestore} routes={routes(userObject)} auth={auth} />
 		</Layout.Header>
 	  <Layout.Main>
 		<Routes>
@@ -122,8 +122,8 @@ export default function App() {
 			<Route exact path="/wiki" element={<Wiki user={userObject} firestore={firestore} />} />
 			<Route exact path="/fb" element={<ReditelskyFB user={userObject} firestore={firestore} />} />
 			<Route exact path="/code-help" element={<CodeHelp user={userObject} firestore={firestore} />} />
-			<Route exact path="/bakalar" element={<Bakalar user={userObject} firestore={firestore} />} />
 			{ userObject && <>
+				<Route exact path="/bakalar" element={<Bakalar user={userObject} firestore={firestore} />} />
 				<Route exact path="/writing" element={<Writing user={userObject} firestore={firestore} functions={functions} />} />
 				<Route exact path="/account" element={<Account user={userObject} firestore={firestore} />} />
 				</>

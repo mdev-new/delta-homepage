@@ -94,7 +94,7 @@ export default function Header({user, routes, firestore, auth}) {
 				spacing={1}
 				sx={{ display: { xs: 'none', lg: 'flex' } }}
 			>
-				{ routes.map(r => r[0] != 'divider' &&
+				{ routes.map(r => r[0] != 'divider' && r[2] &&
 					<NavLink to={r[1]} sx={{ all: 'unset' }}>
 						{({ isActive, isPending, isTransitioning }) => (
 							<Button

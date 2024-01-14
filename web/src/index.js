@@ -10,4 +10,4 @@ ReactDOM
     .createRoot(document.getElementById('root'))
     .render(<CssVarsProvider><CssBaseline /><App /></CssVarsProvider>);
 
-service_worker.unregister();
+service_worker.register();

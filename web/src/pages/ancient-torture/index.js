@@ -17,32 +17,26 @@ class Writing extends Component {
     mistakes: 0
   };
 
-  setText = () => {
-    const text = this.props.functions.httpsCallable('getLesson')().then(text => {
-      const t_obj = text.data
-      const words = t_obj.text.split(" ");
-
-      this.setState({
-        text: t_obj.text,
-        words: words,
-        completedWords: []
-      });
-    });
-  };
-
   startLesson = () => {
-    this.setText();
+    this.props.functions.httpsCallable('getLesson')().then(text => {
+        const t_obj = text?.data
+        const txt = t_obj?.text
 
-    this.setState({
-      started: true,
-      completed: false,
-      progress: 0,
-      mistakes: 0,
-      wordStates: []
+        this.setState({
+          text: txt || null,
+          words: txt?.split(" "),
+          completedWords: [],
+          started: true,
+          completed: false,
+          error: false,
+          progress: 0,
+          mistakes: 0,
+          wordStates: []
+        });
     });
   };
 
-  handleChange = e => {
+  handleChange = async e => {
     const { words, completedWords, wordStates, progress } = this.state;
     const inputValue = e.target.value;
     const lastLetter = inputValue[inputValue.length - 1];
@@ -70,7 +64,7 @@ class Writing extends Component {
       const newProgress = (newCompletedWords.length / (newWords.length + newCompletedWords.length)) * 100;
 
       if(newProgress === 100 && newWords.length === 0) {
-        this.props.functions.httpsCallable('setNextLesson')();
+        await this.props.functions.httpsCallable('setNextLesson')();
       }
 
       this.setState({
@@ -104,7 +98,7 @@ class Writing extends Component {
       mistakes
     } = this.state;
 
-    if (!started)
+    if (!started) {
       return (
         <div className="container">
           <button className="start-btn" onClick={this.startLesson}>
@@ -112,19 +106,17 @@ class Writing extends Component {
           </button>
         </div>
       );
+    }
 
-    if (!text) return <p className="p">Loading...</p>;
+    if (!text) return <div className="container"><p className="p">Loading...<br />If this takes too long, an error probably happened.</p></div>;
 
     if (completed) {
       return (
         <div className="container">
           { mistakes !== 0 ? <>
             <h2 className="h2">
-              Počet chyb: <strong>{mistakes}</strong>
+              Počet chyb: <strong>{mistakes} ({(mistakes / completedWords.length * 100).toFixed(1)}%)</strong>
             </h2>
-            <h3>
-              Chybovost: <strong>{mistakes / completedWords.length * 100}%</strong>
-            </h3>
             </>
             : <>
             <h2 className="h2">
