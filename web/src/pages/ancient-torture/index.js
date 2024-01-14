@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import "./styles.css";
 
+// lore
+// pruvodce - globglobgabgalab
+// globglobgabgalab ma rad knihy a zamkne te ve sklepe
+// dokud neopises vsechno co ti naserviruje (budes low budget mnich)
+
+// za 100% spravne cviceni - bonus body, gify na oslavu, atd
+
 class Writing extends Component {
   state = {
     text: "",
@@ -18,6 +25,15 @@ class Writing extends Component {
   };
 
   startLesson = () => {
+    this.setState({
+      completedWords: [],
+      started: true,
+      completed: false,
+      progress: 0,
+      mistakes: 0,
+      wordStates: []
+    });
+
     this.props.functions.httpsCallable('getLesson')().then(text => {
         const t_obj = text?.data
         const txt = t_obj?.text
@@ -25,13 +41,6 @@ class Writing extends Component {
         this.setState({
           text: txt || null,
           words: txt?.split(" "),
-          completedWords: [],
-          started: true,
-          completed: false,
-          error: false,
-          progress: 0,
-          mistakes: 0,
-          wordStates: []
         });
     });
   };
@@ -63,10 +72,6 @@ class Writing extends Component {
       // Get the total progress by checking how much words are left
       const newProgress = (newCompletedWords.length / (newWords.length + newCompletedWords.length)) * 100;
 
-      if(newProgress === 100 && newWords.length === 0) {
-        await this.props.functions.httpsCallable('setNextLesson')();
-      }
-
       this.setState({
         words: newWords,
         completedWords: newCompletedWords,
@@ -76,6 +81,10 @@ class Writing extends Component {
         wordStates: newWordStates,
         mistakes: newMistakes
       });
+
+      if(newProgress === 100 && newWords.length === 0) {
+        await this.props.functions.httpsCallable('setNextLesson')();
+      }
 
     } else {
       this.setState({
@@ -108,7 +117,7 @@ class Writing extends Component {
       );
     }
 
-    if (!text) return <div className="container"><p className="p">Loading...<br />If this takes too long, an error probably happened.</p></div>;
+    if (!text) return <div className="container"><p className="p">Načítám...<br />Pokud to trvá dlouho, asi se někde stala chyba :(</p></div>;
 
     if (completed) {
       return (

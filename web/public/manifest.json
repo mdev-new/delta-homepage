@@ -4,7 +4,7 @@
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "64x64",
       "type": "image/x-icon"
     },
     {
@@ -18,6 +18,19 @@
       "sizes": "512x512"
     }
   ],
+  "screenshots": [
+    {
+      "src": "screen_wide.png",
+      "form_factor": "wide",
+      "sizes": "1191x657"
+    },
+    {
+      "src": "screen_narrow.png",
+      "form_factor": "narrow",
+      "sizes": "388x781"
+    }
+  ],
+  "id": "/",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
