@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /problems/{problem} {
+    	allow read: if true; // anyone can read
+      allow create: if request.auth != null; // anyone logged in can create
+      // either author or management can delete and update
+      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+    }
+    
+    match /posts/{post} {
+    	allow read: if true; // anyone can read
+      allow create: if request.auth != null; // anyone logged in can create
+      // either author or management can delete and update
+      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+    }
+
+    match /help_posts/{post} {
+      allow read: if true; // anyone can read
+      allow create: if request.auth != null; // anyone logged in can create
+      // either author or management can delete and update
+      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+    }
+    
+    match /users/{user} {
+    	allow read: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
+    	allow update: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
+			allow create: if true; // anyone can register
+      // either author or management can delete and update
+      allow delete: if resource.data.id == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+    }
+
+    match /typing_lessons/{post} {
+      allow read: if request.auth != null; // todo: && if user.lesson == lesson.id
+      allow write: if false;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "functions": [
     {
-      "source": "functions",
+      "source": "backend/functions",
       "codebase": "default",
       "ignore": [
         "node_modules",
@@ -12,7 +12,7 @@
     }
   ],
   "hosting": {
-    "public": "build",
+    "public": "web/build",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -24,5 +24,9 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "firestore": {
+    "rules": "backend/firestore/firestore.rules",
+    "indexes": "backend/firestore/firestore.indexes.json"
   }
 }
