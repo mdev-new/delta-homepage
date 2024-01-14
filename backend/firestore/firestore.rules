@@ -3,7 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /problems/{problem} {
-    	allow read: if true; // anyone can read
+      allow read: if true; // anyone can read
       allow create: if request.auth != null; // anyone logged in can create
       // either author or management can delete and update
       allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
@@ -11,7 +11,7 @@ service cloud.firestore {
     }
     
     match /posts/{post} {
-    	allow read: if true; // anyone can read
+      allow read: if true; // anyone can read
       allow create: if request.auth != null; // anyone logged in can create
       // either author or management can delete and update
       allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
@@ -27,9 +27,9 @@ service cloud.firestore {
     }
     
     match /users/{user} {
-    	allow read: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
-    	allow update: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
-			allow create: if true; // anyone can register
+      allow read: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
+      allow update: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
+      allow create: if true; // anyone can register // TODO: if not registered already
       // either author or management can delete and update
       allow delete: if resource.data.id == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
     }
