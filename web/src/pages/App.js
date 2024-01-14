@@ -75,7 +75,7 @@ const routes = (user) => [
 	['Psaní všemi deseti', '/writing', true],
 	['divider', 'divider'],
 	['Wiki', '/wiki', true],
-	['Zápisky', '/zapisky', true],
+//	['Zápisky', '/zapisky', true],
 	['Ředitelský FB', '/fb', true],
 	['Počasí', '/pocasi', true],
 	['divider', 'divider'],
@@ -118,7 +118,7 @@ export default function App() {
 			<Route exact path="/social" element={<Social user={userObject} firestore={firestore} />} />
 			<Route exact path="/spojeni" element={<Spojeni user={userObject} firestore={firestore} />} />
 			<Route exact path="/pocasi" element={<Pocasi user={userObject} firestore={firestore} />} />
-			<Route exact path="/zapisky" element={<Zapisky user={userObject} firestore={firestore} />} />
+			{/*<Route exact path="/zapisky" element={<Zapisky user={userObject} firestore={firestore} />} />*/}
 			<Route exact path="/wiki" element={<Wiki user={userObject} firestore={firestore} />} />
 			<Route exact path="/fb" element={<ReditelskyFB user={userObject} firestore={firestore} />} />
 			<Route exact path="/code-help" element={<CodeHelp user={userObject} firestore={firestore} />} />

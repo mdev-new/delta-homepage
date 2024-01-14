@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 
+./app/.buildozer/
+
 # Native
 *.orig.*
 *.jks
