@@ -2,41 +2,71 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /problems/{problem} {
-      allow read: if true; // anyone can read
-      allow create: if request.auth != null; // anyone logged in can create
-      // either author or management can delete and update
-      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
-      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+
+    function onlyFields(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([fields]);
     }
-    
+
+    function owns() {
+      return resource.data.createdBy == request.auth.uid;
+    }
+
+    function isRole(role) {
+      return request.resource.auth.token.role == role;
+    }
+
+    function loggedIn() {
+      return request.auth != null;
+    }
+
+    function always() {
+      return true;
+    }
+
+    function never() {
+      return false;
+    }
+
+    match /problems/{problem} {
+      allow read: if always(); // anyone can read
+      allow create: if loggedIn(); // anyone logged in can create
+      allow update: if owns() || onlyFields(['likes']) || !isRole("student");
+      allow delete: if owns() || !isRole("student");
+    }
+
     match /posts/{post} {
       allow read: if true; // anyone can read
-      allow create: if request.auth != null; // anyone logged in can create
-      // either author or management can delete and update
-      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
-      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow create: if loggedIn(); // anyone logged in can create
+      allow update: if owns() || onlyFields(['likes']) || !isRole("student");
+      allow delete: if owns() || !isRole("student");
     }
 
     match /help_posts/{post} {
       allow read: if true; // anyone can read
-      allow create: if request.auth != null; // anyone logged in can create
-      // either author or management can delete and update
-      allow update: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
-      allow delete: if resource.data.createdBy == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow create: if loggedIn(); // anyone logged in can create
+      allow update: if owns() || onlyFields(['upvotes']) || !isRole("student");
+      allow delete: if owns() || !isRole("student");
     }
-    
+
     match /users/{user} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
-      allow update: if request.auth != null && request.auth.uid == resource.data.id; // only user can read his own info
-      allow create: if true; // anyone can register // TODO: if not registered already
+      allow read: if loggedIn() && request.auth.uid == resource.data.id; // only user can read his own info
+      // todo enable update only on certain fields - user shouldn't be able to update his 10-finger learning progress
+      allow update: if loggedIn() && request.auth.uid == resource.data.id; // only user can read his own info // todo: admins can update
+      allow create: if always(); // anyone can register // TODO: if not registered already
       // either author or management can delete and update
-      allow delete: if resource.data.id == request.auth.uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.student != true;
+      allow delete: if resource.data.id == request.auth.uid || request.resource.auth.token.role != "student";
     }
 
     match /typing_lessons/{post} {
-      allow read: if request.auth != null; // todo: && if user.lesson == lesson.id
-      allow write: if false;
+      allow read: if request.auth != null; // todo: && if user.lesson == lesson.id to prevent someone reading all of them
+      allow write: if never();
+    }
+
+    match /typing_history/{post} {
+      allow read: if isRole("teacher");
+      allow create: if always();
+      allow delete: if never();
+      allow update: if never();
     }
   }
 }
