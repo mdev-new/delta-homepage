@@ -40,8 +40,9 @@ jobs:
 
     - name: Build
       run: |
+        cd web
         npm install
-        cd web && CI=false npm run build
+        CI=false npm run build
 
     - uses: FirebaseExtended/action-hosting-deploy@v0
       with:
