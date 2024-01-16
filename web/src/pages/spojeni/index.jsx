@@ -78,7 +78,7 @@ const delta_stanice = {
 };
 
 const delta_odjezdy = {
-  "DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku", "Nemocnice"],
+  "DELTA": ["Pardubice-Pardubičky", "K Nemocnici", "Štrossova", "Na Okrouhlíku"],
   "Intr": [],
   "Zdrávka": ["Zdravotnická škola", "Zámeček"],
   "Hradec Králové hl.n.": ["Hradec Králové hl.n."],
