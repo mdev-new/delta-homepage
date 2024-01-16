@@ -161,6 +161,3 @@ export function najdi_spojeni (destinace, zacatek, konec, cas, zDelty, controls)
 	controls.setResult(res)
 
 };
-
-const compareArrays = (a, b) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);

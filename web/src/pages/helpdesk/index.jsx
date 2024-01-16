@@ -34,18 +34,19 @@ export default function Helpdesk({user, firestore}) {
 
     const form = event.target;
     const formFields = form.elements;
-  
+
     const date = new Date();
     createWithId(problemsCol, {
       problem: formFields.problem.value,
       type: formFields.type[1].value,
       place: formFields.place.value,
       assigned: formFields.assignee.value,
-      reporter: user.email,
+      reporter: user.email, // todo dynamically fetch from db when requiring this (this means allowing public access to the email field in firestore)
       datetime: `${date.getDate()}.${date.getMonth()+1}. ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, 0)}`,
       state: 'waiting',
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      createdBy: user.id
+      createdBy: user.id,
+      upvotes: []
     })
   }
 
@@ -58,7 +59,7 @@ export default function Helpdesk({user, firestore}) {
   }
 
   const like = (p) => {
-    
+    problemsCol.doc(p).update({upvotes: firebase.firestore.FieldValue.arrayUnion(user.id)})
   }
 
   return (<>
@@ -105,13 +106,13 @@ export default function Helpdesk({user, firestore}) {
   <Table>
     <thead>
        <tr>
-         <th><b>Závada</b></th>
-         <th><b>Typ závady</b></th>
-         <th><b>Místo</b></th>
-         <th><b>Datum a čas</b></th>
-         <th><b>Přiřazená osoba</b></th>
-         <th><b>Nahlásil</b></th>
-         <th><b>Souhlasí</b></th>
+          <th><b>Závada</b></th>
+          <th><b>Typ závady</b></th>
+          <th><b>Místo</b></th>
+          <th><b>Datum a čas</b></th>
+          <th><b>Přiřazená osoba</b></th>
+          <th><b>Nahlásil</b></th>
+          <th><b>Souhlasí</b></th>
        </tr>
     </thead>
     <tbody>
@@ -123,7 +124,7 @@ export default function Helpdesk({user, firestore}) {
            <td><Typography>{post.datetime}</Typography></td>
            <td><Typography>{post.assigned}</Typography></td>
            <td><Typography>{post.reporter}</Typography></td>
-           <td><Typography>{post.liked_by}</Typography></td>
+           <td><Typography>{post.upvotes}</Typography></td>
            <td><Typography>
             {
              (user && user.email === post.assigned) &&
@@ -141,6 +142,7 @@ export default function Helpdesk({user, firestore}) {
   </Table>
   </Box>
   
+  {/* Mobile view */}
   <Box sx={{display: {xs: 'block', sm: 'none'}}}>
   {problems && problems.map((post) => 
     <Card style={(post.state == 'waiting') ? {} : (post.state == 'work') ? {backgroundColor: 'yellow'} : {color: 'white', backgroundColor: 'green'}}>
@@ -153,7 +155,7 @@ export default function Helpdesk({user, firestore}) {
             <tr><td><Typography>Datum a cas</Typography></td><td><Typography>{post.datetime}</Typography></td></tr>
             <tr><td><Typography>Prirazena osoba</Typography></td><td><Typography>{post.assigned}</Typography></td></tr>
             <tr><td><Typography>Nahlasovatel</Typography></td><td><Typography>{post.reporter}</Typography></td></tr>
-            <tr><td><Typography>Souhlasi</Typography></td><td><Typography>{post.liked_by}</Typography></td></tr>
+            <tr><td><Typography>Souhlasi</Typography></td><td><Typography>{post.upvotes}</Typography></td></tr>
           </tbody>
         </Table>
       </CardContent>

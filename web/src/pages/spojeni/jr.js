@@ -96,13 +96,6 @@ const jizdni_rad_z_delty_template = {
 		]
 	},
 
-	"Nemocnice": {
-		info: {
-			coords: [17, 50]
-		},
-		spoje: []
-	},
-
 	"Na Okrouhlíku": {
 		info: {
 			coords: [18, 50]

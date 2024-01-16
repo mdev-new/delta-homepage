@@ -49,7 +49,6 @@ function CodeHelp({user, firestore}) {
   const [posts] = useCollectionData(query, {idField: 'id'})
 
   const [length, setLength] = useState(0);
-  const getLengthText = (<Typography>{length}/{MAX_LENGTH}</Typography>);
 
   const [responseTo, setResponseTo] = useState(null)
   const post = (event) => {
@@ -57,7 +56,7 @@ function CodeHelp({user, firestore}) {
 
     const form = event.target;
     const formFields = form.elements;
-  
+
     const date = new Date();
 
     createWithId(postsCol, {
@@ -90,6 +89,7 @@ function CodeHelp({user, firestore}) {
         <Typography>Kategorie</Typography>
         <List orientation="horizontal">
           {
+            /*todo fix*/
             ["c", "cpp", "javascript", "docker"].map(item =>
               <ListItem>
                 <ListItemContent>
@@ -133,7 +133,9 @@ function CodeHelp({user, firestore}) {
                     onChange={(e) => setLength(e.target.value.length)}
                   />
 
-                  <FormLabel>{getLengthText}</FormLabel>
+                  <FormLabel>
+                    <Typography>{length}/{MAX_LENGTH}</Typography>
+                  </FormLabel>
                 </FormControl>
               </CardContent>
               <CardActions sx={{display: 'inline', position: 'absolute', bottom: '20%', right: '3%'}}>

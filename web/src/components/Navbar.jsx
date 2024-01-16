@@ -19,13 +19,13 @@ export default function Navigation({items}) {
 	return (
 	<List>
 		{items.map(r => r[0] != 'divider' &&
-			<NavLink style={{all: 'unset'}} to={r[1]}>
-		<ListItem selected>
-		<ListItemButton>
-			<ListItemContent>{r[0]}</ListItemContent>
-		</ListItemButton>
-		</ListItem>
-		</NavLink>
+			<NavLink key={r[1]} style={{all: 'unset'}} to={r[1]}>
+				<ListItem selected>
+					<ListItemButton>
+						<ListItemContent>{r[0]}</ListItemContent>
+					</ListItemButton>
+				</ListItem>
+			</NavLink>
 		)}
 	</List>
 	);

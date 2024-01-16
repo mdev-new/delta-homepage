@@ -157,15 +157,5 @@ exports.setNextLesson = onCall(async request => {
   await db.collection('users').doc(`${user}`).update({typing_lesson: FieldValue.increment(1)});
 });
 
-exports.getLesson = onCall(async request => {
-  const userRef = await db.collection('users').doc(`${request.auth.token.uid}`).get();
-  const user_object = userRef.data();
-
-  const lessonRef = await db.collection('typing_lessons').doc(`${user_object.typing_lesson}`).get();
-
-  if(!lessonRef.exists) {
-    return;
-  }
-
-  return lessonRef.data();
+exports.getGif = onCall(async request => {
 });

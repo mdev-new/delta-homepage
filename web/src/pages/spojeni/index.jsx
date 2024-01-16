@@ -114,14 +114,14 @@ const destinace_na_deltu = {
 
 function typeToIcon(params, size = "medium") {
   if (params.value.startsWith('Autobus')) {
-    return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize={size} /></Badge>;
+    return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon style={{position: 'relative', bottom: -3}} fontSize={size} /></Badge>;
   } else if(params.value.startsWith('Vlak')) {
     if(params.value.split(' ')[1] !== undefined)
-      return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><TrainTwoToneIcon fontSize={size} /></Badge>;
+      return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><TrainTwoToneIcon style={{position: 'relative', bottom: -3}} fontSize={size} /></Badge>;
     else
-      return <TrainTwoToneIcon fontSize={size} />;
+      return <TrainTwoToneIcon style={{position: 'relative', bottom: -6}} fontSize={size} />;
   } else if(params.value.startsWith('Trolejbus')) {
-    return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon fontSize={size} /></Badge>;
+    return <Badge max={999} badgeContent={params.value.split(' ')[1]} color="primary"><DirectionsBusFilledTwoToneIcon style={{position: 'relative', bottom: -3}} fontSize={size} /></Badge>;
   }
 }
 
@@ -167,7 +167,7 @@ function Spojeni() {
   const genericCell = {headerAlign: 'center', align: 'center', sortable: false, renderCell: normalCellRender}
 
   return (
-  <div className="application">
+  <div>
 
   <div
     className="App"

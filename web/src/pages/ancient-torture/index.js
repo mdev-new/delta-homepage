@@ -1,6 +1,17 @@
 import React, { Component } from "react";
 import "./styles.css";
 
+import loading from '../loading.svg';
+
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Input,
+  Typography
+} from '@mui/joy'
+
 import firebase from 'firebase/compat/app'
 
 // lore
@@ -10,15 +21,11 @@ import firebase from 'firebase/compat/app'
 
 // za 100% spravne cviceni - sbirani gifu (misto hvezdicek jako v mb), gify na oslavu, atd
 
-// todo:
-// [ ] klasifikace
-// [ ] bez mezer
-// [ ] pozadu opis
-// [ ] opis x-krat
-
 // todo admin panel na jednoduchou spravu cviceni a zobrazovani napsanych cviceni
 
 // todo system prav
+
+// todo if clicked next too fast the old text loads
 
 const gifs = [
   "https://media1.tenor.com/m/iEIVpEs-YhgAAAAC/weird-shwabble.gif",
@@ -30,6 +37,9 @@ const gifs = [
 function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+const Jednicek = () => <Typography>{randomInteger(0, 100) == 0 ? "jednišek" : randomInteger(0, 200) == 0 ? "jeptišek" : "jedniček"}</Typography>
+
 
 class Writing extends Component {
   state = {
@@ -47,7 +57,7 @@ class Writing extends Component {
     totalText: ""
   };
 
-  startLesson = () => {
+  startLesson = async () => {
     this.setState({
       lesson: null,
       completedWords: [],
@@ -61,18 +71,20 @@ class Writing extends Component {
       totalText: ""
     });
 
-    this.props.functions.httpsCallable('getLesson')().then(text => {
-      const t_obj = text?.data
-      const txt = t_obj?.text
+    this.props.firestore
+      .collection('typing_lessons')
+      .doc(`${this.props.user.typing_lesson}`)
+      .get()
+      .then((docRef) => {
+        const doc = docRef.data();
+        const txt = doc?.text
 
-      this.setState({
-        text: txt || null,
-        words: txt?.split(" "),
-        lesson: t_obj
-      });
-
-      if(t_obj.graded) alert('Pozor! Klasifikace!'); // todo klasifikace schvaluje ucitel
-    });
+        this.setState({
+          text: txt || null,
+          words: txt?.split(" "),
+          lesson: doc
+        });
+      })
   };
 
   handleChange = async e => {
@@ -125,7 +137,6 @@ class Writing extends Component {
           byUser: this.props.user.id,
           textWritten: totalText + inputValue,
           timeTaken: took,
-          lessonId: this.props.user.typing_lesson,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -152,30 +163,46 @@ class Writing extends Component {
       lesson
     } = this.state;
 
+    if (this.props.user.typing_finished) return (
+      <Card sx={{maxWidth: 650, margin: 'auto'}}>
+        <CardContent sx={{alignContent: 'center', alignItems: 'center'}}>
+          <h4>Teodor tě milosrdně propustil.</h4>
+        </CardContent>
+      </Card>
+    );
+
     if (!started) {
       return (
-        <div className="container">
-          <p className="text">{this.props.user.typing_gifs.length} gifů - {Math.floor(this.props.user.typing_gifs.length / 5)} jednišek</p>
-          <button className="start-btn" onClick={this.startLesson}>
-            Začít psát
-          </button>
-        </div>
+        <Card sx={{maxWidth: 650, margin: 'auto'}}>
+          <CardContent sx={{alignContent: 'center', alignItems: 'center'}}>
+            <Typography>{this.props.user.typing_gifs.length} gifů - {Math.floor(this.props.user.typing_gifs.length / 5)} <Jednicek /></Typography>
+          </CardContent>
+          <CardActions>
+            <Button onClick={this.startLesson}>
+              Začít psát
+            </Button>
+          </CardActions>
+        </Card>
       );
     }
 
     if (!text) return (
-      <div className="container">
-        <p className="text">{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} jednišek</p>
-        <p className="p">Načítám...<br />Pokud to trvá dlouho, asi se někde stala chyba :(</p>
-      </div>
+      <Card sx={{maxWidth: 650, margin: 'auto'}}>
+        <CardContent sx={{alignContent: 'center', alignItems: 'center'}}>
+          <Typography>{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} <Jednicek /> - cvičení #{lesson?.id + 1}</Typography>
+          <Typography>Načítám...<img style={{position: 'relative', bottom: -5}} width={25} height={25} src={loading} /></Typography>
+          <Typography>Pokud to trvá dlouho, asi se někde stala chyba :(</Typography>
+        </CardContent>
+      </Card>
     );
 
     if (completed) {
       const mistakes = wordStates.filter(f => f === false).length;
 
       return (
-        <div className="container">
-          <p className="text">{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} jednišek</p>
+        <Card sx={{maxWidth: 650, margin: 'auto'}}>
+          <CardContent sx={{alignContent: 'center', alignItems: 'center'}}>
+          <Typography>{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} <Jednicek /> - cvičení #{lesson?.id + 1}</Typography>
           { mistakes !== 0 ? <>
             <h2 className="h2">
               Počet chyb: <strong>{mistakes} ({(mistakes / completedWords.length * 100).toFixed(1)}%)</strong>
@@ -188,20 +215,23 @@ class Writing extends Component {
             <img width={500} height={400} src={gifs[randomInteger(0, 3)]} /> {/* Todo: tady ziskat ten random tenor gif a pridat ho do db */}
             </>
           }
-          <button className="start-btn" onClick={this.startLesson}>
+          <Button onClick={this.startLesson}>
             Další cvičení
-          </button>
-        </div>
+          </Button>
+        </CardContent>
+        </Card>
       );
     }
 
     return (
       <div>
-        <div className="container">
-          <p className="text">{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} jednišek</p>
-          <h4>Opiš {lesson.repeat}x.</h4>
-          <progress value={progress} max="100" />
-          <p className="text">
+        <Card sx={{maxWidth: 650, margin: 'auto'}}>
+          <CardContent sx={{alignContent: 'center', alignItems: 'center'}}>
+          <Typography>{this.props.user.typing_gifs.length} gifů - {this.props.user.typing_gifs.length / 5} <Jednicek /> - cvičení #{lesson?.id + 1}</Typography>
+          {lesson?.graded && <Typography>!!!Klasifikace!!!</Typography>}
+          <h4>Opiš {lesson?.repeat}x.</h4>
+          <progress style={{maxWidth: 200}} value={progress} max="100" />
+          <Typography>
             {text.split(" ").map((word, w_idx) => {
               let highlight = "";
               let currentWord = false;
@@ -240,8 +270,8 @@ class Writing extends Component {
                 </span>
               );
             })}
-          </p>
-          <input
+          </Typography>
+          <Input
             type="text"
             onChange={this.handleChange}
             onKeyDown={(event) => {
@@ -255,7 +285,8 @@ class Writing extends Component {
             value={inputValue}
             autoFocus={true}
           />
-        </div>
+        </CardContent>
+        </Card>
       </div>
     );
   }

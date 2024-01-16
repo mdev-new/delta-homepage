@@ -38,173 +38,163 @@ import firebase from 'firebase/compat/app'
 import Switch from "@mui/joy/Switch";
 
 export default function Header({user, routes, firestore, auth}) {
-	const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-	const {mode, setMode} = useColorScheme();
+  const {mode, setMode} = useColorScheme();
 
-	const [email, setEmail] = useState("");
-	const [psw, setPsw] = useState("");
+  const [email, setEmail] = useState("");
+  const [psw, setPsw] = useState("");
 
-	const usersCol = firestore.collection('users')
+  const usersCol = firestore.collection('users')
 
-	const signInWithEmailPass = async () => {
-		auth.signInWithEmailAndPassword(email, psw)
-			.then(userCredential => {
-				usersCol.doc(userCredential.user.uid).update({
-					lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp()
-				})
-			})
-	}
+  const signInWithEmailPass = async () => {
+    auth.signInWithEmailAndPassword(email, psw)
+      .then(userCredential => {
+        usersCol.doc(userCredential.user.uid).update({
+          lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp()
+        })
+      })
+  }
 
-	const register = () => {
-		auth.createUserWithEmailAndPassword(email, psw)
-			.then(userCredential => {
-				userCredential.user.sendEmailVerification()
+  const register = () => {
+    auth.createUserWithEmailAndPassword(email, psw)
+      .then(userCredential => {
+        userCredential.user.sendEmailVerification()
 
-				usersCol.doc(userCredential.user.uid).set({
-					id: userCredential.user.uid,
-					lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp(),
-					name: "",
-					surname: "",
-					bk_username: "",
-					hometown: "",
-					intr: false,
-					credit: 0,
-					mbUploaded: 0.0,
-					email: userCredential.user.email,
-					typing_lesson: 0
-				}, {merge: true})
+        usersCol.doc(userCredential.user.uid).set({
+          id: userCredential.user.uid,
+          lastLoggedIn: firebase.firestore.FieldValue.serverTimestamp(),
+          name: "",
+          surname: "",
+          bk_username: "",
+          hometown: "",
+          intr: false,
+          donated: 0,
+          mbUploaded: 0.0,
+          email: userCredential.user.email,
+          typing_lesson: 0
+        }, {merge: true})
 
-				alert('Potvrzeni odeslano na email, prosim odkliknete ho.')
-			})
-	}
+        alert('Potvrzeni odeslano na email, prosim odkliknete ho.')
+      })
+  }
 
-	return (
-		<Box
-			sx={{
-				display: 'flex',
-				flexGrow: 1,
-				justifyContent: 'space-between',
-			}}
-		>
-			<Stack
-				direction="row"
-				justifyContent="center"
-				alignItems="center"
-				spacing={1}
-				sx={{ display: { xs: 'none', lg: 'flex' } }}
-			>
-				{ routes.map(r => r[0] != 'divider' && r[2] &&
-					<NavLink to={r[1]} sx={{ all: 'unset' }}>
-						{({ isActive, isPending, isTransitioning }) => (
-							<Button
-								variant="plain"
-								color="neutral"
-								size="sm"
-								sx={{ color: isActive? "white" : 'black', backgroundColor: isActive? "red" : 'white', alignSelf: 'center' }}
-							>
-								{r[0]}
-							</Button>
-						)}
-					</NavLink>
-				)}
-			</Stack>
-			<Box sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
-				<IconButton variant="plain" color="neutral" onClick={() => setDrawerOpen(true)}>
-					<MenuRoundedIcon />
-				</IconButton>
-				<Drawer
-					sx={{ display: { xs: 'inline-flex', lg: 'none' } }}
-					open={drawerOpen}
-					onClose={() => setDrawerOpen(false)}
-				>
-					<ModalClose />
-					<DialogTitle>Menu</DialogTitle>
-					<Box sx={{ px: 1 }}>
-						<Navbar items={routes} />
-					</Box>
-				</Drawer>
-				<Typography style={{fontWeight: 'bold', position: 'relative', top: 5.5}}>Delta Homepage</Typography>
-			</Box>
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: 'space-between',
+      }}
+    >
+      <Stack
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        spacing={1}
+        sx={{ display: { xs: 'none', lg: 'flex' } }}
+      >
+        { routes.map(r => r[0] != 'divider' && r[2] &&
+          <NavLink key={r[1]} to={r[1]} sx={{ all: 'unset' }}>
+            {({ isActive, isPending, isTransitioning }) => (
+              <Button
+                variant="plain"
+                color="neutral"
+                size="sm"
+                sx={{ color: isActive? "white" : 'black', backgroundColor: isActive? "red" : 'white', alignSelf: 'center' }}
+              >
+                {r[0]}
+              </Button>
+            )}
+          </NavLink>
+        )}
+      </Stack>
+      <Box sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
+        <IconButton variant="plain" color="neutral" onClick={() => setDrawerOpen(true)}>
+          <MenuRoundedIcon />
+        </IconButton>
+        <Drawer
+          sx={{ display: { xs: 'inline-flex', lg: 'none' } }}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        >
+          <ModalClose />
+          <DialogTitle>Menu</DialogTitle>
+          <Box sx={{ px: 1 }}>
+            <Navbar items={routes} />
+          </Box>
+        </Drawer>
+        <Typography style={{fontWeight: 'bold', position: 'relative', top: 5.5}}>Delta Homepage</Typography>
+      </Box>
 
-			<Box>
-				<Stack direction="row" spacing={2}>
-					<Typography
-						component="label"
-						endDecorator={
-							<Switch
-								checked={mode == 'dark'}
-								onChange={() => setMode(mode === 'light' ? 'dark' : 'light')}
-							/>
-						}
-					>
-						Tmavý režim
-					</Typography>
+      <Box>
+        <Stack direction="row" spacing={2}>
+          <Typography
+            component="label"
+            endDecorator={
+              <Switch
+                checked={mode == 'dark'}
+                onChange={() => setMode(mode === 'light' ? 'dark' : 'light')}
+              />
+            }
+          >
+            Tmavý režim
+          </Typography>
 
-					<Dropdown>
-						<MenuButton
-							variant="plain"
-							size="sm"
-						>
-							<AccountCircle color="primary" fontSize="large" />
-						</MenuButton>
-						<Menu
-							placement="bottom-end"
-							size="sm"
-							sx={{
-								zIndex: '99999',
-								p: 1,
-								gap: 1,
-								'--ListItem-radius': 'var(--joy-radius-sm)',
-							}}
-						>
-							<MenuItem>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-									}}
-								>
-									<AccountCircle color="primary" fontSize="large" />
-									<Box sx={{ ml: 1.5 }}><Typography textColor="text.tertiary">
-											{user ? <>{}</> : "Not logged in"}
-									</Typography></Box>
-								</Box>
-							</MenuItem>
+          <Dropdown>
+            <MenuButton
+              variant="plain"
+              size="sm"
+            >
+              <AccountCircle color="primary" fontSize="large" />
+            </MenuButton>
+            <Menu
+              placement="bottom-end"
+              size="sm"
+              sx={{
+                zIndex: '99999',
+                p: 1,
+                gap: 1,
+                '--ListItem-radius': 'var(--joy-radius-sm)',
+              }}
+            >
+              <MenuItem>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <AccountCircle color="primary" fontSize="large" />
+                  <Box sx={{ ml: 1.5 }}><Typography textColor="text.tertiary">
+                      {user ? <>{user?.name} {user?.surname}</> : "Nepřihlášen(a)"}
+                  </Typography></Box>
+                </Box>
+              </MenuItem>
 
-							{ user ?
-							<>
-								<MenuItem>
-									<Typography>Kredit: {user.credit / 100} kč (po konci měsíce {(user.credit - (user.credit_usage || 0)) / 100} kč)</Typography>
-								</MenuItem>
+              { user ?
+              <>
+                <ListDivider />
+                <MenuItem onClick={() => auth.signOut()}>
+                  <LogoutRoundedIcon />
+                  <Typography>Odhlasit</Typography>
+                </MenuItem>
 
-								<Button style={{all: 'unset'}} component="a" target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${user.id}`} variant="text">
-									<MenuItem>
-										<Typography>Přidat kredit</Typography>
-									</MenuItem>
-								</Button>
+              </>
 
-								<ListDivider />
-								<MenuItem onClick={() => auth.signOut()}>
-									<LogoutRoundedIcon />
-									<Typography>Odhlasit</Typography>
-								</MenuItem>
-
-							</>
-
-							:
-							<>
-								<ListDivider />
-								<MenuItem><Input required value={email} type="email" onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
-								<MenuItem><Input required value={psw} type="password" onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
-								<MenuItem onClick={signInWithEmailPass}>Prihlasit se</MenuItem>
-								<MenuItem onClick={register}>Registrovat se</MenuItem>
-							</>
-							}
-						</Menu>
-					</Dropdown>
-				</Stack>
-			</Box>
-		</Box>
-	);
+              :
+              <>
+                <ListDivider />
+                <MenuItem><Input required value={email} type="email" onChange={(e) => setEmail(e.target.value)} variant="outlined" /></MenuItem>
+                <MenuItem><Input required value={psw} type="password" onChange={(e) => setPsw(e.target.value)} variant="outlined" /></MenuItem>
+                <MenuItem onClick={signInWithEmailPass}>Prihlasit se</MenuItem>
+                <MenuItem onClick={register}>Registrovat se</MenuItem>
+              </>
+              }
+            </Menu>
+          </Dropdown>
+        </Stack>
+      </Box>
+    </Box>
+  );
 }

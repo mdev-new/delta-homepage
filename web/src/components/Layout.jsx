@@ -79,9 +79,21 @@ function Main(props) {
 	);
 }
 
+function Footer(props) {
+	return (
+		<Box
+			component="footer"
+			className="Footer"
+			{...props}
+			sx={[{ p: 2 }, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
+		/>
+	);
+}
+
 export default {
 	Root,
 	Header,
 	SideNav,
 	Main,
+	Footer
 };

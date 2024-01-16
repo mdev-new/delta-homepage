@@ -1,21 +1,21 @@
 import { CssVarsProvider } from '@mui/joy/styles';
 import CssBaseline from '@mui/joy/CssBaseline';
-import {Input, Button} from '@mui/joy';
+import {Input, Button, Typography} from '@mui/joy';
 
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 
 import Helpdesk from './helpdesk'
 import Social from './social'
-import Zapisky from './zapisky'
 import Spojeni from './spojeni'
 import Pocasi from './pocasi'
-import Wiki from './wiki'
-import ReditelskyFB from './fb'
+import Wiki from './ostatni/Wiki'
 import Bakalar from './bakalar'
 import Account from './account'
 import CodeHelp from './code-help'
 import Writing from './ancient-torture'
+import Zapisky from './ostatni/Zapisky'
+import ReditelskyFB from './ostatni/Facebook'
 
 import { useState, useEffect } from 'react'
 
@@ -47,20 +47,6 @@ const firestore = app.firestore()
 const functions = app.functions('europe-west1')
 
 firestore.enablePersistence()
-  .catch(err => {
-    switch(err.code) {
-      case 'failed-precondition': {
-        // multiple tabs are open, this is unsupported.
-        break;
-      }
-      case 'unimplemented': {
-        // browser doesn't implement features that enable persistence
-        break;
-      }
-
-      default: break;
-    }
-  })
 
 const routes = (user) => [
   ['Domov', '/', true],
@@ -87,11 +73,10 @@ export default function App() {
   const [userObject, _setUserObject] = useState(null);
   useEffect(() => {
     if(authenticatedUser) {
-      firestore.collection('users').doc(authenticatedUser.uid).get().then((docRef) => _setUserObject(docRef.data()))
+      firestore.collection('users').doc(authenticatedUser.uid).onSnapshot(doc => _setUserObject(doc.data()))
     } else {
       _setUserObject(null);
     }
-
   }, [authenticatedUser]);
 
   return (
@@ -102,6 +87,7 @@ export default function App() {
         <Layout.Header>
           <Header user={userObject} firestore={firestore} routes={routes(userObject)} auth={auth} />
         </Layout.Header>
+        <div style={{minHeight:'85vh', display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
         <Layout.Main>
           <Routes>
             <Route path="/" element={
@@ -127,6 +113,18 @@ export default function App() {
             }
           </Routes>
         </Layout.Main>
+        </div>
+        {userObject &&
+        <Layout.Footer>
+          <hr style={{backgroundColor: '#D3D3D3', height: '1px', border: 0}} />
+          <>
+          <Typography>Darováno: {Math.round(userObject.donated / 100)} kč&nbsp;
+          <a target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${userObject.id}`}>
+            <Typography>Darovat</Typography>
+          </a></Typography>
+          </>
+        </Layout.Footer>
+        }
       </Layout.Root>
       </CssVarsProvider>
     </Router>

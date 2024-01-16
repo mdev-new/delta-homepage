@@ -33,15 +33,15 @@ const useContainerDimensions = myRef => {
 };
 
 function ReditelskyFB() {
-	const componentRef = useRef()
-	const { width, height } = useContainerDimensions(componentRef)
-	return (
-		<Box ref={componentRef}>
-			<div class="h_iframe">
-				<iframe src={"https://www.facebook.com/plugins/page.php?href=DELTA.SSIE&tabs=timeline&width=" + width + "&height=" + height + "&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId%22"} frameborder="0" allowfullscreen></iframe>
-			</div>
-		</Box>
-	);
+  const componentRef = useRef()
+  const { width, height } = useContainerDimensions(componentRef)
+  return (
+    <Box ref={componentRef}>
+      <div class="h_iframe">
+        <iframe src={"https://www.facebook.com/plugins/page.php?href=DELTA.SSIE&tabs=timeline&width=" + width + "&height=" + height + "&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId%22"} frameborder="0" allowfullscreen></iframe>
+      </div>
+    </Box>
+  );
 }
 
 export default ReditelskyFB;

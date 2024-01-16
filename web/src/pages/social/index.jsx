@@ -68,7 +68,7 @@ function Social({user, firestore}) {
 
     const form = event.target;
     const formFields = form.elements;
-  
+
     const date = new Date();
 
     if (formFields.text.value.length > MAX_LENGTH) return;
@@ -86,7 +86,7 @@ function Social({user, firestore}) {
       responseTo: responseTo
     })
   }
-  
+
   const like = (p) => {
     postsCol.doc(p).update({likes: firebase.firestore.FieldValue.arrayUnion(user.email)})
   }
