@@ -10,7 +10,7 @@ const objectMap = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v
 const closest = (array, pivot) => array.sort((a, b) => a - b).filter(e => (e >= pivot))[0];
 const capitalizeFirst = (text) => text.charAt(0).toUpperCase() + text.slice(1)
 
-function najdi(jr, zacatek, konec, cas, prevStanice) {
+function najdi(jr, zacatek, konec, cas, prevStanice = undefined) {
 
 	if(!(zacatek in jr)) return null
 
@@ -37,20 +37,21 @@ function najdi(jr, zacatek, konec, cas, prevStanice) {
 		if(spoj.typ == "trol") typ = "Trolejbus";
 		else if(spoj.typ == "bus") typ = "Autobus";
 	}
-	if(spoj.cislo_linky !== undefined)
+	if(spoj.cislo_linky !== undefined) {
 		typ += " " + spoj.cislo_linky;
+	}
 
 	//console.log(zacatek, spoj.zastavky.filter(f => f.name != zacatek)[0])
-	let _prevZastavka = zastavky[0]
+	let vychoziZastavka = zastavky[0]
 
 	let cesta = [
 		[
 			typ,
 			`${hours_minutes(spoj.cas)}`,
-			`${hours_minutes(spoj.cas+((prevStanice != undefined) ? prevStanice.time : _prevZastavka.time))}`,
-			(prevStanice != undefined) ? prevStanice.nastupiste : _prevZastavka.nastupiste
+			`${hours_minutes(spoj.cas+((prevStanice != undefined) ? prevStanice.time : vychoziZastavka.time))}`,
+			(prevStanice === undefined) ? vychoziZastavka.nastupiste : prevStanice.nastupiste
 		],
-		[...(zastavky.map(z => z.name))]
+		zastavky.map(z => z.name)
 	]
 
 	let _moznosti = {}
@@ -66,13 +67,13 @@ function najdi(jr, zacatek, konec, cas, prevStanice) {
 
 		let s = (typeof jr[stanice.name] == 'string') ? jr[stanice.name] : stanice.name;
 
-		let found = najdi(jr, s, konec, spoj.cas + stanice.time, _prevZastavka)
+		let found = najdi(jr, s, konec, spoj.cas + stanice.time, stanice)
 
 		if(found != null) { // found == null = tudy cesta fakt nevede
 			_moznosti[s] = {prijezd: cesta, odjezd: found}
 		}
 
-		_prevZastavka = stanice
+		vychoziZastavka = stanice
 	}
 
 	return _moznosti;

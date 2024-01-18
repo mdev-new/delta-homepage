@@ -8,6 +8,10 @@ const {onRequest} = require("firebase-functions/v2/https");
 const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const {onDocumentUpdated} = require("firebase-functions/v2/firestore");
 
+const { getAuth } = require('firebase-admin/auth');
+
+const functions = require("firebase-functions")
+
 const { setGlobalOptions } = require("firebase-functions/v2");
 
 const logger = require("firebase-functions/logger");
@@ -22,6 +26,22 @@ const FieldValue = admin.firestore.FieldValue;
 admin.initializeApp();
 
 const db = admin.firestore();
+
+exports.setRoleOnRegister = functions.auth.user().onCreate((user) => {
+  getAuth().setCustomUserClaims(user.uid, { role: "student" })
+})
+
+exports.setRole = onCall(async request => {
+  if(request.auth.token.role == "admin") {
+
+    // only admins can set roles
+    getAuth().setCustomUserClaims(user.uid, { role: /* todo */ request.body.role })
+
+    return { status: 200 };
+  } else {
+    return { status: 403 };
+  }
+})
 
 exports.newHelpdeskProblem = onDocumentCreated("problems/{docId}", (event) => {
 
@@ -121,7 +141,7 @@ exports.sendAlerts = onSchedule("every monday 08:00", async (event) => {
   })
 })
 
-exports.addCredit = onRequest(async (request, response) => {
+exports.donate = onRequest(async (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   let event;
@@ -140,7 +160,7 @@ exports.addCredit = onRequest(async (request, response) => {
       const paymentIntentSucceeded = event.data.object;
       const user = paymentIntentSucceeded.client_reference_id;
       const amount = paymentIntentSucceeded.amount_total;
-      await db.collection('users').doc(`${user}`).update({credit: FieldValue.increment(amount)});
+      await db.collection('users').doc(`${user}`).update({donated: FieldValue.increment(amount)});
       break;
     }
     default: {

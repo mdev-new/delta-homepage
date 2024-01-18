@@ -17,7 +17,7 @@ function Bakalar({user}) {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: `client_id=ANDR&grant_type=password&username=${user.bk_user}&password=${user.bk_pass}`
+      body: `client_id=ANDR&grant_type=password&username=${"17Hroud06513"}&password=${prompt("Zadej heslo k bakalarum (neukladano)")}`
     })
     .then((response) => response.json())
     .then((res) => {

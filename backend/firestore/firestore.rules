@@ -32,35 +32,35 @@ service cloud.firestore {
     }
 
     match /problems/{problem} {
-      allow read: if always(); // anyone can read
-      allow create: if loggedIn(); // anyone logged in can create
+      allow read: if always();
+      allow create: if loggedIn();
       allow update: if owns() || onlyFields(['upvotes']) || !isRole("student");
       allow delete: if owns() || !isRole("student");
     }
 
     match /posts/{post} {
-      allow read: if always(); // anyone can read
-      allow create: if loggedIn(); // anyone logged in can create
+      allow read: if always();
+      allow create: if loggedIn();
       allow update: if owns() || onlyFields(['likes']) || !isRole("student");
       allow delete: if owns() || !isRole("student");
     }
 
     match /help_posts/{post} {
-      allow read: if always(); // anyone can read
-      allow create: if loggedIn(); // anyone logged in can create
+      allow read: if always();
+      allow create: if loggedIn();
       allow update: if owns() || onlyFields(['upvotes']) || !isRole("student");
       allow delete: if owns() || !isRole("student");
     }
 
     match /users/{user} {
-      allow read: if loggedIn() && request.auth.uid == resource.data.id;
-      allow update: if loggedIn() && request.auth.uid == resource.data.id && !onlyFields(["typing_lesson"]); // todo: admins can update
-      allow create: if always();
+      allow read: if loggedIn() && ((request.auth.uid == resource.data.id) || isRole("admin"));
+      allow create: if always(); // todo create with a cloud function to prevent finishing typing early
+      allow update: if loggedIn() && ((request.auth.uid == resource.data.id && !onlyFields(["typing_lesson"])) || isRole("admin")); // todo: admins can update
       allow delete: if (loggedIn() && resource.data.id == request.auth.uid) || request.resource.auth.token.role != "student";
     }
 
     match /typing_lessons/{post} {
-      allow read: if loggedIn() && resource.data.id == userObject().data.typing_lesson;
+      allow read: if loggedIn() && (resource.data.id == userObject().data.typing_lesson || isRole("admin"));
       allow write: if never();
     }
 

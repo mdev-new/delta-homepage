@@ -70,7 +70,6 @@ export default function Header({user, routes, firestore, auth}) {
           hometown: "",
           intr: false,
           donated: 0,
-          mbUploaded: 0.0,
           email: userCredential.user.email,
           typing_lesson: 0
         }, {merge: true})
@@ -179,6 +178,16 @@ export default function Header({user, routes, firestore, auth}) {
                   <LogoutRoundedIcon />
                   <Typography>Odhlasit</Typography>
                 </MenuItem>
+                {
+                  //user.role === "admin" &&
+                    <MenuItem>
+                      <Typography>
+                        <NavLink to="/admin" sx={{ all: 'unset' }}>
+                          Admin panel
+                        </NavLink>
+                      </Typography>
+                    </MenuItem>
+                }
 
               </>
 

@@ -5,17 +5,18 @@ import {Input, Button, Typography} from '@mui/joy';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 
+import Admin from './admin'
 import Helpdesk from './helpdesk'
 import Social from './social'
-import Spojeni from './spojeni'
-import Pocasi from './pocasi'
-import Wiki from './ostatni/Wiki'
+import Spojeni from './travel'
+import Pocasi from './weather'
 import Bakalar from './bakalar'
 import Account from './account'
 import CodeHelp from './code-help'
 import Writing from './ancient-torture'
-import Zapisky from './ostatni/Zapisky'
-import ReditelskyFB from './ostatni/Facebook'
+import Zapisky from './note-marketplace'
+import Wiki from './other/Wiki'
+import ReditelskyFB from './other/Facebook'
 
 import { useState, useEffect } from 'react'
 
@@ -109,6 +110,10 @@ export default function App() {
               <Route exact path="/bakalar" element={<Bakalar user={userObject} firestore={firestore} />} />
               <Route exact path="/writing" element={<Writing user={userObject} firestore={firestore} functions={functions} />} />
               <Route exact path="/account" element={<Account user={userObject} firestore={firestore} />} />
+              {
+                //userObject.role === "admin" &&
+                  <Route exact path="/admin" element={<Admin user={userObject} firestore={firestore} />} />
+              }
               </>
             }
           </Routes>
@@ -118,10 +123,12 @@ export default function App() {
         <Layout.Footer>
           <hr style={{backgroundColor: '#D3D3D3', height: '1px', border: 0}} />
           <>
+          <marquee behavior="alternate">
           <Typography>Darováno: {Math.round(userObject.donated / 100)} kč&nbsp;
-          <a target="_blank" rel="noreferrer noopener" href={`https://buy.stripe.com/test_aEU3cugTBajG3Oo9AB?client_reference_id=${userObject.id}`}>
+          <a target="_blank" rel="noreferrer noopener" href={`https://donate.stripe.com/test_aEUbJ0eLt9fCet2bIK?client_reference_id=${userObject.id}`}>
             <Typography>Darovat</Typography>
           </a></Typography>
+          </marquee>
           </>
         </Layout.Footer>
         }

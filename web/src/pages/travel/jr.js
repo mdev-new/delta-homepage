@@ -1,5 +1,3 @@
-// todo mozna ke kazdy zastavce pridat minutaz jak daleko je od zacatku
-
 // todo presnost v casech jizd
 
 // nastupiste aplikovano retroaktivne (na jizdu z predchozi zastavky k aktualni)
@@ -84,7 +82,7 @@ const jizdni_rad_z_delty_template = {
 					1900
 				],
 				zastavky: [
-					{ name: "K Nemocnici", time: 0, nastupiste: ""},
+					{ name: "K Nemocnici", time: 0, nastupiste: "5"},
 					{ name: "Karla IV.", time: 0, nastupiste: ""},
 					{ name: "Náměstí Republiky", time: 0, nastupiste: ""},
 					//{name: "Sukova", time: 0},

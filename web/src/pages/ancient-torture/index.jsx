@@ -21,8 +21,6 @@ import firebase from 'firebase/compat/app'
 
 // za 100% spravne cviceni - sbirani gifu (misto hvezdicek jako v mb), gify na oslavu, atd
 
-// todo admin panel na jednoduchou spravu cviceni a zobrazovani napsanych cviceni
-
 // todo system prav
 
 // todo if clicked next too fast the old text loads
