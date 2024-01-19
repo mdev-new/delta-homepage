@@ -1,0 +1,38 @@
+{
+  "short_name": "Delta Homepage",
+  "name": "Delta Homepage",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screen_wide.png",
+      "form_factor": "wide",
+      "sizes": "1191x657"
+    },
+    {
+      "src": "screen_narrow.png",
+      "form_factor": "narrow",
+      "sizes": "388x781"
+    }
+  ],
+  "id": "/",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
