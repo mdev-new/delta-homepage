@@ -1,0 +1,45 @@
+<.header>
+  Listing Helpdesk
+  <:actions>
+    <.link patch={~p"/helpdesk/new"}>
+      <.button>New Helpdesk post</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="helpdesk"
+  rows={@streams.helpdesk}
+  row_click={fn {_id, helpdesk_post} -> JS.navigate(~p"/helpdesk/#{helpdesk_post}") end}
+>
+  <:col :let={{_id, helpdesk_post}} label="Problem"><%= helpdesk_post.problem %></:col>
+  <:col :let={{_id, helpdesk_post}} label="Place"><%= helpdesk_post.place %></:col>
+  <:col :let={{_id, helpdesk_post}} label="Assigned"><%= helpdesk_post.assigned %></:col>
+  <:col :let={{_id, helpdesk_post}} label="Status"><%= helpdesk_post.status %></:col>
+  <:col :let={{_id, helpdesk_post}} label="Time"><%= helpdesk_post.time %></:col>
+  <:action :let={{_id, helpdesk_post}}>
+    <div class="sr-only">
+      <.link navigate={~p"/helpdesk/#{helpdesk_post}"}>Show</.link>
+    </div>
+    <.link patch={~p"/helpdesk/#{helpdesk_post}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, helpdesk_post}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: helpdesk_post.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="helpdesk_post-modal" show on_cancel={JS.patch(~p"/helpdesk")}>
+  <.live_component
+    module={DeltaHomepageWeb.HelpdeskPostLive.FormComponent}
+    id={@helpdesk_post.id || :new}
+    title={@page_title}
+    action={@live_action}
+    helpdesk_post={@helpdesk_post}
+    patch={~p"/helpdesk"}
+  />
+</.modal>

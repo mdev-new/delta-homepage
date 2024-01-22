@@ -1,0 +1,30 @@
+<.header>
+  Helpdesk post <%= @helpdesk_post.id %>
+  <:subtitle>This is a helpdesk_post record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/helpdesk/#{@helpdesk_post}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit helpdesk_post</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Problem"><%= @helpdesk_post.problem %></:item>
+  <:item title="Place"><%= @helpdesk_post.place %></:item>
+  <:item title="Assigned"><%= @helpdesk_post.assigned %></:item>
+  <:item title="Status"><%= @helpdesk_post.status %></:item>
+  <:item title="Time"><%= @helpdesk_post.time %></:item>
+</.list>
+
+<.back navigate={~p"/helpdesk"}>Back to helpdesk</.back>
+
+<.modal :if={@live_action == :edit} id="helpdesk_post-modal" show on_cancel={JS.patch(~p"/helpdesk/#{@helpdesk_post}")}>
+  <.live_component
+    module={DeltaHomepageWeb.HelpdeskPostLive.FormComponent}
+    id={@helpdesk_post.id}
+    title={@page_title}
+    action={@live_action}
+    helpdesk_post={@helpdesk_post}
+    patch={~p"/helpdesk/#{@helpdesk_post}"}
+  />
+</.modal>
