@@ -4,11 +4,12 @@ from django.db.models import (
     DateTimeField,
     PositiveSmallIntegerField,
     BooleanField,
-    IntegerField,
     IntegerChoices,
     ForeignKey,
-    CASCADE
+    SET_NULL
 )
+
+from django.conf import settings
 
 class LessonType(IntegerChoices):
     NORMAL = 0, 'Normalne'
@@ -22,8 +23,9 @@ class LessonType(IntegerChoices):
 
 class Lesson(Model):
     text = CharField(max_length=2048)
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True)
+    mode = PositiveSmallIntegerField(default=LessonType.NORMAL, choices=LessonType.choices)
     repeat = PositiveSmallIntegerField()
     backspace = BooleanField,
-    mode = PositiveSmallIntegerField(default=LessonType.NORMAL, choices=LessonType.choices)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+    author = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
