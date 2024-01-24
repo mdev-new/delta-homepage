@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'market',
     'route',
     'torture'
-
 ]
 
 MIDDLEWARE = [
