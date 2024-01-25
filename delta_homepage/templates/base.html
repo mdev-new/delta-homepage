@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static 'css/nes.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  <!--<link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet">-->
+  <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">-->
+  <!--<script src="https://cdn.jsdelivr.net/npm/less"></script>-->
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <title>{{ name|title }}</title>
+
+  <style>
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYMEDIUM.OTF' %}");
+    }
+    html, body, pre, code, kbd, samp {
+      {# font-family: "Press Start 2P"; #}
+      font-family: "SF Pro Display";
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body style="padding: 20px;">
+  <header>
+    {#% include 'header.html' %#} {# Will this _ever_ be used for anything? #}
+    <nav>
+      {% include 'nav.html' %}
+    </nav>
+  </header>
+  <main>
+    {% block content %}
+    {% endblock content %}
+  </main>
+  <footer>
+    {% include 'footer.html' %}
+  </footer>
+</body>
+</html>

@@ -19,5 +19,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tickets/', include('tickets.urls'))
+    path('tickets/', include('tickets.urls'), name="tickets"),
+    path('route/', include('route.urls'), name="route"),
+    path('market/', include('market.urls'), name="market"),
+    path('torture/', include('writing.urls'), name="writing"),
+    path('help/', include('helpdesk.urls'), name="helpdesk"),
+    path('food/', include('food.urls'), name="food"),
+    #path('social/', include('tickets.urls')), # not needed - posts will be created on the home page, and chats will be there also
+    path('', include('home.urls'), name="home")
 ]

@@ -1,0 +1,13 @@
+<style>
+.black-text {
+    color: #353535 !important;
+}
+</style>
+
+<div style="display: flex; justify-content: space-evenly; gap: 5px;">
+{% for link in navbar %}
+    <a style="line-height: 0.75;" href="{{ link.route }}" class="nes-btn {% if path == link.route %} is-success black-text {% endif %}">{{ link.name }}</a>
+{% endfor %}
+</div>
+
+<hr>

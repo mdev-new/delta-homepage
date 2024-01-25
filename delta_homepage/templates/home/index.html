@@ -1,0 +1,38 @@
+{% extends '../base.html' %}
+
+{% block content %}
+
+<style>
+.post {
+
+}
+</style>
+
+<section>
+    <h4 class="title">Nový příspěvek</h4>
+    <form onsubmit="window.event.preventDefault(); console.log(window.event.target.elements.text.value)">
+        {#% csrf_token %#}
+        <textarea name="text" placeholder="Text příspěvku"></textarea>
+        <br>
+        <input type="file" accept="image/png, image/jpeg"></input>
+        <br>
+        <button type="submit" class="nes-btn is-primary">Přispět</button>
+    </form>
+</section>
+
+{% for post in posts %}
+<div style="display: flex; justify-content: center; gap: 5px;">
+    <article class="post">
+        <hgroup>
+            {# Todo: avatar #}
+            <h1 style="margin-bottom: 0;">{{ post.title }}</h1>
+            <p style="margin-top: 0;">@{{ post.author.username }} • {{ post.created_at }}</p>
+        </hgroup>
+        <p>{{ post.text }}</p>
+        {# Todo: Attachments #}
+        <button class="nes-btn">👍</button>
+    </article>
+</div>
+{% endfor %}
+
+{% endblock content %}
