@@ -1,12 +1,61 @@
+
+{# Todo: Drawer #}
+
 <style>
-.black-text {
-    color: #353535 !important;
+.my-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 5px;
+}
+
+.drawer {
+    display: none;
+}
+
+.drawer-list {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow-x: hidden; /* no hroiz scroll */
+    transition: 0.5s;
+    z-index: 2;
+}
+
+.drawer-list a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+@media only screen and (max-width: 900px) {
+    .my-list {
+        display: none;
+    }
+
+    .drawer {
+        display: block;
+    }
 }
 </style>
 
-<div style="display: flex; justify-content: space-evenly; gap: 5px;">
+<div class="drawer">
+    <button class="nes-btn is-primary" onclick="document.getElementById('drawer').style.display = 'block';">Otevrit sidebar</button>
+    <div class="drawer-list" id="drawer">
+    {% for link in navbar %}
+        <a style="line-height: 0.75; font-weight: 600;" href="{{ link.route }}" class="nes-btn {% if path == link.route %} is-success {% endif %}">{{ link.name }}</a>
+    {% endfor %}
+    </div>
+</div>
+
+<div class="my-list">
 {% for link in navbar %}
-    <a style="line-height: 0.75;" href="{{ link.route }}" class="nes-btn {% if path == link.route %} is-success black-text {% endif %}">{{ link.name }}</a>
+    <a style="line-height: 0.75; font-weight: 600;" href="{{ link.route }}" class="nes-btn {% if path == link.route %} is-success {% endif %}">{{ link.name }}</a>
 {% endfor %}
 </div>
 

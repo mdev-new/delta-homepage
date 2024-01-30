@@ -25,6 +25,7 @@ urlpatterns = [
     path('torture/', include('writing.urls'), name="writing"),
     path('help/', include('helpdesk.urls'), name="helpdesk"),
     path('food/', include('food.urls'), name="food"),
+    path('grades/', include('grades.urls'), name="grades"),
     #path('social/', include('tickets.urls')), # not needed - posts will be created on the home page, and chats will be there also
     path('', include('home.urls'), name="home")
 ]

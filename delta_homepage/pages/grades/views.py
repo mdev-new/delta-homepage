@@ -9,7 +9,4 @@ def index(request):
         'path': request.path,
         'navbar' : navbar(None)
     }
-    return render(request, 'route/index.html', context)
-
-def search(request):
-    return HttpResponse("Search page")
+    return render(request, 'grades/index.html', context)

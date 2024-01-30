@@ -1,0 +1,9 @@
+.on-top {
+    position: fixed;
+    z-index: 1;
+}
+
+.on-top-sticky {
+    position: sticky;
+    z-index: 1;
+}

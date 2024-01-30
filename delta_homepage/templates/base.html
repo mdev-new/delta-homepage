@@ -4,21 +4,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Delta Homapage - webová aplikace pro líného studenta SŠIE Delta" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="{% static 'manifest.json' %}" />
+  <link rel="icon" href="{% static 'favicon.ico' %}" />
+  <link rel="apple-touch-icon" href="{% static 'logo192.png' %}" />
   <link href="{% static 'css/nes.css' %}" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <link href="{% static 'css/global.css' %}" rel="stylesheet">
+  <!--<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">-->
+
   <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  <!--<script src="https://cdn.tailwindcss.com"></script>-->
   <!--<link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet">-->
   <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">-->
   <!--<script src="https://cdn.jsdelivr.net/npm/less"></script>-->
 
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <title>{{ name|title }}</title>
 
   <style>
     @font-face {
       font-family: "SF Pro Display";
       src: url("{% static 'fonts/SFPRODISPLAYMEDIUM.OTF' %}");
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYREGULAR.OTF' %}");
+      font-weight: normal;
+    }
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYBOLD.OTF' %}");
+      font-weight: bold;
     }
     html, body, pre, code, kbd, samp {
       {# font-family: "Press Start 2P"; #}
@@ -26,20 +44,81 @@
       font-size: 18px;
     }
   </style>
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            //clifford: '#da373d',
+          }
+        }
+      }
+    }
+  </script>
+
+  <script>
+    function _base_closeBadge_onClick(event) {
+      event.target.style.display='none';
+      document.getElementById('badge').style.display = 'none';
+    }
+
+    function isPwa() {
+      return ["fullscreen", "standalone", "minimal-ui"].some(
+        (displayMode) => window.matchMedia('(display-mode: ' + displayMode + ')').matches
+      );
+    }
+
+    function loaded() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'js/service-worker.js' %}");
+      }
+
+      /*if(!isPwa()) {
+        document.getElementById('_base_body').innerHTML = "<h1>Nainstaluj si PWA</h1>";
+      }*/
+
+      function noDevTools() {
+
+        /*setInterval(function () {
+          debugger;
+        }, 1000);*/
+
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        });
+
+        Object.defineProperty(console, '_commandLineAPI', { get : function() { window.location.reload(); } })
+
+        function ctrlShiftKey(e, key) {
+          return e.ctrlKey && e.shiftKey && e.key == key;
+        }
+
+        document.onkeydown = (e) => {
+          if (e.key == 123) {
+            e.preventDefault();
+          }
+          if (ctrlShiftKey(e, 'I')) {
+            e.preventDefault();
+          }
+          if (ctrlShiftKey(e, 'C')) {
+            e.preventDefault();
+          }
+          if (ctrlShiftKey(e, 'J')) {
+            e.preventDefault();
+          }
+          if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+            e.preventDefault();
+          }
+        }
+      }
+
+      noDevTools();
+    }
+  </script>
 </head>
-<body style="padding: 20px;">
-  <header>
-    {#% include 'header.html' %#} {# Will this _ever_ be used for anything? #}
-    <nav>
-      {% include 'nav.html' %}
-    </nav>
-  </header>
-  <main>
-    {% block content %}
-    {% endblock content %}
-  </main>
-  <footer>
-    {% include 'footer.html' %}
-  </footer>
-</body>
+{% block content %}
+{% endblock content %}
 </html>

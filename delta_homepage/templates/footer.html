@@ -1,0 +1,33 @@
+<style>
+.chat-list {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+</style>
+
+<div class="on-top chat-list" style="right: 10px; bottom: 10px;">
+    {% for chat in chats %}
+        <p style="line-height: 0.75;">{{chat.name}}</p>
+    {% endfor %}
+
+    <button style="line-height: 0.75;" class="nes-btn is-primary" onclick="document.getElementById('new-chat-dialog').showModal();">Novy chat</button>
+</div>
+
+<dialog class="nes-dialog" id="new-chat-dialog">
+    <h4 class="title">Nový chat</h4>
+    <script>
+        function closeDialog() {
+            document.getElementById('new-chat-dialog').close();
+        }
+    </script>
+    <form method="dialog" onsubmit="window.event.preventDefault(); console.log(window.event.target.elements.text.value)" style="display: flex; flex-direction: column; gap: 5px;">
+        {#% csrf_token %#}
+        <input type="text" placeholder="Uzivatelske jmeno..."></input> {# Todo: search, this will be htmx's job #}
+        <textarea name="text" placeholder="Prvni zprava..."></textarea>
+        <menu onclick="closeDialog();" class="dialog-menu">
+            <button type="button" class="nes-btn is-error">Zrušit</button>
+            <button type="submit" class="nes-btn is-primary">Odeslat</button>
+        </menu>
+    </form>
+</dialog>
