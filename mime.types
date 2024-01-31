@@ -79,4 +79,3 @@ types {
   video/x-ms-wmv                        wmv;
   video/x-msvideo                       avi;
 }
-

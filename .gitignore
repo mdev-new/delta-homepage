@@ -1,4 +1,5 @@
 nginx.conf.compiled
 *_temp
 logs
-
+build/*
+!build/.keep
