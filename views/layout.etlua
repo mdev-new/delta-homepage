@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Meta info -->
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Delta Homapage - webová aplikace pro líného studenta SŠIE Delta" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Web stuff -->
+  <link rel="manifest" href="/static/manifest.json" />
+  <link rel="icon" href="{% static 'favicon.ico' %}" />
+  <link rel="apple-touch-icon" href="{% static 'logo192.png' %}" />
+
+
+  <title><%= page_title or "Delta Homepage" %></title>
+
+  <!-- Styles -->
+  <link href="{% static 'css/nes.css' %}" rel="stylesheet">
+  <link href="{% static 'css/global.css' %}" rel="stylesheet">
+  <!--<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">-->
+
+  <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  <!--<script src="https://cdn.tailwindcss.com"></script>-->
+  <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">-->
+  <!--<script src="https://cdn.jsdelivr.net/npm/less"></script>-->
+
+  <style>
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYMEDIUM.OTF' %}");
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYREGULAR.OTF' %}");
+      font-weight: normal;
+    }
+    @font-face {
+      font-family: "SF Pro Display";
+      src: url("{% static 'fonts/SFPRODISPLAYBOLD.OTF' %}");
+      font-weight: bold;
+    }
+    html, body, pre, code, kbd, samp {
+      /* font-family: "Press Start 2P"; */
+      font-family: "SF Pro Display";
+      font-size: 18px;
+    }
+  </style>
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            //clifford: '#da373d',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Scripts -->
+</head>
+
+<body>
+ <% content_for('inner') %>
+ <hr>
+ <%= "Lapis version " .. require("lapis.version") .. " running on " .. _VERSION %>
+</body>
+
+</html>
+
