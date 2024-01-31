@@ -3,3 +3,4 @@ nginx.conf.compiled
 logs
 build/*
 !build/.keep
+*.lua
