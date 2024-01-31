@@ -7,6 +7,30 @@ const RUNTIME = 'runtime';
 // A list of local resources we always want to be cached.
 // TODO
 const PRECACHE_URLS = [
+  '/',
+  '/static/fonts/SFMono-BoldItalic.otf', // Fonts
+  '/static/fonts/SFMono-Bold.otf',
+  '/static/fonts/SFMono-HeavyItalic.otf',
+  '/static/fonts/SFMono-Heavy.otf',
+  '/static/fonts/SFMono-LightItalic.otf',
+  '/static/fonts/SFMono-Light.otf',
+  '/static/fonts/SFMono-MediumItalic.otf',
+  '/static/fonts/SFMono-Medium.otf',
+  '/static/fonts/SFMono-RegularItalic.otf',
+  '/static/fonts/SFMono-Regular.otf',
+  '/static/fonts/SFMono-SemiboldItalic.otf',
+  '/static/fonts/SFMono-Semibold.otf',
+  '/static/fonts/SFPRODISPLAYBLACKITALIC.OTF',
+  '/static/fonts/SFPRODISPLAYBOLD.OTF',
+  '/static/fonts/SFPRODISPLAYHEAVYITALIC.OTF',
+  '/static/fonts/SFPRODISPLAYLIGHTITALIC.OTF',
+  '/static/fonts/SFPRODISPLAYMEDIUM.OTF',
+  '/static/fonts/SFPRODISPLAYREGULAR.OTF',
+  '/static/fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF',
+  '/static/fonts/SFPRODISPLAYTHINITALIC.OTF',
+  '/static/fonts/SFPRODISPLAYULTRALIGHTITALIC.OTF',
+  // CSS
+  '/static/css/nes.css'
 ];
 
 // The install handler takes care of precaching the resources we always need.

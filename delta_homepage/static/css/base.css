@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/static/fonts/SFPRODISPLAYMEDIUM.OTF");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/static/fonts/SFPRODISPLAYREGULAR.OTF");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/static/fonts/SFPRODISPLAYBOLD.OTF");
+  font-weight: bold;
+}
+html, body, pre, code, kbd, samp {
+  /* font-family: "Press Start 2P";*/
+  font-family: "SF Pro Display";
+  font-size: 18px;
+}

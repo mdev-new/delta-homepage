@@ -40,14 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     '_global',
-    'home',
-    'social',
-    'tickets',
-    'helpdesk',
-    'food',
-    'market',
-    'route',
-    'writing'
+    'app',
+    'app.home',
+    'app.social',
+    'app.tickets',
+    'app.helpdesk',
+    'app.food',
+    'app.market',
+    'app.route',
+    'app.writing',
+    'index'
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.check_auth'
 ]
 
 ROOT_URLCONF = 'delta_homepage.urls'

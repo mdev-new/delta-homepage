@@ -1,13 +1,18 @@
-def navbar(user):
+def navbar(request):
     navbar = [
         {'route': '/', 'name': 'Domov'},
-        {'route': '/grades/', 'name': 'Znamky'},
-        {'route': '/food/', 'name': 'Jídlo'},
-        {'route': '/market/', 'name': 'Marketplace'},
-        {'route': '/tickets/', 'name': 'Problémy'},
-        {'route': '/help/', 'name': 'Code helpdesk'},
-        {'route': '/route/', 'name': 'Spojení'},
-        {'route': '/torture/', 'name': 'Šhrekova bažina'} # Todo : Conditional render based on if the user is in 1st grade
+        {'route': '/app/grades/', 'name': 'Znamky'},
+        {'route': '/app/food/', 'name': 'Jídlo'},
+        {'route': '/app/market/', 'name': 'Marketplace'},
+        {'route': '/app/tickets/', 'name': 'Problémy'},
+        {'route': '/app/help/', 'name': 'Code helpdesk'},
+        {'route': '/app/route/', 'name': 'Spojení'},
+        {'route': '/app/torture/', 'name': 'Šhrekova bažina'} # Todo : Conditional render based on if the user is in 1st grade
     ]
 
-    return navbar
+    publicNavBar = [
+        {'route': '/', 'name': 'Domov'},
+        {'route': '/login/', 'name': 'Login'}
+    ]
+
+    return navbar if request.user.is_authenticated else publicNavBar

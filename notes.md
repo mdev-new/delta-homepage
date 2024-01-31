@@ -1,0 +1,1 @@
+- na kazdou stranku -> permise (napr. ucitel nebo rodic nemuze videt a pristupovat na marketplace)

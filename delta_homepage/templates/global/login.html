@@ -1,0 +1,26 @@
+{% extends '../base.html' %}
+
+{% block styles_scripts %}
+{% endblock styles_scripts %}
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+<h1>Prihlasit</h1>
+<form action="/login/" method="post">
+  {% csrf_token %}
+  {{ form }}
+  <input type="submit" value="Odeslat">
+</form>
+
+<h1>Registrovat</h1>
+<form action="/register/" method="post">
+  {% csrf_token %}
+  {{ form }}
+  <input type="submit" value="Odeslat">
+</form>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}

@@ -1,39 +1,38 @@
 {
-    "short_name": "Delta Homepage",
-    "name": "Delta Homepage",
-    "icons": [
-      {
-        "src": "/static/favicon.ico",
-        "sizes": "64x64",
-        "type": "image/x-icon"
-      },
-      {
-        "src": "/static/logo192.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/static/logo512.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
-    "screenshots": [
-      {
-        "src": "/static/screen_wide.png",
-        "form_factor": "wide",
-        "sizes": "1191x657"
-      },
-      {
-        "src": "/static/screen_narrow.png",
-        "form_factor": "narrow",
-        "sizes": "388x781"
-      }
-    ],
-    "id": "/",
-    "start_url": "..",
-    "display": "standalone",
-    "theme_color": "#000000",
-    "background_color": "#ffffff"
-  }
-  
+  "short_name": "Delta Homepage",
+  "name": "Delta Homepage",
+  "icons": [
+    {
+      "src": "/static/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/static/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/static/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/screen_wide.png",
+      "form_factor": "wide",
+      "sizes": "1191x657"
+    },
+    {
+      "src": "/static/screen_narrow.png",
+      "form_factor": "narrow",
+      "sizes": "388x781"
+    }
+  ],
+  "id": "/",
+  "start_url": "..",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

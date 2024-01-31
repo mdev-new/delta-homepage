@@ -1,6 +1,4 @@
 
-{# Todo: Drawer #}
-
 <style>
 .my-list {
     display: flex;
@@ -44,6 +42,7 @@
 }
 </style>
 
+{% if navbar %}
 <div class="drawer">
     <button class="nes-btn is-primary" onclick="document.getElementById('drawer').style.display = 'block';">Otevrit sidebar</button>
     <div class="drawer-list" id="drawer">
@@ -60,3 +59,4 @@
 </div>
 
 <hr>
+{% endif %}
