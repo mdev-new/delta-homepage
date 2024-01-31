@@ -3,13 +3,9 @@ local app = lapis.Application()
 
 local loggedIn = false
 
-string.startswith = function(self, str)
-    return self:find('^' .. str) ~= nil
-end
-
 -- this is sort of ugly but it works...
 app:before_filter(function(self)
-  if self.route_name:startswith("app") and not loggedIn then
+  if not loggedIn then
     self:write({redirect_to = '/'})
   end
 end)
