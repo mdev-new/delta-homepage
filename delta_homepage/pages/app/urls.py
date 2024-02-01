@@ -2,6 +2,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', include('app.home.urls'), name="home"),
+    path('social/', include('app.social.urls'), name="social"),
     path('market/', include('app.market.urls'), name="market"),
     path('food/', include('app.food.urls'), name="food"),
     path('help/', include('app.helpdesk.urls'), name="helpdesk"),

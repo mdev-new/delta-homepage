@@ -1,6 +1,6 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -19,11 +19,15 @@ def _login(request):
             else:
                 pass
 
-            return HttpResponseRedirect("/app")
+            return HttpResponseRedirect("/app/")
 
     else:
         form = LoginForm()
         return render(request, 'global/login.html', {'form': form})
+
+def _logout(request):
+    logout(request)
+    return HttpResponseRedirect("/")
 
 def register(request):
     if request.method == "POST":

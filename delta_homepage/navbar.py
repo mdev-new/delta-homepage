@@ -1,13 +1,14 @@
 def navbar(request):
     navbar = [
-        {'route': '/', 'name': 'Domov'},
+        {'route': '/app/', 'name': 'Domov'},
         {'route': '/app/grades/', 'name': 'Znamky'},
         {'route': '/app/food/', 'name': 'Jídlo'},
         {'route': '/app/market/', 'name': 'Marketplace'},
         {'route': '/app/tickets/', 'name': 'Problémy'},
         {'route': '/app/help/', 'name': 'Code helpdesk'},
         {'route': '/app/route/', 'name': 'Spojení'},
-        {'route': '/app/torture/', 'name': 'Šhrekova bažina'} # Todo : Conditional render based on if the user is in 1st grade
+        {'route': '/app/torture/', 'name': 'Šhrekova bažina'}, # Todo : Conditional render based on if the user is in 1st grade
+        {'route': '/logout/', 'name': 'Odhlasit'} # Todo : Conditional render based on if the user is in 1st grade
     ]
 
     publicNavBar = [

@@ -38,11 +38,9 @@
 <section>
     <dialog class="nes-dialog" id="new-post-dialog">
         <h4 class="title">Nový příspěvek</h4>
-        <form method="dialog" onsubmit="window.event.preventDefault(); console.log(window.event.target.elements.text.value)">
-            {#% csrf_token %#}
-            <textarea name="text" placeholder="Text příspěvku"></textarea>
-            <br>
-            <input type="file" accept="image/png, image/jpeg"></input>
+        <form method="dialog" action="/app/social/posts/new/">
+            {% csrf_token %}
+            {{ new_post_form }}
             <br>
             <menu onclick="document.getElementById('new-post-dialog').close()" class="dialog-menu">
                 <button type="button" class="nes-btn is-error">Zrušit</button>
@@ -62,9 +60,9 @@
                 <div>
                     {# Todo: avatar #}
                     <h4 style="font-weight: normal; margin-top: 0;">
-                        <a style="font-weight: bold;" href="/users/{{ post.author.username }}">@{{ post.author.username }}</a>
-                        •
-                        {{ post.created_at }} {# Todo: tooltip with full date #}
+                        <a style="font-weight: bold;" href="/app/social/users/{{ post.author.id }}/">@{{ post.author.username }}</a>
+                        <br>
+                        <i>{{ post.created_at }}</i> {# Todo: tooltip with full date #}
                     </h4>
                 </div>
                 <p style="text-align: justify; font-size: 1.2rem; ">{{ post.text }}</p>
